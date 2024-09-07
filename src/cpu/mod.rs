@@ -1,3 +1,6 @@
+mod cpu_tests;
+
+#[derive(Debug)]
 pub struct CPU {
     pub register_a: u8,
     pub status: u8,
@@ -7,7 +10,6 @@ pub struct CPU {
     pub stack_pointer: u8,
     memory: [u8; 0xFFFF],
 }
-
 
 impl CPU {
     pub fn new() -> Self {
@@ -46,4 +48,3 @@ impl CPU {
         self.status & 0b00000001 != 0
     }
 }
-
