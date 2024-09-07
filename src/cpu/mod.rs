@@ -39,7 +39,7 @@ impl CPU {
         self.status & 0b00001000 != 0
     }
     pub fn get_status_i(&self) -> bool {
-        self.status & 0b01000100 != 0
+        self.status & 0b00000100 != 0
     }
     pub fn get_status_z(&self) -> bool {
         self.status & 0b00000010 != 0
