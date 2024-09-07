@@ -46,3 +46,4 @@ impl CPU {
         self.status & 0b00000001 != 0
     }
 }
+
