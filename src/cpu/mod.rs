@@ -1,4 +1,5 @@
 mod cpu_operations;
+#[cfg(test)]
 mod cpu_tests;
 
 #[derive(Debug)]
