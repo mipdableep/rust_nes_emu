@@ -36,3 +36,37 @@ impl CPU {
         let high = self.mem_read(addr.wrapping_add(1)) as u16;
         (high << 8) | (low as u16)
     }
+
+    fn convert_mode_to_operand_mem_address(&self, mode: AddressingMode) -> u16 {
+        match mode {
+            AddressingMode::Immediate => self.program_counter,
+            AddressingMode::ZeroPage => self.read_memory(self.program_counter as u16) as u16,
+            AddressingMode::ZeroPage_X => (self.read_memory(self.program_counter) as u16 + self.register_x as u16) & 0x00FF,
+            AddressingMode::ZeroPage_Y => (self.read_memory(self.program_counter) as u16 + self.register_y as u16) & 0x00FF,
+            AddressingMode::Relative => {
+                let unsigned_offset = self.read_memory(self.program_counter as u16);
+                let mut signed_offset: u16 = unsigned_offset as u16;
+                if signed_offset >= 0x80 {
+                    signed_offset = signed_offset - 0x0100;
+                }
+                self.program_counter + signed_offset as u16
+            }
+            AddressingMode::Absolute => self.read_memory_2_bytes((self.program_counter) as u16),
+            AddressingMode::Absolute_X => self.read_memory_2_bytes((self.program_counter) as u16).wrapping_add(self.register_x as u16) as u16,
+            AddressingMode::Absolute_Y => self.read_memory_2_bytes((self.program_counter) as u16).wrapping_add(self.register_y as u16) as u16,
+            AddressingMode::Indirect => self.read_memory_2_bytes(self.read_memory_2_bytes((self.program_counter))),
+            AddressingMode::Indirect_X => {
+                let zero_page_location: u8 = self.register_x.wrapping_add(self.mem_read(self.program_counter));
+                self.read_memory_2_bytes_with_overflow(zero_page_location as u16)
+            }
+            AddressingMode::Indirect_Y => {
+                let mem_location = self.read_memory_2_bytes((self.program_counter) as u16).wrapping_add(self.register_y as u16);
+                self.read_memory_2_bytes_with_overflow(mem_location)
+            },
+            AddressingMode::Accumulator => 0,
+            AddressingMode::NoneAddressing => {
+                panic!("Unimplemented mode {:?}", mode)
+            }
+        }
+    }
+}
