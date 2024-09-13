@@ -7,22 +7,22 @@ impl CPU {
     /////////////////////////////
 
     ///  Push Accumulator
-    pub fn PHA(&self) {
+    pub fn PHA(&mut self) {
         todo!()
     }
 
     ///  Push Processor Status
-    pub fn PHP(&self) {
+    pub fn PHP(&mut self) {
         todo!()
     }
 
     ///  Pull Accumulator
-    pub fn PLA(&self) {
+    pub fn PLA(&mut self) {
         todo!()
     }
 
     ///  Pull Processor Status
-    pub fn PLP(&self) {
+    pub fn PLP(&mut self) {
         todo!()
     }
 
@@ -31,7 +31,7 @@ impl CPU {
     ////////////////////////////
 
     ///  No Operation
-    pub fn NOP(&self) {
+    pub fn NOP(&mut self) {
         todo!()
     }
 
@@ -40,12 +40,12 @@ impl CPU {
     //////////////////////////
 
     ///  Return from Interrupt
-    pub fn RTI(&self) {
+    pub fn RTI(&mut self) {
         todo!()
     }
 
     ///  Force Interrupt
-    pub fn BRK(&self) {
+    pub fn BRK(&mut self) {
         return;
     }
 }

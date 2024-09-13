@@ -3,97 +3,97 @@ use super::super::CPU;
 #[allow(dead_code, non_snake_case)]
 impl CPU {
     ///  Compare X Register
-    pub fn CPX(&self) {
+    pub fn CPX(&mut self) {
         todo!()
     }
 
     ///  Compare Y Register
-    pub fn CPY(&self) {
+    pub fn CPY(&mut self) {
         todo!()
     }
 
     ///  Decrement X Register
-    pub fn DEX(&self) {
+    pub fn DEX(&mut self) {
         todo!()
     }
 
     ///  Decrement Y Register
-    pub fn DEY(&self) {
+    pub fn DEY(&mut self) {
         todo!()
     }
 
     ///  Increment Memory
-    pub fn INC(&self) {
+    pub fn INC(&mut self) {
         todo!()
     }
 
     ///  Increment X Register
-    pub fn INX(&self) {
+    pub fn INX(&mut self) {
         todo!()
     }
 
     ///  Increment Y Register
-    pub fn INY(&self) {
+    pub fn INY(&mut self) {
         todo!()
     }
 
     ///  Load Accumulator
-    pub fn LDA(&self) {
+    pub fn LDA(&mut self) {
         todo!()
     }
 
     ///  Load X Register
-    pub fn LDX(&self) {
+    pub fn LDX(&mut self) {
         todo!()
     }
 
     ///  Load Y Register
-    pub fn LDY(&self) {
+    pub fn LDY(&mut self) {
         todo!()
     }
 
     ///  Store Accumulator
-    pub fn STA(&self) {
+    pub fn STA(&mut self) {
         todo!()
     }
 
     ///  Store X Register
-    pub fn STX(&self) {
+    pub fn STX(&mut self) {
         todo!()
     }
 
     ///  Store Y Register
-    pub fn STY(&self) {
+    pub fn STY(&mut self) {
         todo!()
     }
 
     ///  Transfer Accumulator to X
-    pub fn TAX(&self) {
+    pub fn TAX(&mut self) {
         todo!()
     }
 
     ///  Transfer Accumulator to Y
-    pub fn TAY(&self) {
+    pub fn TAY(&mut self) {
         todo!()
     }
 
     ///  Transfer Stack Pointer to X
-    pub fn TSX(&self) {
+    pub fn TSX(&mut self) {
         todo!()
     }
 
     ///  Transfer X to Accumulator
-    pub fn TXA(&self) {
+    pub fn TXA(&mut self) {
         todo!()
     }
 
     ///  Transfer X to Stack Pointer
-    pub fn TXS(&self) {
+    pub fn TXS(&mut self) {
         todo!()
     }
 
     ///  Transfer Y to Accumulator
-    pub fn TYA(&self) {
+    pub fn TYA(&mut self) {
         todo!()
     }
 }
