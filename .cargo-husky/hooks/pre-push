@@ -1,0 +1,23 @@
+#!/bin/bash
+
+#stash uncommited changes
+echo "Stash uncommited changes"
+git stash push --keep-index
+
+# Run cargo test
+echo "Running cargo test..."
+cargo test
+
+# Capture the exit code of cargo test
+TEST_EXIT_CODE=$?
+
+# If the test fails, prevent the push
+if [ $TEST_EXIT_CODE -ne 0 ]; then
+  echo "Cargo test failed. Push aborted - stash not popped."
+  echo "to pop stash (run git stash pop)"
+  exit 1
+fi
+
+echo "Cargo test passed. unstashing and proceeding with push."
+git stash pop
+exit 0
