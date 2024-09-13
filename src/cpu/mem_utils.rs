@@ -40,6 +40,10 @@ impl CPU {
         (high << 8) | (low as u16)
     }
 
+    pub fn convert_mode_to_val(&self, mode: AddressingMode) -> u8 {
+        self.read_memory(self.convert_mode_to_operand_mem_address(mode))
+    }
+
     pub fn convert_mode_to_operand_mem_address(&self, mode: AddressingMode) -> u16 {
         match mode {
             AddressingMode::Immediate => self.program_counter,
