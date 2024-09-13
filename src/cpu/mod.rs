@@ -28,6 +28,11 @@ impl CPU {
         }
     }
 
+    pub fn load(&mut self, program: Vec<u8>) {
+        self.memory[0x8000..(0x8000 + program.len())].copy_from_slice(&program[..]);
+        self.program_counter = 0x8000;
+    }
+
     pub fn get_status_n(&self) -> bool {
         self.status & 0b10000000 != 0
     }
