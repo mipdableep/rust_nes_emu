@@ -1,3 +1,4 @@
+use crate::cpu::CPU;
 use super::AddressingMode;
 
 #[test]
