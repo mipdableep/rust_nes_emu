@@ -46,6 +46,6 @@ impl CPU {
 
     ///  Force Interrupt
     pub fn BRK(&self) {
-        todo!()
+        return;
     }
 }
