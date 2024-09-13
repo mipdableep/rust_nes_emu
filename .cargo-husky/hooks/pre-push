@@ -1,8 +1,14 @@
 #!/bin/bash
 
-#stash uncommited changes
-echo "Stash uncommited changes"
-git stash push --keep-index
+git update-index --refresh
+git diff-index --quiet HEAD --
+UNCOMMITED_CHANGES=$?
+
+if [ $UNCOMMITED_CHANGES != 0 ]; then
+  echo "Uncommited changed detected. try stashing them?"
+  echo "aborting..."
+  exit 1
+fi
 
 # Run cargo test
 echo "Running cargo test..."
@@ -13,7 +19,7 @@ TEST_EXIT_CODE=$?
 
 # If the test fails, prevent the push
 if [ $TEST_EXIT_CODE -ne 0 ]; then
-  echo "Cargo test failed. Push aborted - stash not popped."
+  echo "Cargo test failed. Push aborted"
   echo "to pop stash (run git stash pop)"
   exit 1
 fi
