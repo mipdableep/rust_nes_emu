@@ -28,19 +28,23 @@ impl CPU {
         self.memory[addr as usize]
     }
 
-    fn read_memory_2_bytes(&self, addr: u16) -> u16 {
+    pub fn read_memory_2_bytes(&self, addr: u16) -> u16 {
         let low = self.read_memory(addr) as u16;
         let high = self.read_memory(addr + 1) as u16;
         (high << 8) | (low as u16)
     }
 
-    fn read_memory_2_bytes_with_overflow(&self, addr: u16) -> u16 {
+    pub fn read_memory_2_bytes_with_overflow(&self, addr: u16) -> u16 {
         let low = self.read_memory(addr) as u16;
         let high = self.read_memory(addr.wrapping_add(1)) as u16;
         (high << 8) | (low as u16)
     }
 
-    fn convert_mode_to_operand_mem_address(&self, mode: AddressingMode) -> u16 {
+    pub fn convert_mode_to_val(&self, mode: AddressingMode) -> u8 {
+        self.read_memory(self.convert_mode_to_operand_mem_address(mode))
+    }
+
+    pub fn convert_mode_to_operand_mem_address(&self, mode: AddressingMode) -> u16 {
         match mode {
             AddressingMode::Immediate => self.program_counter,
             AddressingMode::ZeroPage => self.read_memory(self.program_counter) as u16,
