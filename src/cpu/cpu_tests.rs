@@ -29,10 +29,19 @@ fn get_status_n() {
     cpu.status = n_false;
     assert!(!cpu.get_status_n());
 }
+#[test]
+fn set_status_n() {
+    let mut cpu = CPU::new();
+    assert!(!cpu.get_status_n());
+    cpu.set_negative(true);
+    assert!(cpu.get_status_n());
+    cpu.set_negative(false);
+    assert!(!cpu.get_status_n());
+}
 
 #[test]
 fn get_status_v() {
-    let v_true  = 0b01000000;
+    let v_true = 0b01000000;
     let v_false = 0b10111111;
     let mut cpu = CPU::new();
     cpu.status = v_true;
@@ -40,11 +49,20 @@ fn get_status_v() {
     cpu.status = v_false;
     assert!(!cpu.get_status_v());
 }
+#[test]
+fn set_status_v() {
+    let mut cpu = CPU::new();
+    assert!(!cpu.get_status_v());
+    cpu.set_overflow(true);
+    assert!(cpu.get_status_v());
+    cpu.set_overflow(false);
+    assert!(!cpu.get_status_v());
+}
 
 
 #[test]
 fn get_status_b() {
-    let b_true  = 0b00010000;
+    let b_true = 0b00010000;
     let b_false = 0b11101111;
     let mut cpu = CPU::new();
     cpu.status = b_true;
@@ -55,7 +73,7 @@ fn get_status_b() {
 
 #[test]
 fn get_status_d() {
-    let d_true  = 0b00001000;
+    let d_true = 0b00001000;
     let d_false = 0b11110111;
     let mut cpu = CPU::new();
     cpu.status = d_true;
@@ -66,7 +84,7 @@ fn get_status_d() {
 
 #[test]
 fn get_status_i() {
-    let i_true  = 0b00000100;
+    let i_true = 0b00000100;
     let i_false = 0b11111011;
     let mut cpu = CPU::new();
     cpu.status = i_true;
@@ -77,7 +95,7 @@ fn get_status_i() {
 
 #[test]
 fn get_status_z() {
-    let z_true  = 0b00000010;
+    let z_true = 0b00000010;
     let z_false = 0b11111101;
     let mut cpu = CPU::new();
     cpu.status = z_true;
@@ -85,10 +103,19 @@ fn get_status_z() {
     cpu.status = z_false;
     assert!(!cpu.get_status_z());
 }
+#[test]
+fn set_status_z() {
+    let mut cpu = CPU::new();
+    assert!(!cpu.get_status_z());
+    cpu.set_zero(true);
+    assert!(cpu.get_status_z());
+    cpu.set_zero(false);
+    assert!(!cpu.get_status_z());
+}
 
 #[test]
 fn get_status_c() {
-    let c_true  = 0b00000001;
+    let c_true = 0b00000001;
     let c_false = 0b11111110;
     let mut cpu = CPU::new();
     cpu.status = c_true;
@@ -105,4 +132,18 @@ fn set_status_c() {
     assert!(cpu.get_status_c());
     cpu.set_carry(false);
     assert!(!cpu.get_status_c());
+}
+
+#[test]
+fn set_negative_and_zero() {
+    let mut cpu = CPU::new();
+    cpu.set_zero_and_negative_flag(0);
+    assert!(cpu.get_status_z());
+    assert!(!cpu.get_status_n());
+    cpu.set_zero_and_negative_flag(1);
+    assert!(!cpu.get_status_z());
+    assert!(!cpu.get_status_n());
+    cpu.set_zero_and_negative_flag(0x80);
+    assert!(!cpu.get_status_z());
+    assert!(cpu.get_status_n());
 }
