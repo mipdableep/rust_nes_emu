@@ -1,5 +1,4 @@
 use super::AddressingMode;
-use crate::prelude::*;
 
 #[test]
 fn mode_to_mem_addr_immediate() {
