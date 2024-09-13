@@ -1,4 +1,4 @@
-use super::AddressingMode;
+use super::{AddressingMode, CPU};
 
 #[test]
 fn mode_to_mem_addr_immediate() {
