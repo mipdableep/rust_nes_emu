@@ -31,11 +31,9 @@ impl CPU {
     pub fn get_status_n(&self) -> bool {
         self.status & 0b10000000 != 0
     }
-
     pub fn get_status_v(&self) -> bool {
         self.status & 0b01000000 != 0
     }
-
     pub fn get_status_b(&self) -> bool {
         self.status & 0b00010000 != 0
     }
@@ -50,5 +48,19 @@ impl CPU {
     }
     pub fn get_status_c(&self) -> bool {
         self.status & 0b00000001 != 0
+    }
+    pub fn set_zero_and_negative_flag(&mut self, result: u8) {
+        if result != 0 {
+            // change zero flag
+            self.status &= 0b11111101
+        } else {
+            self.status |= 0b00000010
+        }
+        if result & 0x80 != 0 {
+            // change negative flag
+            self.status &= 0b11111110
+        } else {
+            self.status |= 0b00000001
+        }
     }
 }
