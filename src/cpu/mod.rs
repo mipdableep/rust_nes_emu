@@ -49,6 +49,13 @@ impl CPU {
     pub fn get_status_c(&self) -> bool {
         self.status & 0b00000001 != 0
     }
+    pub fn set_carry(&mut self, carry: bool){
+        if carry {
+            self.status |= 0b00000001;
+        } else {
+            self.status &= !0b00000001;
+        }
+    }
     pub fn set_zero_and_negative_flag(&mut self, result: u8) {
         if result != 0 {
             // change zero flag

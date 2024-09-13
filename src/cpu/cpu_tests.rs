@@ -96,3 +96,13 @@ fn get_status_c() {
     cpu.status = c_false;
     assert!(!cpu.get_status_c());
 }
+
+#[test]
+fn set_status_c() {
+    let mut cpu = CPU::new();
+    assert!(!cpu.get_status_c());
+    cpu.set_carry(true);
+    assert!(cpu.get_status_c());
+    cpu.set_carry(false);
+    assert!(!cpu.get_status_c());
+}
