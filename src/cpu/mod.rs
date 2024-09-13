@@ -3,6 +3,7 @@ mod cpu_operations;
 mod cpu_tests;
 mod massive_switch;
 pub mod mem_utils;
+mod cpu_operations_tests;
 
 #[derive(Debug)]
 pub struct CPU {
