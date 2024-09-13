@@ -63,4 +63,15 @@ impl CPU {
             self.status |= 0b00000001
         }
     }
+    pub fn interpret(&mut self, program: Vec<u8>) {
+        self.program_counter = 0;
+
+        loop {
+            let opcode = program[self.program_counter];
+            self.program_counter += 1;
+            if !self.massive_switch(opcode, &program){
+                return;
+            }
+        }
+    }
 }
