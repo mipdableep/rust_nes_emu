@@ -285,35 +285,35 @@ impl CPU {
             // ADC : Add with Carry
             0x69 => {
                 let addressing_mode = AddressingMode::Immediate;
-                self.ADC();
+                // self.ADC();
             }
             0x65 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.ADC();
+                // self.ADC();
             }
             0x75 => {
                 let addressing_mode = AddressingMode::ZeroPage_X;
-                self.ADC();
+                // self.ADC();
             }
             0x6D => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.ADC();
+                // self.ADC();
             }
             0x7D => {
                 let addressing_mode = AddressingMode::Absolute_X;
-                self.ADC();
+                // self.ADC();
             }
             0x79 => {
                 let addressing_mode = AddressingMode::Absolute_Y;
-                self.ADC();
+                // self.ADC();
             }
             0x61 => {
                 let addressing_mode = AddressingMode::Indirect_X;
-                self.ADC();
+                // self.ADC();
             }
             0x71 => {
                 let addressing_mode = AddressingMode::Indirect_Y;
-                self.ADC();
+                // self.ADC();
             }
 
             // AND : Logical AND
@@ -757,3 +757,4 @@ impl CPU {
         true
     }
 }
+

@@ -3,10 +3,7 @@ use super::super::CPU;
 #[allow(dead_code, non_snake_case)]
 impl CPU {
     ///  Add with Carry
-    pub fn ADC(&self) {
-        todo!()
-    pub fn ADC(&mut self, operand: u8) {
-    }
+    pub fn ADC(&mut self, operand: u8) {}
 
     ///  Logical AND
     pub fn AND(&mut self) {
