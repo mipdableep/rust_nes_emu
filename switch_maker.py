@@ -124,7 +124,7 @@ j = json.loads(j)
 #         print("/// ", list(op_desc)[0])
 #     else:
 #         print(op_desc)
-#     print(f"pub fn {op_name}(&self) ", "{ todo!() }")
+#     print(f"pub fn {op_name}(&mut self) ", "{ todo!() }")
 #     print("")
 
 for cat in catagories:

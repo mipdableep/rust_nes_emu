@@ -2,7 +2,7 @@ use super::mem_utils::AddressingMode;
 use super::CPU;
 
 impl CPU {
-    fn massive_switch(&mut self, op_code: u8) {
+    pub fn massive_switch(&mut self, op_code: u8, program: &Vec<u8>) -> bool {
         match op_code {
             ///////////////////////
             //// register_ops /////
@@ -264,6 +264,7 @@ impl CPU {
             0x00 => {
                 let _addressing_mode = AddressingMode::NoneAddressing;
                 self.BRK();
+                return false;
             }
 
             ////////////////
@@ -752,5 +753,6 @@ impl CPU {
                 todo!()
             }
         }
+        true
     }
 }
