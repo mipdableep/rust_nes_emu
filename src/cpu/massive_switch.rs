@@ -419,19 +419,19 @@ impl CPU {
             // DEC : Decrement Memory
             0xC6 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.DEC();
+                // self.DEC();
             }
             0xD6 => {
                 let addressing_mode = AddressingMode::ZeroPage_X;
-                self.DEC();
+                // self.DEC();
             }
             0xCE => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.DEC();
+                // self.DEC();
             }
             0xDE => {
                 let addressing_mode = AddressingMode::Absolute_X;
-                self.DEC();
+                // self.DEC();
             }
 
             // EOR : Exclusive OR

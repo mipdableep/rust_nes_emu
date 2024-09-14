@@ -71,8 +71,10 @@ impl CPU {
     }
 
     ///  Decrement Memory
-    pub fn DEC(&mut self) {
-        todo!()
+    pub fn DEC(&mut self, address: u16) {
+        let new_mem_value: u8 = self.read_memory(address).wrapping_sub(1);
+        self.write_memory(address, new_mem_value);
+        self.set_zero_and_negative_flag(new_mem_value);
     }
 
     ///  Exclusive OR

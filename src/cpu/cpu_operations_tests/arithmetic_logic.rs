@@ -85,8 +85,6 @@ fn set_bit_test(cpu: &mut CPU, operand: u8) {
     assert_eq!(cpu.get_status_z(), cpu.register_a & operand == 0);
     assert_eq!(cpu.get_status_v() as u8, operand >> 6 & 1);
     assert_eq!(cpu.get_status_n() as u8, operand >> 7 & 1);
-
-
 }
 
 #[test]
@@ -118,9 +116,38 @@ fn CMP() {
     set_cmp_test(&mut cpu, 0xd2, 0xa7, false, true);
     set_cmp_test(&mut cpu, 0xee, 0x69, true, true);
     set_cmp_test(&mut cpu, 0x94, 0x72, false, true);
-    set_cmp_test(&mut cpu, 0x3f , 0x80, true, false);
-    set_cmp_test(&mut cpu, 0x18 , 0x09, false, true);
-    set_cmp_test(&mut cpu, 0x63 , 0xf3, false, false);
-    set_cmp_test(&mut cpu, 0x63 , 0x63, false, true);
+    set_cmp_test(&mut cpu, 0x3f, 0x80, true, false);
+    set_cmp_test(&mut cpu, 0x18, 0x09, false, true);
+    set_cmp_test(&mut cpu, 0x63, 0xf3, false, false);
+    set_cmp_test(&mut cpu, 0x63, 0x63, false, true);
+}
 
+fn set_dec_test(cpu: &mut CPU, memory_address: u16, memory_value: u8) {
+    cpu.write_memory(memory_address, memory_value);
+    cpu.DEC(memory_address);
+    assert_eq!(cpu.read_memory(memory_address).wrapping_add(1), memory_value);
+    assert_eq!(cpu.get_status_z(), cpu.read_memory(memory_address) == 0);
+    assert_eq!(cpu.get_status_n(), (cpu.read_memory(memory_address) >> 7) & 1 == 1);
+}
+
+#[test]
+#[allow(non_snake_case)]
+fn DEC() {
+    let mut cpu: CPU = CPU::new();
+    set_dec_test(&mut cpu, 0x00fa, 0x00);
+    set_dec_test(&mut cpu, 0x5501, 0);
+    set_dec_test(&mut cpu, 0x1f01, 0x81);
+    set_dec_test(&mut cpu, 0xffff, 0xff);
+    // check for multiple decreases of the same memory address
+    let mem_addr: u16 = 0x57af;
+    cpu.write_memory(mem_addr, 0x01);
+    assert_eq!(cpu.read_memory(mem_addr), 0x01);
+    cpu.DEC(mem_addr);
+    assert_eq!(cpu.read_memory(mem_addr), 0x00);
+    assert!(cpu.get_status_z());
+    assert!(!cpu.get_status_n());
+    cpu.DEC(mem_addr);
+    assert_eq!(cpu.read_memory(mem_addr), 0xff);
+    assert!(!cpu.get_status_z());
+    assert!(cpu.get_status_n());
 }
