@@ -319,35 +319,35 @@ impl CPU {
             // AND : Logical AND
             0x29 => {
                 let addressing_mode = AddressingMode::Immediate;
-                self.AND();
+                // self.AND();
             }
             0x25 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.AND();
+                // self.AND();
             }
             0x35 => {
                 let addressing_mode = AddressingMode::ZeroPage_X;
-                self.AND();
+                // self.AND();
             }
             0x2D => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.AND();
+                // self.AND();
             }
             0x3D => {
                 let addressing_mode = AddressingMode::Absolute_X;
-                self.AND();
+                // self.AND();
             }
             0x39 => {
                 let addressing_mode = AddressingMode::Absolute_Y;
-                self.AND();
+                // self.AND();
             }
             0x21 => {
                 let addressing_mode = AddressingMode::Indirect_X;
-                self.AND();
+                // self.AND();
             }
             0x31 => {
                 let addressing_mode = AddressingMode::Indirect_Y;
-                self.AND();
+                // self.AND();
             }
 
             // ASL : Arithmetic Shift Left

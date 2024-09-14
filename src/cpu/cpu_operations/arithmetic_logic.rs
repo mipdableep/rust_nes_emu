@@ -23,13 +23,14 @@ impl CPU {
     }
 
     ///  Logical AND
-    pub fn AND(&mut self) {
-        todo!()
+    pub fn AND(&mut self, operand: u8) {
+        self.register_a &= operand;
+        self.set_zero_and_negative_flag(self.register_a);
     }
 
     ///  Arithmetic Shift Left
     pub fn ASL(&mut self) {
-        todo!()
+
     }
 
     ///  Bit Test
