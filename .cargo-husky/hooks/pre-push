@@ -25,5 +25,4 @@ if [ $TEST_EXIT_CODE -ne 0 ]; then
 fi
 
 echo "Cargo test passed. unstashing and proceeding with push."
-git stash pop
 exit 0
