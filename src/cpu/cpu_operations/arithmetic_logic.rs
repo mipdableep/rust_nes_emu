@@ -37,8 +37,16 @@ impl CPU {
     }
 
     ///  Bit Test
-    pub fn BIT(&mut self) {
-        todo!()
+    pub fn BIT(&mut self, operand: u8) {
+        // this command "performs" and between the operand and reg_a, but does not store the values
+        // (only set flags)
+        let operand_bit_7 = (operand & 0x80) == 0x80;
+        let operand_bit_6 = (operand & 0x40) == 0x40;
+        let is_result_zero = (operand & self.register_a) == 0;
+        self.set_zero(is_result_zero);
+        self.set_overflow(operand_bit_6);
+        self.set_negative(operand_bit_7);
+
     }
 
     ///  Compare

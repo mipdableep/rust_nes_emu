@@ -375,11 +375,11 @@ impl CPU {
             // BIT : Bit Test
             0x24 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.BIT();
+                // self.BIT();
             }
             0x2C => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.BIT();
+                // self.BIT();
             }
 
             // CMP : Compare
