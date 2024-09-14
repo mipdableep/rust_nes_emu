@@ -58,11 +58,11 @@ impl CPU {
 
             AddressingMode::Relative => {
                 let unsigned_offset = self.read_memory(self.program_counter);
-                let mut signed_offset: u16 = unsigned_offset as u16;
-                if signed_offset >= 0x80 {
-                    signed_offset = signed_offset - 0x0100;
+                let mut signed_offset = unsigned_offset as i16;
+                if signed_offset >= 0b1000_0000 {
+                    signed_offset = signed_offset - 0b1_0000_0000;
                 }
-                self.program_counter + signed_offset as u16
+                ((self.program_counter + 2) as i32 + signed_offset as i32) as u16
             }
             AddressingMode::Absolute => self.read_memory_2_bytes(self.program_counter),
             AddressingMode::Absolute_X => {
