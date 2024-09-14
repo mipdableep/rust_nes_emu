@@ -385,35 +385,35 @@ impl CPU {
             // CMP : Compare
             0xC9 => {
                 let addressing_mode = AddressingMode::Immediate;
-                self.CMP();
+                // self.CMP();
             }
             0xC5 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.CMP();
+                // self.CMP();
             }
             0xD5 => {
                 let addressing_mode = AddressingMode::ZeroPage_X;
-                self.CMP();
+                // self.CMP();
             }
             0xCD => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.CMP();
+                // self.CMP();
             }
             0xDD => {
                 let addressing_mode = AddressingMode::Absolute_X;
-                self.CMP();
+                // self.CMP();
             }
             0xD9 => {
                 let addressing_mode = AddressingMode::Absolute_Y;
-                self.CMP();
+                // self.CMP();
             }
             0xC1 => {
                 let addressing_mode = AddressingMode::Indirect_X;
-                self.CMP();
+                // self.CMP();
             }
             0xD1 => {
                 let addressing_mode = AddressingMode::Indirect_Y;
-                self.CMP();
+                // self.CMP();
             }
 
             // DEC : Decrement Memory
