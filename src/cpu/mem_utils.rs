@@ -40,6 +40,10 @@ impl CPU {
         (high << 8) | (low as u16)
     }
 
+    pub fn write_memory(&mut self, addr: u16, data: u8) {
+        self.memory[addr as usize] = data;
+    }
+
     pub fn convert_mode_to_val(&self, mode: AddressingMode) -> u8 {
         self.read_memory(self.convert_mode_to_operand_mem_address(mode))
     }
