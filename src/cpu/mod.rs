@@ -13,7 +13,7 @@ pub struct CPU {
     pub register_x: u8,
     pub register_y: u8,
     pub stack_pointer: u8,
-    pub memory: [u8; 0xFFFF],
+    pub memory: [u8; 0xFFFF + 1],
 }
 
 impl CPU {
@@ -25,7 +25,7 @@ impl CPU {
             register_x: 0,
             register_y: 0,
             stack_pointer: 0,
-            memory: [0; 0xFFFF],
+            memory: [0; 0xFFFF + 1],
         }
     }
 
