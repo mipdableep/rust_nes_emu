@@ -89,3 +89,35 @@ fn mode_to_mem_zeropage_y() {
     assert_eq!(15, cpu.convert_mode_to_val(AddressingMode::ZeroPage_Y));
     cpu.program_counter += 1;
 }
+
+#[test]
+fn mode_to_mem_relative() {
+    let mut cpu = CPU::new();
+    cpu.load(vec![15]);
+    let pc = cpu.program_counter;
+    assert_eq!(
+        pc + 2 + 15,
+        cpu.convert_mode_to_operand_mem_address(AddressingMode::Relative)
+    );
+
+    cpu.load(vec![0b0100_0000]);
+    let pc = cpu.program_counter;
+    assert_eq!(
+        pc + 2 + 0b0100_0000,
+        cpu.convert_mode_to_operand_mem_address(AddressingMode::Relative)
+    );
+
+    cpu.load(vec![0b1000_0000]);
+    let pc = cpu.program_counter;
+    assert_eq!(
+        pc + 2 - 128,
+        cpu.convert_mode_to_operand_mem_address(AddressingMode::Relative)
+    );
+
+    cpu.load(vec![255 - 73]);
+    let pc = cpu.program_counter;
+    assert_eq!(
+        pc + 2 - 74,
+        cpu.convert_mode_to_operand_mem_address(AddressingMode::Relative)
+    );
+}
