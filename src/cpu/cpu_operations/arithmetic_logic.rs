@@ -30,7 +30,10 @@ impl CPU {
 
     ///  Arithmetic Shift Left
     pub fn ASL(&mut self) {
-
+        let should_carry: bool = self.register_a & 0x80 == 0x80;
+        self.register_a <<= 1;
+        self.set_carry(should_carry);
+        self.set_zero_and_negative_flag(self.register_a)
     }
 
     ///  Bit Test

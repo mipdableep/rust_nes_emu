@@ -55,3 +55,25 @@ fn AND() {
     set_and_test(&mut cpu, 0x8c, 0x75,);
     set_and_test(&mut cpu, 0x04, 0x27,);
 }
+
+fn set_asl_test(cpu : &mut CPU, reg_a: u8) {
+    let expected_result = reg_a.wrapping_mul(2);
+    let should_carry = reg_a >= 0x80;
+    cpu.register_a = reg_a;
+    cpu.ASL();
+    assert_eq!(cpu.register_a, expected_result);
+    assert_eq!(cpu.get_status_z(), cpu.register_a == 0);
+    assert_eq!(cpu.get_status_n(), cpu.register_a >> 7 == 1);
+    assert_eq!(cpu.get_status_c(),should_carry)
+}
+
+#[test]
+#[allow(non_snake_case)]
+fn ASL() {
+    let mut cpu: CPU = CPU::new();
+    set_asl_test(&mut cpu,0);
+    set_asl_test(&mut cpu, 128);
+    set_asl_test(&mut cpu, 0x1f);
+    set_asl_test(&mut cpu, 0xFF);
+    set_asl_test(&mut cpu, 0x01);
+}
