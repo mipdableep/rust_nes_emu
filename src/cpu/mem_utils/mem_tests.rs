@@ -134,3 +134,33 @@ fn mode_to_mem_absolute() {
     cpu.memory[0xa8fa_u16 as usize] = 22;
     assert_eq!(22, cpu.convert_mode_to_val(AddressingMode::Absolute));
 }
+
+#[test]
+fn mode_to_mem_absolute_x() {
+    let mut cpu = CPU::new();
+    cpu.load(vec![0xab, 0xcd, 0xfa, 0xa8]);
+    cpu.register_x = 48;
+
+    cpu.memory[0xcdab_u16 as usize + 48] = 11;
+    assert_eq!(11, cpu.convert_mode_to_val(AddressingMode::Absolute_X));
+
+    cpu.program_counter += 2;
+    cpu.register_x = 183;
+    cpu.memory[0xa8fa_u16 as usize + 183] = 22;
+    assert_eq!(22, cpu.convert_mode_to_val(AddressingMode::Absolute_X));
+}
+
+#[test]
+fn mode_to_mem_absolute_y() {
+    let mut cpu = CPU::new();
+    cpu.load(vec![0xab, 0xcd, 0xfa, 0xa8]);
+    cpu.register_y = 48;
+
+    cpu.memory[0xcdab_u16 as usize + 48] = 11;
+    assert_eq!(11, cpu.convert_mode_to_val(AddressingMode::Absolute_Y));
+
+    cpu.program_counter += 2;
+    cpu.register_y = 183;
+    cpu.memory[0xa8fa_u16 as usize + 183] = 22;
+    assert_eq!(22, cpu.convert_mode_to_val(AddressingMode::Absolute_Y));
+}
