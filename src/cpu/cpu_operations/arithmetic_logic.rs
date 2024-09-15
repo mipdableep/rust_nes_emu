@@ -30,17 +30,44 @@ impl CPU {
 
     ///  Arithmetic Shift Left
     pub fn ASL(&mut self) {
-
+        let should_carry: bool = self.register_a & 0x80 == 0x80;
+        self.register_a <<= 1;
+        self.set_carry(should_carry);
+        self.set_zero_and_negative_flag(self.register_a)
     }
 
     ///  Bit Test
-    pub fn BIT(&mut self) {
-        todo!()
+    pub fn BIT(&mut self, operand: u8) {
+        // this command "performs" and between the operand and reg_a, but does not store the values
+        // (only set flags)
+        let operand_bit_7 = (operand & 0x80) == 0x80;
+        let operand_bit_6 = (operand & 0x40) == 0x40;
+        let is_result_zero = (operand & self.register_a) == 0;
+        self.set_zero(is_result_zero);
+        self.set_overflow(operand_bit_6);
+        self.set_negative(operand_bit_7);
+
     }
 
     ///  Compare
-    pub fn CMP(&mut self) {
-        todo!()
+    pub fn CMP(&mut self, operand: u8) {
+        // compare a to operand and set flags
+        if self.register_a == operand {
+            self.set_negative(false);
+            self.set_zero(true);
+            self.set_carry(true);
+            return;
+        } else {
+            self.set_zero(false);
+            // set negative as bit 7 of reg_a - operand
+            self.set_negative(self.register_a.wrapping_sub(operand) >> 7 & 1 == 1);
+            if self.register_a < operand {
+                self.set_carry(false);
+            }
+            else {
+                self.set_carry(true);
+            }
+        }
     }
 
     ///  Decrement Memory
