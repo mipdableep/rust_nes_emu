@@ -121,3 +121,16 @@ fn mode_to_mem_relative() {
         cpu.convert_mode_to_operand_mem_address(AddressingMode::Relative)
     );
 }
+
+#[test]
+fn mode_to_mem_absolute() {
+    let mut cpu = CPU::new();
+    cpu.load(vec![0xab, 0xcd, 0xfa, 0xa8]);
+
+    cpu.memory[0xcdab_u16 as usize] = 11;
+    assert_eq!(11, cpu.convert_mode_to_val(AddressingMode::Absolute));
+
+    cpu.program_counter += 2;
+    cpu.memory[0xa8fa_u16 as usize] = 22;
+    assert_eq!(22, cpu.convert_mode_to_val(AddressingMode::Absolute));
+}
