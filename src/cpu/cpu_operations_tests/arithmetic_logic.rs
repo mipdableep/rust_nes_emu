@@ -46,6 +46,19 @@ fn get_random_u8_pairs() -> Vec<[u8; 2]> {
     res
 }
 
+fn get_random_u8_and_u16_pairs() -> Vec<(u16, u8)> {
+    let mut res: Vec<(u16, u8)> = Vec::new();
+    res.push((0x00fa, 0x00));
+    res.push((0x5501, 0));
+    res.push((0x1f01, 0x81));
+    res.push((0xffff, 0xff));
+    res.push((0xffff, 0x00));
+    res.push((0x0000, 0x00));
+    res.push((0x0000, 0xff));
+    res.push((0x5501, 0x2a));
+    res
+}
+
 fn set_and_test(cpu: &mut CPU, reg_a: u8, operand: u8) {
     let expected_result = operand & reg_a;
     cpu.register_a = reg_a;
@@ -72,7 +85,7 @@ fn set_asl_accumulator_test(cpu: &mut CPU, reg_a: u8) {
     assert_eq!(cpu.register_a, expected_result);
     assert_eq!(cpu.get_status_z(), cpu.register_a == 0);
     assert_eq!(cpu.get_status_n(), cpu.register_a >> 7 == 1);
-    assert_eq!(cpu.get_status_c(), should_carry)
+    assert_eq!(cpu.get_status_c(), should_carry);
 }
 
 #[test]
@@ -84,6 +97,36 @@ fn ASL_accumulator() {
     set_asl_accumulator_test(&mut cpu, 0x1f);
     set_asl_accumulator_test(&mut cpu, 0xFF);
     set_asl_accumulator_test(&mut cpu, 0x01);
+}
+
+fn set_asl_memory_tests(cpu: &mut CPU, value: u8, address: u16) {
+    cpu.write_memory(address, value);
+    let should_carry = value >= 0x80;
+    let expected_result = value.wrapping_mul(2);
+    cpu.ASL_memory(address);
+    assert_eq!(cpu.read_memory(address), expected_result);
+    assert_eq!(cpu.get_status_z(), cpu.read_memory(address) == 0);
+    assert_eq!(cpu.get_status_n(), cpu.read_memory(address) >> 7 == 1);
+    assert_eq!(cpu.get_status_c(), should_carry);
+}
+
+#[test]
+#[allow(non_snake_case)]
+fn ASL_memory() {
+    let mut cpu: CPU = CPU::new();
+    // test for some memory addresses and values:
+    for (address, value) in get_random_u8_and_u16_pairs() {
+        set_asl_memory_tests(&mut cpu, value, address);
+    }
+    // test for multiple shifts of the same memory
+    let address: u16 = 0x51d0;
+    cpu.write_memory(address, 0b10110010);
+    cpu.ASL_memory(address);
+    assert!(cpu.get_status_c());
+    assert_eq!(cpu.read_memory(address), 0b01100100);
+    cpu.ASL_memory(address);
+    assert!(!cpu.get_status_c());
+    assert_eq!(cpu.read_memory(address), 0b11001000);
 }
 
 fn set_bit_test(cpu: &mut CPU, operand: u8) {
@@ -142,10 +185,11 @@ fn set_dec_test(cpu: &mut CPU, memory_address: u16, memory_value: u8) {
 #[allow(non_snake_case)]
 fn DEC() {
     let mut cpu: CPU = CPU::new();
-    set_dec_test(&mut cpu, 0x00fa, 0x00);
-    set_dec_test(&mut cpu, 0x5501, 0);
-    set_dec_test(&mut cpu, 0x1f01, 0x81);
-    set_dec_test(&mut cpu, 0xffff, 0xff);
+    // test for some memory addresses and values:
+    for (address, value) in get_random_u8_and_u16_pairs() {
+        set_dec_test(&mut cpu, address, value);
+    }
+
     // check for multiple decreases of the same memory address
     let mem_addr: u16 = 0x57af;
     cpu.write_memory(mem_addr, 0x01);
