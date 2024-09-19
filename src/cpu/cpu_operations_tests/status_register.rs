@@ -27,3 +27,17 @@ fn CLD_and_SED() {
     cpu.CLD();
     assert!(!cpu.get_status_d());
 }
+
+#[test]
+#[allow(non_snake_case)]
+fn CLI_and_SEI() {
+    let mut cpu = CPU::new();
+    cpu.SEI();
+    assert!(cpu.get_status_i());
+    cpu.CLI();
+    assert!(!cpu.get_status_i());
+    cpu.SEI();
+    assert!(cpu.get_status_i());
+    cpu.CLI();
+    assert!(!cpu.get_status_i());
+}

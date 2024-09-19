@@ -14,7 +14,7 @@ impl CPU {
 
     ///  Clear Interrupt Disable
     pub fn CLI(&mut self) {
-        todo!()
+        self.set_interrupt(false);
     }
 
     ///  Clear Overflow Flag
@@ -34,6 +34,6 @@ impl CPU {
 
     ///  Set Interrupt Disable
     pub fn SEI(&mut self) {
-        todo!()
+        self.set_interrupt(true);
     }
 }
