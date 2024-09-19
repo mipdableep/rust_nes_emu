@@ -493,35 +493,35 @@ impl CPU {
             // ORA : Logical Inclusive OR
             0x09 => {
                 let addressing_mode = AddressingMode::Immediate;
-                self.ORA();
+                // self.ORA();
             }
             0x05 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.ORA();
+                // self.ORA();
             }
             0x15 => {
                 let addressing_mode = AddressingMode::ZeroPage_X;
-                self.ORA();
+                // self.ORA();
             }
             0x0D => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.ORA();
+                // self.ORA();
             }
             0x1D => {
                 let addressing_mode = AddressingMode::Absolute_X;
-                self.ORA();
+                // self.ORA();
             }
             0x19 => {
                 let addressing_mode = AddressingMode::Absolute_Y;
-                self.ORA();
+                // self.ORA();
             }
             0x01 => {
                 let addressing_mode = AddressingMode::Indirect_X;
-                self.ORA();
+                // self.ORA();
             }
             0x11 => {
                 let addressing_mode = AddressingMode::Indirect_Y;
-                self.ORA();
+                // self.ORA();
             }
 
             // ROL : Rotate Left

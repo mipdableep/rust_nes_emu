@@ -177,3 +177,21 @@ fn EOR() {
         set_eor_test(&mut cpu, test_pair[0], test_pair[1]);
     }
 }
+
+fn set_ora_test(cpu: &mut CPU, reg_a: u8, operand: u8) {
+    let expected_result = operand | reg_a;
+    cpu.register_a = reg_a;
+    cpu.ORA(operand);
+    assert_eq!(cpu.register_a, expected_result);
+    assert_eq!(cpu.get_status_z(), cpu.register_a == 0);
+    assert_eq!(cpu.get_status_n(), cpu.register_a >> 7 == 1);
+}
+
+#[test]
+#[allow(non_snake_case)]
+fn ORA() {
+    let mut cpu: CPU = CPU::new();
+    for test_pair in get_random_u8_pairs() {
+        set_ora_test(&mut cpu, test_pair[0], test_pair[1]);
+    }
+}

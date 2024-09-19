@@ -7,7 +7,7 @@ impl CPU {
     pub fn ADC(&mut self, operand: u8) {
         let res_as_u16: u16 = self.register_a as u16 + operand as u16;
         // check for carry
-        self.set_carry( (res_as_u16 & 0x0100) == 0x0100);
+        self.set_carry((res_as_u16 & 0x0100) == 0x0100);
 
         // check for overflow
         let is_operand_negative: bool = operand & 0x80 == 0x80;
@@ -46,7 +46,6 @@ impl CPU {
         self.set_zero(is_result_zero);
         self.set_overflow(operand_bit_6);
         self.set_negative(operand_bit_7);
-
     }
 
     ///  Compare
@@ -63,8 +62,7 @@ impl CPU {
             self.set_negative(self.register_a.wrapping_sub(operand) >> 7 & 1 == 1);
             if self.register_a < operand {
                 self.set_carry(false);
-            }
-            else {
+            } else {
                 self.set_carry(true);
             }
         }
@@ -89,8 +87,9 @@ impl CPU {
     }
 
     ///  Logical Inclusive OR
-    pub fn ORA(&mut self) {
-        todo!()
+    pub fn ORA(&mut self, operand: u8) {
+        self.register_a |= operand;
+        self.set_zero_and_negative_flag(self.register_a);
     }
 
     ///  Rotate Left
