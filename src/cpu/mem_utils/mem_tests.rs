@@ -57,7 +57,7 @@ fn mode_to_mem_zeropage_x() {
 
     assert_eq!(24, cpu.convert_mode_to_val(AddressingMode::ZeroPage_X));
     cpu.program_counter += 1;
-    // test the wraping
+    // test the wrapping
     cpu.register_x = 254;
     assert_eq!(21, cpu.convert_mode_to_val(AddressingMode::ZeroPage_X));
     cpu.program_counter += 1;
