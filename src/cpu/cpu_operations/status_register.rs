@@ -19,7 +19,7 @@ impl CPU {
 
     ///  Clear Overflow Flag
     pub fn CLV(&mut self) {
-        todo!()
+        self.set_overflow(false);
     }
 
     ///  Set Carry Flag

@@ -41,3 +41,17 @@ fn CLI_and_SEI() {
     cpu.CLI();
     assert!(!cpu.get_status_i());
 }
+
+#[test]
+#[allow(non_snake_case)]
+fn CLV() {
+    let mut cpu = CPU::new();
+    cpu.set_overflow(true);
+    assert!(cpu.get_status_v());
+    cpu.CLV();
+    assert!(!cpu.get_status_v());
+    cpu.set_overflow(true);
+    assert!(cpu.get_status_v());
+    cpu.CLV();
+    assert!(!cpu.get_status_v());
+}
