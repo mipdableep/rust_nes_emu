@@ -1,6 +1,5 @@
 use super::super::CPU;
 
-
 #[allow(dead_code, non_snake_case)]
 impl CPU {
     ///  Add with Carry
@@ -14,7 +13,8 @@ impl CPU {
         let is_a_negative: bool = self.register_a & 0x80 == 0x80;
         let is_result_negative: bool = res_as_u16 & 0x0080 == 0x80;
         // overflow occurred iff the sign of the result does not match the expected sign
-        let overflow_occurred: bool = (is_operand_negative == is_a_negative) & (is_operand_negative != is_result_negative);
+        let overflow_occurred: bool =
+            (is_operand_negative == is_a_negative) & (is_operand_negative != is_result_negative);
         self.set_overflow(overflow_occurred);
 
         // now we can set register a as the result. Don't forget to convert it properly!
@@ -39,7 +39,7 @@ impl CPU {
     pub fn ASL_memory(&mut self, address: u16) {
         let address_value = self.read_memory(address);
         let should_carry: bool = address_value & 0x80 == 0x80;
-        self.write_memory(address, address_value<<1);
+        self.write_memory(address, address_value << 1);
         self.set_carry(should_carry);
         self.set_zero_and_negative_flag(self.read_memory(address));
     }
