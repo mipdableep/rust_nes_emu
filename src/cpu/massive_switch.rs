@@ -471,23 +471,23 @@ impl CPU {
             // LSR : Logical Shift Right
             0x4A => {
                 let addressing_mode = AddressingMode::Accumulator;
-                self.LSR();
+                self.LSR_accumulator();
             }
             0x46 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.LSR();
+                self.LSR_memory(self.convert_mode_to_operand_mem_address(addressing_mode));
             }
             0x56 => {
                 let addressing_mode = AddressingMode::ZeroPage_X;
-                self.LSR();
+                self.LSR_memory(self.convert_mode_to_operand_mem_address(addressing_mode));
             }
             0x4E => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.LSR();
+                self.LSR_memory(self.convert_mode_to_operand_mem_address(addressing_mode));
             }
             0x5E => {
                 let addressing_mode = AddressingMode::Absolute_X;
-                self.LSR();
+                self.LSR_memory(self.convert_mode_to_operand_mem_address(addressing_mode));
             }
 
             // ORA : Logical Inclusive OR
@@ -757,4 +757,3 @@ impl CPU {
         true
     }
 }
-
