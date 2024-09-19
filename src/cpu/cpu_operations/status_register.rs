@@ -9,7 +9,7 @@ impl CPU {
 
     ///  Clear Decimal Mode
     pub fn CLD(&mut self) {
-        todo!()
+        self.set_decimal(false);
     }
 
     ///  Clear Interrupt Disable
@@ -29,7 +29,7 @@ impl CPU {
 
     ///  Set Decimal Flag
     pub fn SED(&mut self) {
-        todo!()
+        self.set_decimal(true);
     }
 
     ///  Set Interrupt Disable

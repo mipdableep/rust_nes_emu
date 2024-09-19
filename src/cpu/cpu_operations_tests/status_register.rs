@@ -13,3 +13,17 @@ fn CLC_and_SEC() {
     cpu.CLC();
     assert!(!cpu.get_status_c());
 }
+
+#[test]
+#[allow(non_snake_case)]
+fn CLD_and_SED() {
+    let mut cpu = CPU::new();
+    cpu.SED();
+    assert!(cpu.get_status_d());
+    cpu.CLD();
+    assert!(!cpu.get_status_d());
+    cpu.SED();
+    assert!(cpu.get_status_d());
+    cpu.CLD();
+    assert!(!cpu.get_status_d());
+}
