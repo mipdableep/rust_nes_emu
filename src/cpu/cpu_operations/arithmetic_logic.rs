@@ -51,7 +51,7 @@ impl CPU {
 
     ///  Compare
     pub fn CMP(&mut self, operand: u8) {
-        // compare a to operand and set flags
+        // compare reg_a to operand and set flags
         if self.register_a == operand {
             self.set_negative(false);
             self.set_zero(true);
