@@ -353,23 +353,23 @@ impl CPU {
             // ASL : Arithmetic Shift Left
             0x0A => {
                 let addressing_mode = AddressingMode::Accumulator;
-                self.ASL();
+                self.ASL_accumulator();
             }
             0x06 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.ASL();
+                // self.ASL_memory();
             }
             0x16 => {
                 let addressing_mode = AddressingMode::ZeroPage_X;
-                self.ASL();
+                // self.ASL_memory();
             }
             0x0E => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.ASL();
+                // self.ASL_memory();
             }
             0x1E => {
                 let addressing_mode = AddressingMode::Absolute_X;
-                self.ASL();
+                // self.ASL_memory();
             }
 
             // BIT : Bit Test

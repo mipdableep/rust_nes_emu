@@ -29,11 +29,19 @@ impl CPU {
     }
 
     ///  Arithmetic Shift Left
-    pub fn ASL(&mut self) {
+    pub fn ASL_accumulator(&mut self) {
         let should_carry: bool = self.register_a & 0x80 == 0x80;
         self.register_a <<= 1;
         self.set_carry(should_carry);
         self.set_zero_and_negative_flag(self.register_a)
+    }
+
+    pub fn ASL_memory(&mut self, address: u16) {
+        let address_value = self.read_memory(address);
+        let should_carry: bool = address_value & 0x80 == 0x80;
+        self.write_memory(address, address_value<<1);
+        self.set_carry(should_carry);
+        self.set_zero_and_negative_flag(self.read_memory(address));
     }
 
     ///  Bit Test

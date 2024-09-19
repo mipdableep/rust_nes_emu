@@ -64,11 +64,11 @@ fn AND() {
     }
 }
 
-fn set_asl_test(cpu: &mut CPU, reg_a: u8) {
+fn set_asl_accumulator_test(cpu: &mut CPU, reg_a: u8) {
     let expected_result = reg_a.wrapping_mul(2);
     let should_carry = reg_a >= 0x80;
     cpu.register_a = reg_a;
-    cpu.ASL();
+    cpu.ASL_accumulator();
     assert_eq!(cpu.register_a, expected_result);
     assert_eq!(cpu.get_status_z(), cpu.register_a == 0);
     assert_eq!(cpu.get_status_n(), cpu.register_a >> 7 == 1);
@@ -77,13 +77,13 @@ fn set_asl_test(cpu: &mut CPU, reg_a: u8) {
 
 #[test]
 #[allow(non_snake_case)]
-fn ASL() {
+fn ASL_accumulator() {
     let mut cpu: CPU = CPU::new();
-    set_asl_test(&mut cpu, 0);
-    set_asl_test(&mut cpu, 128);
-    set_asl_test(&mut cpu, 0x1f);
-    set_asl_test(&mut cpu, 0xFF);
-    set_asl_test(&mut cpu, 0x01);
+    set_asl_accumulator_test(&mut cpu, 0);
+    set_asl_accumulator_test(&mut cpu, 128);
+    set_asl_accumulator_test(&mut cpu, 0x1f);
+    set_asl_accumulator_test(&mut cpu, 0xFF);
+    set_asl_accumulator_test(&mut cpu, 0x01);
 }
 
 fn set_bit_test(cpu: &mut CPU, operand: u8) {
