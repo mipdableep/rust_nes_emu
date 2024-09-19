@@ -38,7 +38,7 @@ fn test_write_memory() {
 #[test]
 fn test_read_memory_2_bytes() {
     let mut cpu = CPU::new();
-    let memory_contents: [u8; 0xffff+1] = get_full_memory_from_seed(42);
+    let memory_contents: [u8; 0xffff + 1] = get_full_memory_from_seed(42);
     for i in 0..=0xff {
         cpu.write_memory(i, memory_contents[i as usize]);
     }
@@ -84,11 +84,11 @@ fn mode_to_mem_addr_immediate() {
 #[test]
 fn mode_to_mem_addr_zeropage() {
     let mut cpu = CPU::new();
-    cpu.memory[11] = 24;
-    cpu.memory[14] = 21;
-    cpu.memory[20] = 15;
+    cpu.write_memory(11, 24);
+    cpu.write_memory(13, 21);
+    cpu.write_memory(20, 15);
 
-    let program = vec![11, 14, 20];
+    let program = vec![11, 13, 20];
     cpu.load(program);
 
     assert_eq!(24, cpu.convert_mode_to_val(AddressingMode::ZeroPage));
@@ -104,9 +104,9 @@ fn mode_to_mem_addr_zeropage() {
 #[test]
 fn mode_to_mem_zeropage_x() {
     let mut cpu = CPU::new();
-    cpu.memory[11] = 24;
-    cpu.memory[13] = 21;
-    cpu.memory[20] = 15;
+    cpu.write_memory(11, 24);
+    cpu.write_memory(13, 21);
+    cpu.write_memory(20, 15);
     cpu.register_x = 1;
 
     let program = vec![10, 15, 17];
@@ -127,9 +127,9 @@ fn mode_to_mem_zeropage_x() {
 #[test]
 fn mode_to_mem_zeropage_y() {
     let mut cpu = CPU::new();
-    cpu.memory[11] = 24;
-    cpu.memory[13] = 21;
-    cpu.memory[20] = 15;
+    cpu.write_memory(11, 24);
+    cpu.write_memory(13, 21);
+    cpu.write_memory(20, 15);
     cpu.register_y = 1;
 
     let program = vec![10, 15, 17];
@@ -184,11 +184,11 @@ fn mode_to_mem_absolute() {
     let mut cpu = CPU::new();
     cpu.load(vec![0xab, 0xcd, 0xfa, 0xa8]);
 
-    cpu.memory[0xcdab_u16 as usize] = 11;
+    cpu.write_memory(0xcdab, 11);
     assert_eq!(11, cpu.convert_mode_to_val(AddressingMode::Absolute));
 
     cpu.program_counter += 2;
-    cpu.memory[0xa8fa_u16 as usize] = 22;
+    cpu.write_memory(0xa8fa, 22);
     assert_eq!(22, cpu.convert_mode_to_val(AddressingMode::Absolute));
 }
 
@@ -198,12 +198,12 @@ fn mode_to_mem_absolute_x() {
     cpu.load(vec![0xab, 0xcd, 0xfa, 0xa8]);
     cpu.register_x = 48;
 
-    cpu.memory[0xcdab_u16 as usize + 48] = 11;
+    cpu.write_memory(0xcdab + 48, 11);
     assert_eq!(11, cpu.convert_mode_to_val(AddressingMode::Absolute_X));
 
     cpu.program_counter += 2;
     cpu.register_x = 183;
-    cpu.memory[0xa8fa_u16 as usize + 183] = 22;
+    cpu.write_memory(0xa8fa + 183, 22);
     assert_eq!(22, cpu.convert_mode_to_val(AddressingMode::Absolute_X));
 }
 
@@ -213,12 +213,12 @@ fn mode_to_mem_absolute_y() {
     cpu.load(vec![0xab, 0xcd, 0xfa, 0xa8]);
     cpu.register_y = 48;
 
-    cpu.memory[0xcdab_u16 as usize + 48] = 11;
+    cpu.write_memory(0xcdab + 48, 11);
     assert_eq!(11, cpu.convert_mode_to_val(AddressingMode::Absolute_Y));
 
     cpu.program_counter += 2;
     cpu.register_y = 183;
-    cpu.memory[0xa8fa_u16 as usize + 183] = 22;
+    cpu.write_memory(0xa8fa + 183, 22);
     assert_eq!(22, cpu.convert_mode_to_val(AddressingMode::Absolute_Y));
 }
 
@@ -227,14 +227,14 @@ fn mode_to_mem_indirect() {
     let mut cpu = CPU::new();
     cpu.load(vec![0xab, 0xcd, 0xfa, 0xa8]);
 
-    cpu.memory[0xcdab_u16 as usize] = 0x44;
-    cpu.memory[0xcdab_u16 as usize + 1] = 0xee;
-    cpu.memory[0xee44_u16 as usize] = 11;
+    cpu.write_memory(0xcdab_u16, 0x44);
+    cpu.write_memory(0xcdab_u16 + 1, 0xee);
+    cpu.write_memory(0xee44_u16, 11);
     assert_eq!(11, cpu.convert_mode_to_val(AddressingMode::Indirect));
 
     cpu.program_counter += 2;
-    cpu.memory[0xa8fa_u16 as usize] = 0x8f;
-    cpu.memory[0xa8fa_u16 as usize + 1] = 0xc3;
-    cpu.memory[0xc38f_u16 as usize] = 0x8f;
+    cpu.write_memory(0xa8fa_u16, 0x8f);
+    cpu.write_memory(0xa8fa_u16 + 1, 0xc3);
+    cpu.write_memory(0xc38f_u16, 0x8f);
     assert_eq!(0x8f, cpu.convert_mode_to_val(AddressingMode::Indirect));
 }
