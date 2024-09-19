@@ -78,8 +78,9 @@ impl CPU {
     }
 
     ///  Exclusive OR
-    pub fn EOR(&mut self) {
-        todo!()
+    pub fn EOR(&mut self, operand: u8) {
+        self.register_a ^= operand;
+        self.set_zero_and_negative_flag(self.register_a);
     }
 
     ///  Logical Shift Right

@@ -29,6 +29,23 @@ fn ADC() {
     set_add_test(&mut cpu, 0x04, 0x27, false, false);
 }
 
+fn get_random_u8_pairs() -> Vec<[u8; 2]> {
+    let mut res: Vec<[u8; 2]> = Vec::new();
+    res.push([5, 3]);
+    res.push([0, 0]);
+    res.push([1, 0xFF]);
+    res.push([0xFF, 0xFF]);
+    res.push([0xa5, 0x84]);
+    res.push([0x39, 0xde]);
+    res.push([0xdd, 0x0a]);
+    res.push([0xc8, 0x53]);
+    res.push([0x5b, 0xde]);
+    res.push([0x5b, 0xde]);
+    res.push([0x8c, 0x75]);
+    res.push([0x04, 0x27]);
+    res
+}
+
 fn set_and_test(cpu: &mut CPU, reg_a: u8, operand: u8) {
     let expected_result = operand & reg_a;
     cpu.register_a = reg_a;
@@ -42,18 +59,9 @@ fn set_and_test(cpu: &mut CPU, reg_a: u8, operand: u8) {
 #[allow(non_snake_case)]
 fn AND() {
     let mut cpu: CPU = CPU::new();
-    set_and_test(&mut cpu, 5, 3);
-    set_and_test(&mut cpu, 0, 0);
-    set_and_test(&mut cpu, 1, 0xFF);
-    set_and_test(&mut cpu, 0xFF, 0xFF);
-    set_and_test(&mut cpu, 0xa5, 0x84);
-    set_and_test(&mut cpu, 0x39, 0xde);
-    set_and_test(&mut cpu, 0xdd, 0x0a);
-    set_and_test(&mut cpu, 0xc8, 0x53);
-    set_and_test(&mut cpu, 0x5b, 0xde);
-    set_and_test(&mut cpu, 0x5b, 0xde);
-    set_and_test(&mut cpu, 0x8c, 0x75);
-    set_and_test(&mut cpu, 0x04, 0x27);
+    for test_pair in get_random_u8_pairs() {
+        set_and_test(&mut cpu, test_pair[0], test_pair[1]);
+    }
 }
 
 fn set_asl_test(cpu: &mut CPU, reg_a: u8) {
@@ -150,4 +158,22 @@ fn DEC() {
     assert_eq!(cpu.read_memory(mem_addr), 0xff);
     assert!(!cpu.get_status_z());
     assert!(cpu.get_status_n());
+}
+
+fn set_eor_test(cpu: &mut CPU, reg_a: u8, operand: u8) {
+    let expected_result = operand ^ reg_a;
+    cpu.register_a = reg_a;
+    cpu.EOR(operand);
+    assert_eq!(cpu.register_a, expected_result);
+    assert_eq!(cpu.get_status_z(), cpu.register_a == 0);
+    assert_eq!(cpu.get_status_n(), cpu.register_a >> 7 == 1);
+}
+
+#[test]
+#[allow(non_snake_case)]
+fn EOR() {
+    let mut cpu: CPU = CPU::new();
+    for test_pair in get_random_u8_pairs() {
+        set_eor_test(&mut cpu, test_pair[0], test_pair[1]);
+    }
 }

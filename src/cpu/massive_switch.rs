@@ -437,35 +437,35 @@ impl CPU {
             // EOR : Exclusive OR
             0x49 => {
                 let addressing_mode = AddressingMode::Immediate;
-                self.EOR();
+                // self.EOR();
             }
             0x45 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.EOR();
+                // self.EOR();
             }
             0x55 => {
                 let addressing_mode = AddressingMode::ZeroPage_X;
-                self.EOR();
+                // self.EOR();
             }
             0x4D => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.EOR();
+                // self.EOR();
             }
             0x5D => {
                 let addressing_mode = AddressingMode::Absolute_X;
-                self.EOR();
+                // self.EOR();
             }
             0x59 => {
                 let addressing_mode = AddressingMode::Absolute_Y;
-                self.EOR();
+                // self.EOR();
             }
             0x41 => {
                 let addressing_mode = AddressingMode::Indirect_X;
-                self.EOR();
+                // self.EOR();
             }
             0x51 => {
                 let addressing_mode = AddressingMode::Indirect_Y;
-                self.EOR();
+                // self.EOR();
             }
 
             // LSR : Logical Shift Right
