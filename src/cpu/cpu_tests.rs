@@ -101,6 +101,15 @@ fn get_status_i() {
     cpu.status = i_false;
     assert!(!cpu.get_status_i());
 }
+#[test]
+fn set_status_i() {
+    let mut cpu = CPU::new();
+    assert!(!cpu.get_status_i());
+    cpu.set_interrupt(true);
+    assert!(cpu.get_status_i());
+    cpu.set_interrupt(false);
+    assert!(!cpu.get_status_i());
+}
 
 #[test]
 fn get_status_z() {

@@ -77,6 +77,13 @@ impl CPU {
             self.status &= !0b01001000;
         }
     }
+    pub fn set_interrupt(&mut self, interrupt: bool) {
+        if interrupt {
+            self.status |= 0b00000100;
+        } else {
+            self.status &= !0b01000100;
+        }
+    }
     pub fn set_zero(&mut self, zero: bool) {
         if zero {
             self.status |= 0b00000010;
