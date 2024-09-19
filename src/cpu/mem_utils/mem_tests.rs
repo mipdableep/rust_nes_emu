@@ -261,3 +261,34 @@ fn mod_to_mem_indirect_x() {
     assert_eq!(0xaabb, cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_X));
     assert_eq!(0x60, cpu.convert_mode_to_val(AddressingMode::Indirect_X));
 }
+
+
+#[test]
+fn mod_to_mem_indirect_y() {
+    // based on http://www.emulator101.com/6502-addressing-modes.html
+    let mut cpu = CPU::new();
+    // test without wrapping
+    cpu.register_y = 0x10;
+    cpu.write_memory(0x86, 0x28);
+    cpu.write_memory(0x87, 0x40);
+    cpu.write_memory(0x4038, 0x5a); // 0X4028 + 0X10 = 0X4038
+    cpu.load(vec![0x86]);
+    assert_eq!(0x4038, cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_Y));
+    assert_eq!(0x5a, cpu.convert_mode_to_val(AddressingMode::Indirect_Y));
+    // test with overflow around zero page, that should not occur
+    cpu.register_y = 0x01;
+    cpu.write_memory(0x13, 0xff);
+    cpu.write_memory(0x14, 0x00);
+    cpu.write_memory(0x0100, 0x60);
+    cpu.load(vec![0x13]); // 0xb9 + 0x5a = 0x113
+    assert_eq!(0x0100, cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_Y));
+    assert_eq!(0x60, cpu.convert_mode_to_val(AddressingMode::Indirect_Y));
+    // test with overflow around all the pages, which should occur
+    cpu.register_y = 0xb9;
+    cpu.write_memory(0x86, 0x5a);
+    cpu.write_memory(0x87, 0xff); // 0xff5a + 0xb9 = 0x10013
+    cpu.write_memory(0x13, 0x5a);
+    cpu.load(vec![0x86]);
+    assert_eq!(0x13, cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_Y));
+    assert_eq!(0x5a, cpu.convert_mode_to_val(AddressingMode::Indirect_Y));
+}
