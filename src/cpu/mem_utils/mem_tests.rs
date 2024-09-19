@@ -241,6 +241,7 @@ fn mode_to_mem_indirect() {
 
 #[test]
 fn mod_to_mem_indirect_x() {
+    // based on http://www.emulator101.com/6502-addressing-modes.html
     let mut cpu = CPU::new();
     // test without wrapping
     cpu.register_x = 0x04;
@@ -248,7 +249,7 @@ fn mod_to_mem_indirect_x() {
     cpu.write_memory(0x25, 0x20);
     cpu.write_memory(0x2074, 0x5a);
     cpu.write_memory(0x2075, 0xbb);
-    cpu.load(vec![0x20]);
+    cpu.load(vec![0x20]); // 0x20 + 0x04 = 0x24
     assert_eq!(0x2074, cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_X));
     assert_eq!(0x5a, cpu.convert_mode_to_val(AddressingMode::Indirect_X));
     // test with overflow
@@ -256,7 +257,7 @@ fn mod_to_mem_indirect_x() {
     cpu.write_memory(0x13, 0xbb);
     cpu.write_memory(0x14, 0xaa);
     cpu.write_memory(0xaabb, 0x60);
-    cpu.load(vec![0xb9]);
+    cpu.load(vec![0xb9]); // 0xb9 + 0x5a = 0x113
     assert_eq!(0xaabb, cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_X));
     assert_eq!(0x60, cpu.convert_mode_to_val(AddressingMode::Indirect_X));
 }
