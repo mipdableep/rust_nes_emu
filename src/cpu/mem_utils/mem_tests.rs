@@ -1,4 +1,61 @@
 use super::{AddressingMode, CPU};
+use rand_chacha::ChaCha12Rng;
+use rand_chacha::rand_core::{RngCore, SeedableRng};
+
+fn get_full_memory_from_seed(seed: u8) -> [u8; 1 << 16] {
+    let mut generator = ChaCha12Rng::from_seed([seed; 32]);
+    let mut result: [u8; 1 << 16] = [0; 1 << 16];
+    for i in 0..0xFF {
+        result[i] = generator.next_u32() as u8;
+    }
+    result
+}
+
+#[test]
+fn test_read_memory() {
+    let mut cpu = CPU::new();
+    let memory_contents = get_full_memory_from_seed(42);
+    for i in 0..=0xff {
+        cpu.memory[i] = memory_contents[i];
+    }
+    for i in 0..=0xff {
+        assert_eq!(cpu.read_memory(i), memory_contents[i as usize]);
+    }
+}
+
+#[test]
+fn test_write_memory() {
+    let mut cpu = CPU::new();
+    let memory_contents = get_full_memory_from_seed(42);
+    for i in 0..=0xff {
+        cpu.write_memory(i, memory_contents[i as usize]);
+    }
+    for i in 0..=0xff {
+        assert_eq!(cpu.read_memory(i), memory_contents[i as usize]);
+    }
+}
+
+#[test]
+fn test_read_memory_2_bytes() {
+    let mut cpu = CPU::new();
+    let memory_contents: [u8; 0xffff+1] = get_full_memory_from_seed(42);
+    for i in 0..=0xff {
+        cpu.write_memory(i, memory_contents[i as usize]);
+    }
+    for i in 0u8..=0x70 {
+        // 6502 is little endian
+        let expected_result: u16 = ((memory_contents[(2 * i + 1) as usize] as u16) << 8) + (memory_contents[(2 * i) as usize] as u16);
+        assert_eq!(cpu.read_memory_2_bytes(i as u16 * 2), expected_result);
+    }
+}
+
+#[test]
+#[should_panic]
+fn test_memory_violation() {
+    let cpu = CPU::new();
+    cpu.read_memory_2_bytes(0xffff);
+}
+
 
 #[test]
 fn mode_to_mem_addr_immediate() {
