@@ -238,3 +238,25 @@ fn mode_to_mem_indirect() {
     cpu.write_memory(0xc38f_u16, 0x8f);
     assert_eq!(0x8f, cpu.convert_mode_to_val(AddressingMode::Indirect));
 }
+
+#[test]
+fn mod_to_mem_indirect_x() {
+    let mut cpu = CPU::new();
+    // test without wrapping
+    cpu.register_x = 0x04;
+    cpu.write_memory(0x24, 0x74);
+    cpu.write_memory(0x25, 0x20);
+    cpu.write_memory(0x2074, 0x5a);
+    cpu.write_memory(0x2075, 0xbb);
+    cpu.load(vec![0x20]);
+    assert_eq!(0x2074, cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_X));
+    assert_eq!(0x5a, cpu.convert_mode_to_val(AddressingMode::Indirect_X));
+    // test with overflow
+    cpu.register_x = 0x5a;
+    cpu.write_memory(0x13, 0xbb);
+    cpu.write_memory(0x14, 0xaa);
+    cpu.write_memory(0xaabb, 0x60);
+    cpu.load(vec![0xb9]);
+    assert_eq!(0xaabb, cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_X));
+    assert_eq!(0x60, cpu.convert_mode_to_val(AddressingMode::Indirect_X));
+}
