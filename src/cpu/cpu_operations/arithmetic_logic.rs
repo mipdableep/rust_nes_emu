@@ -90,8 +90,18 @@ impl CPU {
     }
 
     ///  Logical Shift Right
-    pub fn LSR(&mut self) {
-        todo!()
+    pub fn LSR_accumulator(&mut self) {
+        self.set_carry(self.register_a & 0b1 == 1);
+        self.register_a = self.register_a >> 1;
+        self.set_zero_and_negative_flag(self.register_a);
+    }
+
+    pub fn LSR_memory(&mut self, address: u16) {
+        let address_value = self.read_memory(address);
+        self.set_carry(address_value & 0b1 == 1);
+        let res = address_value >> 1;
+        self.write_memory(address, res);
+        self.set_zero_and_negative_flag(res);
     }
 
     ///  Logical Inclusive OR
