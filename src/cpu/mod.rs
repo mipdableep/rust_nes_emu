@@ -55,11 +55,12 @@ impl CPU {
     pub fn get_status_c(&self) -> bool {
         self.status & 0b00000001 != 0
     }
-    pub fn set_carry(&mut self, carry: bool) {
-        if carry {
-            self.status |= 0b00000001;
+
+    pub fn set_negative(&mut self, negative: bool) {
+        if negative {
+            self.status |= 0b10000000;
         } else {
-            self.status &= !0b00000001;
+            self.status &= !0b10000000;
         }
     }
     pub fn set_overflow(&mut self, overflow: bool) {
@@ -69,6 +70,13 @@ impl CPU {
             self.status &= !0b01000000;
         }
     }
+    pub fn set_decimal(&mut self, decimal: bool) { // the decimal flag is not used in operation (such as ADC), but still exists
+        if decimal {
+            self.status |= 0b00001000;
+        } else {
+            self.status &= !0b01001000;
+        }
+    }
     pub fn set_zero(&mut self, zero: bool) {
         if zero {
             self.status |= 0b00000010;
@@ -76,13 +84,14 @@ impl CPU {
             self.status &= !0b00000010;
         }
     }
-    pub fn set_negative(&mut self, negative: bool) {
-        if negative {
-            self.status |= 0b10000000;
+    pub fn set_carry(&mut self, carry: bool) {
+        if carry {
+            self.status |= 0b00000001;
         } else {
-            self.status &= !0b10000000;
+            self.status &= !0b00000001;
         }
     }
+
     pub fn set_zero_and_negative_flag(&mut self, result: u8) {
         self.set_zero(result == 0);
         self.set_negative(result & 0x80 == 0x80);
