@@ -81,6 +81,15 @@ fn get_status_d() {
     cpu.status = d_false;
     assert!(!cpu.get_status_d());
 }
+#[test]
+fn set_status_d() {
+    let mut cpu = CPU::new();
+    assert!(!cpu.get_status_d());
+    cpu.set_decimal(true);
+    assert!(cpu.get_status_d());
+    cpu.set_decimal(false);
+    assert!(!cpu.get_status_d());
+}
 
 #[test]
 fn get_status_i() {
@@ -90,6 +99,15 @@ fn get_status_i() {
     cpu.status = i_true;
     assert!(cpu.get_status_i());
     cpu.status = i_false;
+    assert!(!cpu.get_status_i());
+}
+#[test]
+fn set_status_i() {
+    let mut cpu = CPU::new();
+    assert!(!cpu.get_status_i());
+    cpu.set_interrupt(true);
+    assert!(cpu.get_status_i());
+    cpu.set_interrupt(false);
     assert!(!cpu.get_status_i());
 }
 
