@@ -549,23 +549,23 @@ impl CPU {
             // ROR : Rotate Right
             0x6A => {
                 let addressing_mode = AddressingMode::Accumulator;
-                self.ROR();
+                self.ROR_accumulator();
             }
             0x66 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.ROR();
+                self.ROR_memory(self.convert_mode_to_operand_mem_address(addressing_mode));
             }
             0x76 => {
                 let addressing_mode = AddressingMode::ZeroPage_X;
-                self.ROR();
+                self.ROR_memory(self.convert_mode_to_operand_mem_address(addressing_mode));
             }
             0x6E => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.ROR();
+                self.ROR_memory(self.convert_mode_to_operand_mem_address(addressing_mode));
             }
             0x7E => {
                 let addressing_mode = AddressingMode::Absolute_X;
-                self.ROR();
+                self.ROR_memory(self.convert_mode_to_operand_mem_address(addressing_mode));
             }
 
             // SBC : Subtract with Carry
