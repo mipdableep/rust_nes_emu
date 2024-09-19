@@ -1,3 +1,4 @@
+#[cfg(test)]
 mod mem_tests;
 
 use crate::cpu::CPU;
