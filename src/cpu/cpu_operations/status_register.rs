@@ -4,7 +4,7 @@ use super::super::CPU;
 impl CPU {
     ///  Clear Carry Flag
     pub fn CLC(&mut self) {
-        todo!()
+        self.set_carry(false);
     }
 
     ///  Clear Decimal Mode
@@ -24,7 +24,7 @@ impl CPU {
 
     ///  Set Carry Flag
     pub fn SEC(&mut self) {
-        todo!()
+        self.set_carry(true);
     }
 
     ///  Set Decimal Flag
