@@ -609,13 +609,13 @@ impl CPU {
             // BCC : Branch if Carry Clear
             0x90 => {
                 let addressing_mode = AddressingMode::Relative;
-                self.BCC();
+                // self.BCC();
             }
 
             // BCS : Branch if Carry Set
             0xB0 => {
                 let addressing_mode = AddressingMode::Relative;
-                self.BCS();
+                // self.BCS();
             }
 
             // BEQ : Branch if Equal
