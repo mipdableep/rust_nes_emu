@@ -146,7 +146,7 @@ fn DEX() {
 
 fn set_dey_test(cpu: &mut CPU, register_y_value: u8) {
     cpu.register_y = register_y_value;
-    cpu.DEX();
+    cpu.DEY();
     assert_eq!(cpu.register_y.wrapping_add(1), register_y_value);
     assert_eq!(cpu.get_status_z(), cpu.register_y == 0);
     assert_eq!(cpu.get_status_n(), (cpu.register_y >> 7) & 1 == 1);
@@ -158,7 +158,7 @@ fn DEY() {
     let mut cpu: CPU = CPU::new();
     // test for some  values:
     for value in get_random_u8_values() {
-        crate::cpu::cpu_operations_tests::register_ops::set_dex_test(&mut cpu, value);
+        set_dey_test(&mut cpu, value);
     }
 
     // check for multiple decreases
