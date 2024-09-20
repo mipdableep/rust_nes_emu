@@ -52,19 +52,19 @@ impl CPU {
             // INC : Increment Memory
             0xE6 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.INC();
+                // self.INC();
             }
             0xF6 => {
                 let addressing_mode = AddressingMode::ZeroPage_X;
-                self.INC();
+                // self.INC();
             }
             0xEE => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.INC();
+                // self.INC();
             }
             0xFE => {
                 let addressing_mode = AddressingMode::Absolute_X;
-                self.INC();
+                // self.INC();
             }
 
             // INX : Increment X Register

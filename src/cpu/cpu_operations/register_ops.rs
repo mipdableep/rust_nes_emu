@@ -56,8 +56,10 @@ impl CPU {
     }
 
     ///  Increment Memory
-    pub fn INC(&mut self) {
-        todo!()
+    pub fn INC(&mut self, address: u16) {
+        let new_mem_value: u8 = self.read_memory(address).wrapping_add(1);
+        self.write_memory(address, new_mem_value);
+        self.set_zero_and_negative_flag(new_mem_value);
     }
 
     ///  Increment X Register

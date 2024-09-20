@@ -60,6 +60,7 @@ fn CPY() {
     test_compare(&mut cpu, "Y");
 }
 
+
 fn set_dec_test(cpu: &mut CPU, memory_address: u16, memory_value: u8) {
     cpu.write_memory(memory_address, memory_value);
     cpu.DEC(memory_address);
@@ -89,6 +90,42 @@ fn DEC() {
     assert_eq!(cpu.read_memory(mem_addr), 0xff);
     assert!(!cpu.get_status_z());
     assert!(cpu.get_status_n());
+}
+
+
+fn set_inc_test(cpu: &mut CPU, memory_address: u16, memory_value: u8) {
+    cpu.write_memory(memory_address, memory_value);
+    cpu.INC(memory_address);
+    assert_eq!(cpu.read_memory(memory_address).wrapping_sub(1), memory_value);
+    assert_eq!(cpu.get_status_z(), cpu.read_memory(memory_address) == 0);
+    assert_eq!(cpu.get_status_n(), (cpu.read_memory(memory_address) >> 7) & 1 == 1);
+}
+
+#[test]
+#[allow(non_snake_case)]
+fn INC() {
+    let mut cpu: CPU = CPU::new();
+    // test for some memory addresses and values:
+    for (address, value) in get_random_u8_and_u16_pairs() {
+        set_inc_test(&mut cpu, address, value);
+    }
+
+    // check for multiple decreases of the same memory address
+    let mem_addr: u16 = 0x57af;
+    cpu.write_memory(mem_addr, 0xfe);
+    assert_eq!(cpu.read_memory(mem_addr), 0xfe);
+    cpu.INC(mem_addr);
+    assert_eq!(cpu.read_memory(mem_addr), 0xff);
+    assert!(!cpu.get_status_z());
+    assert!(cpu.get_status_n());
+    cpu.INC(mem_addr);
+    assert_eq!(cpu.read_memory(mem_addr), 0x00);
+    assert!(cpu.get_status_z());
+    assert!(!cpu.get_status_n());
+    cpu.INC(mem_addr);
+    assert_eq!(cpu.read_memory(mem_addr), 0x01);
+    assert!(!cpu.get_status_z());
+    assert!(!cpu.get_status_n());
 }
 
 fn get_random_u8_values() -> Vec<u8> {
