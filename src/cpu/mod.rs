@@ -5,6 +5,8 @@ mod massive_switch;
 pub mod mem_utils;
 mod cpu_operations_tests;
 
+const STACK_END: u16 = 0x100;
+
 #[derive(Debug)]
 pub struct CPU {
     pub register_a: u8,
@@ -103,6 +105,16 @@ impl CPU {
         self.set_zero(result == 0);
         self.set_negative(result & 0x80 == 0x80);
     }
+
+    pub fn stack_push(&mut self, value: u8) {
+        self.write_memory(STACK_END + self.stack_pointer as u16, value);
+        self.stack_pointer = self.stack_pointer.wrapping_sub(1);
+    }
+    pub fn stack_pull(&mut self) -> u8 {
+        self.stack_pointer = self.stack_pointer.wrapping_add(1);
+        self.read_memory(STACK_END + self.stack_pointer as u16)
+    }
+
     pub fn interpret(&mut self, program: Vec<u8>) {
         self.program_counter = 0;
 
