@@ -114,6 +114,17 @@ impl CPU {
         self.stack_pointer = self.stack_pointer.wrapping_add(1);
         self.read_memory(STACK_END + self.stack_pointer as u16)
     }
+    pub fn stack_push_u16(&mut self, value: u16) {
+        let low = (value & 0x00ff) as u8;
+        let high = ((value & 0xff00 ) >> 8) as u8;
+        self.stack_push(high);
+        self.stack_push(low);
+    }
+    pub fn stack_pull_u16(&mut self) -> u16 {
+        let low = self.stack_pull() as u16;
+        let high = self.stack_pull() as u16;
+        high << 8 | low
+    }
 
     pub fn interpret(&mut self, program: Vec<u8>) {
         self.program_counter = 0;
