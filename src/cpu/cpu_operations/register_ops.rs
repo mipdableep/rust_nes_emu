@@ -27,13 +27,13 @@ impl CPU {
     }
 
     ///  Compare X Register
-    pub fn CPX(&mut self) {
-        todo!()
+    pub fn CPX(&mut self, operand: u8) {
+        self.compare(self.register_x, operand);
     }
 
     ///  Compare Y Register
-    pub fn CPY(&mut self) {
-        todo!()
+    pub fn CPY(&mut self, operand: u8) {
+        self.compare(self.register_y, operand);
     }
 
     ///  Decrement X Register

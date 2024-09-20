@@ -12,29 +12,29 @@ impl CPU {
             // CPX : Compare X Register
             0xE0 => {
                 let addressing_mode = AddressingMode::Immediate;
-                self.CPX();
+                // self.CPX();
             }
             0xE4 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.CPX();
+                // self.CPX();
             }
             0xEC => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.CPX();
+                // self.CPX();
             }
 
             // CPY : Compare Y Register
             0xC0 => {
                 let addressing_mode = AddressingMode::Immediate;
-                self.CPY();
+                // self.CPY();
             }
             0xC4 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.CPY();
+                // self.CPY();
             }
             0xCC => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.CPY();
+                // self.CPY();
             }
 
             // DEX : Decrement X Register
