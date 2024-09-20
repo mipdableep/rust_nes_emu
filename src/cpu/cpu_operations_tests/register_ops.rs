@@ -25,7 +25,6 @@ fn set_compare_tests(cpu: &mut CPU, register_name: &str, register_value: u8, ope
         }
         _ => panic!("Unknown register called {:?}", register_name)
     }
-
 }
 
 fn test_compare(cpu: &mut CPU, register_name: &str) {
@@ -58,4 +57,35 @@ fn CPX() {
 fn CPY() {
     let mut cpu: CPU = CPU::new();
     test_compare(&mut cpu, "Y");
+}
+
+fn set_dec_test(cpu: &mut CPU, memory_address: u16, memory_value: u8) {
+    cpu.write_memory(memory_address, memory_value);
+    cpu.DEC(memory_address);
+    assert_eq!(cpu.read_memory(memory_address).wrapping_add(1), memory_value);
+    assert_eq!(cpu.get_status_z(), cpu.read_memory(memory_address) == 0);
+    assert_eq!(cpu.get_status_n(), (cpu.read_memory(memory_address) >> 7) & 1 == 1);
+}
+
+#[test]
+#[allow(non_snake_case)]
+fn DEC() {
+    let mut cpu: CPU = CPU::new();
+    // test for some memory addresses and values:
+    for (address, value) in crate::cpu::cpu_operations_tests::arithmetic_logic::get_random_u8_and_u16_pairs() {
+        set_dec_test(&mut cpu, address, value);
+    }
+
+    // check for multiple decreases of the same memory address
+    let mem_addr: u16 = 0x57af;
+    cpu.write_memory(mem_addr, 0x01);
+    assert_eq!(cpu.read_memory(mem_addr), 0x01);
+    cpu.DEC(mem_addr);
+    assert_eq!(cpu.read_memory(mem_addr), 0x00);
+    assert!(cpu.get_status_z());
+    assert!(!cpu.get_status_n());
+    cpu.DEC(mem_addr);
+    assert_eq!(cpu.read_memory(mem_addr), 0xff);
+    assert!(!cpu.get_status_z());
+    assert!(cpu.get_status_n());
 }
