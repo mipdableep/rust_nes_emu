@@ -2,6 +2,26 @@ use super::super::CPU;
 
 #[allow(dead_code, non_snake_case)]
 impl CPU {
+    /// CMP A register
+    pub fn CMP(&mut self, operand: u8) {
+        // compare reg_a to operand and set flags
+        if self.register_a == operand {
+            self.set_negative(false);
+            self.set_zero(true);
+            self.set_carry(true);
+            return;
+        } else {
+            self.set_zero(false);
+            // set negative as bit 7 of reg_a - operand
+            self.set_negative(self.register_a.wrapping_sub(operand) >> 7 & 1 == 1);
+            if self.register_a < operand {
+                self.set_carry(false);
+            } else {
+                self.set_carry(true);
+            }
+        }
+    }
+
     ///  Compare X Register
     pub fn CPX(&mut self) {
         todo!()
