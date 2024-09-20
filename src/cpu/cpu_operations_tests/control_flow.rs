@@ -99,5 +99,5 @@ fn JSR() {
     assert_eq!(cpu.program_counter, 0x31a9);
     cpu.JSR(0x15ff);
     assert_eq!(cpu.program_counter, 0x15ff);
-    assert_eq!(cpu.stack_pull_u16(), 0x31a9);
+    assert_eq!(cpu.stack_pull_u16(), 0x31a8); // should push pc-1
 }
