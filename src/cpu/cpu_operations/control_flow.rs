@@ -72,8 +72,9 @@ impl CPU {
     }
 
     ///  Jump to Subroutine
-    pub fn JSR(&mut self) {
-        todo!()
+    pub fn JSR(&mut self, address: u16) {
+        self.stack_push_u16(self.program_counter.wrapping_sub(1));
+        self.program_counter = address;
     }
 
     ///  Return from Subroutine
