@@ -64,12 +64,14 @@ impl CPU {
 
     ///  Increment X Register
     pub fn INX(&mut self) {
-        todo!()
+        self.register_x = self.register_x.wrapping_add(1);
+        self.set_zero_and_negative_flag(self.register_x);
     }
 
     ///  Increment Y Register
     pub fn INY(&mut self) {
-        todo!()
+        self.register_y = self.register_y.wrapping_add(1);
+        self.set_zero_and_negative_flag(self.register_y);
     }
 
     ///  Load Accumulator

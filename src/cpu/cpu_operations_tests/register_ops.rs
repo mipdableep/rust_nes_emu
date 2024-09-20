@@ -210,3 +210,71 @@ fn DEY() {
     assert!(!cpu.get_status_z());
     assert!(cpu.get_status_n());
 }
+
+fn set_inx_test(cpu: &mut CPU, register_x_value: u8) {
+    cpu.register_x = register_x_value;
+    cpu.INX();
+    assert_eq!(cpu.register_x.wrapping_sub(1), register_x_value);
+    assert_eq!(cpu.get_status_z(), cpu.register_x == 0);
+    assert_eq!(cpu.get_status_n(), (cpu.register_x >> 7) & 1 == 1);
+}
+
+#[test]
+#[allow(non_snake_case)]
+fn INX() {
+    let mut cpu: CPU = CPU::new();
+    // test for some  values:
+    for value in get_random_u8_values() {
+        set_inx_test(&mut cpu, value);
+    }
+
+    // check for multiple decreases
+    cpu.register_x = 0xfe;
+    assert_eq!(cpu.register_x, 0xfe);
+    cpu.INX();
+    assert_eq!(cpu.register_x, 0xff);
+    assert!(!cpu.get_status_z());
+    assert!(cpu.get_status_n());
+    cpu.INX();
+    assert_eq!(cpu.register_x, 0x00);
+    assert!(cpu.get_status_z());
+    assert!(!cpu.get_status_n());
+    cpu.INX();
+    assert_eq!(cpu.register_x, 0x01);
+    assert!(!cpu.get_status_z());
+    assert!(!cpu.get_status_n());
+}
+
+fn set_iny_test(cpu: &mut CPU, register_y_value: u8) {
+    cpu.register_y = register_y_value;
+    cpu.INY();
+    assert_eq!(cpu.register_y.wrapping_sub(1), register_y_value);
+    assert_eq!(cpu.get_status_z(), cpu.register_y == 0);
+    assert_eq!(cpu.get_status_n(), (cpu.register_y >> 7) & 1 == 1);
+}
+
+#[test]
+#[allow(non_snake_case)]
+fn INY() {
+    let mut cpu: CPU = CPU::new();
+    // test for some  values:
+    for value in get_random_u8_values() {
+        set_iny_test(&mut cpu, value);
+    }
+
+    // check for multiple decreases
+    cpu.register_y = 0xfe;
+    assert_eq!(cpu.register_y, 0xfe);
+    cpu.INY();
+    assert_eq!(cpu.register_y, 0xff);
+    assert!(!cpu.get_status_z());
+    assert!(cpu.get_status_n());
+    cpu.INY();
+    assert_eq!(cpu.register_y, 0x00);
+    assert!(cpu.get_status_z());
+    assert!(!cpu.get_status_n());
+    cpu.INY();
+    assert_eq!(cpu.register_y, 0x01);
+    assert!(!cpu.get_status_z());
+    assert!(!cpu.get_status_n());
+}
