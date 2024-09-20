@@ -278,3 +278,54 @@ fn INY() {
     assert!(!cpu.get_status_z());
     assert!(!cpu.get_status_n());
 }
+
+fn test_load(cpu: &mut CPU, register_name: &str, register_value: u8) {
+    match register_name {
+        "A" => {
+            cpu.LDA(register_value);
+            assert_eq!(cpu.register_a, register_value);
+            assert_eq!(cpu.register_a == 0, cpu.get_status_z());
+            assert_eq!(cpu.register_a >= 0x80, cpu.get_status_n());
+        }
+        "X" => {
+            cpu.LDX(register_value);
+            assert_eq!(cpu.register_x, register_value);
+            assert_eq!(cpu.register_x == 0, cpu.get_status_z());
+            assert_eq!(cpu.register_x >= 0x80, cpu.get_status_n());
+        }
+        "Y" => {
+            cpu.LDY(register_value);
+            assert_eq!(cpu.register_y, register_value);
+            assert_eq!(cpu.register_y == 0, cpu.get_status_z());
+            assert_eq!(cpu.register_y >= 0x80, cpu.get_status_n());
+        }
+        _ => panic!("Unknown register {:} in load", register_name)
+    }
+}
+
+#[allow(non_snake_case)]
+#[test]
+fn LDA() {
+    let mut cpu = CPU::new();
+    for value in get_random_u8_values(){
+        test_load(&mut cpu, "A", value)
+    }
+}
+
+#[allow(non_snake_case)]
+#[test]
+fn LDX() {
+    let mut cpu = CPU::new();
+    for value in get_random_u8_values(){
+        test_load(&mut cpu, "X", value)
+    }
+}
+
+#[allow(non_snake_case)]
+#[test]
+fn LDY() {
+    let mut cpu = CPU::new();
+    for value in get_random_u8_values(){
+        test_load(&mut cpu, "Y", value)
+    }
+}

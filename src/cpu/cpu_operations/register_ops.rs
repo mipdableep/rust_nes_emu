@@ -75,18 +75,21 @@ impl CPU {
     }
 
     ///  Load Accumulator
-    pub fn LDA(&mut self) {
-        todo!()
+    pub fn LDA(&mut self, operand: u8) {
+        self.register_a = operand;
+        self.set_zero_and_negative_flag(self.register_a);
     }
 
     ///  Load X Register
-    pub fn LDX(&mut self) {
-        todo!()
+    pub fn LDX(&mut self, operand: u8) {
+        self.register_x = operand;
+        self.set_zero_and_negative_flag(self.register_x);
     }
 
     ///  Load Y Register
-    pub fn LDY(&mut self) {
-        todo!()
+    pub fn LDY(&mut self, operand: u8) {
+        self.register_y = operand;
+        self.set_zero_and_negative_flag(self.register_y);
     }
 
     ///  Store Accumulator

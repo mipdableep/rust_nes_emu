@@ -82,79 +82,79 @@ impl CPU {
             // LDA : Load Accumulator
             0xA9 => {
                 let addressing_mode = AddressingMode::Immediate;
-                self.LDA();
+                // self.LDA();
             }
             0xA5 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.LDA();
+                // self.LDA();
             }
             0xB5 => {
                 let addressing_mode = AddressingMode::ZeroPage_X;
-                self.LDA();
+                // self.LDA();
             }
             0xAD => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.LDA();
+                // self.LDA();
             }
             0xBD => {
                 let addressing_mode = AddressingMode::Absolute_X;
-                self.LDA();
+                // self.LDA();
             }
             0xB9 => {
                 let addressing_mode = AddressingMode::Absolute_Y;
-                self.LDA();
+                // self.LDA();
             }
             0xA1 => {
                 let addressing_mode = AddressingMode::Indirect_X;
-                self.LDA();
+                // self.LDA();
             }
             0xB1 => {
                 let addressing_mode = AddressingMode::Indirect_Y;
-                self.LDA();
+                // self.LDA();
             }
 
             // LDX : Load X Register
             0xA2 => {
                 let addressing_mode = AddressingMode::Immediate;
-                self.LDX();
+                // self.LDX();
             }
             0xA6 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.LDX();
+                // self.LDX();
             }
             0xB6 => {
                 let addressing_mode = AddressingMode::ZeroPage_Y;
-                self.LDX();
+                // self.LDX();
             }
             0xAE => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.LDX();
+                // self.LDX();
             }
             0xBE => {
                 let addressing_mode = AddressingMode::Absolute_Y;
-                self.LDX();
+                // self.LDX();
             }
 
             // LDY : Load Y Register
             0xA0 => {
                 let addressing_mode = AddressingMode::Immediate;
-                self.LDY();
+                // self.LDY();
             }
             0xA4 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.LDY();
+                // self.LDY();
             }
             0xB4 => {
                 let addressing_mode = AddressingMode::ZeroPage_X;
-                self.LDY();
+                // self.LDY();
             }
             0xAC => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.LDY();
+                // self.LDY();
             }
             0xBC => {
                 let addressing_mode = AddressingMode::Absolute_X;
-                self.LDY();
+                // self.LDY();
             }
 
             // STA : Store Accumulator
