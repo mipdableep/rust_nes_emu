@@ -8,7 +8,7 @@ fn new() {
     assert_eq!(c.program_counter, 0);
     assert_eq!(c.register_x, 0);
     assert_eq!(c.register_y, 0);
-    assert_eq!(c.stack_pointer, 0);
+    assert_eq!(c.stack_pointer, 0xff);
     assert_eq!(c.memory, [0; 0x10000]);
 }
 

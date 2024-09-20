@@ -24,7 +24,7 @@ impl CPU {
             program_counter: 0,
             register_x: 0,
             register_y: 0,
-            stack_pointer: 0,
+            stack_pointer: 0xff,
             memory: [0; 0xFFFF + 1],
         }
     }
