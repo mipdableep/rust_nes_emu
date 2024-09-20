@@ -165,3 +165,32 @@ fn set_negative_and_zero() {
     assert!(!cpu.get_status_z());
     assert!(cpu.get_status_n());
 }
+
+
+#[test]
+fn stack_u8() {
+    let mut cpu = CPU::new();
+    let values = [0_u8, 0x98, 0xff, 0x98, 0x1d, 0xd1, 0, 0, 0x15];
+    for value in values {
+        cpu.stack_push(value);
+    }
+    let mut i: usize = values.len();
+    while i>1 {
+        i -= 1;
+        assert_eq!(cpu.stack_pull(), values[i]);
+    }
+}
+
+#[test]
+fn stack_u16() {
+    let mut cpu = CPU::new();
+    let values = [0_u16, 0xad98, 0xffff, 0x4d98, 0x1dd1, 0xd11d, 0, 0xd11d, 0x15];
+    for value in values {
+        cpu.stack_push_u16(value);
+    }
+    let mut i: usize = values.len();
+    while i>1 {
+        i -= 1;
+        assert_eq!(cpu.stack_pull_u16(), values[i]);
+    }
+}

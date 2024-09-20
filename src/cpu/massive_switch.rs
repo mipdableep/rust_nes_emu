@@ -657,17 +657,17 @@ impl CPU {
             // JMP : Jump
             0x4C => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.JMP();
+                // self.JMP();
             }
             0x6C => {
                 let addressing_mode = AddressingMode::Indirect;
-                self.JMP();
+                // self.JMP();
             }
 
             // JSR : Jump to Subroutine
             0x20 => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.JSR();
+                // self.JSR();
             }
 
             // RTS : Return from Subroutine
