@@ -64,6 +64,17 @@ fn NOP() {
 
 #[test]
 #[allow(non_snake_case)]
+fn RTI() {
+    let mut cpu = CPU::new();
+    cpu.stack_push_u16(0x58fa);
+    cpu.stack_push(0xff);
+    cpu.RTI();
+    assert_eq!(cpu.program_counter, 0x58fa);
+    assert_eq!(cpu.status, 0xcf);//ignore bits 4 and 5!
+}
+
+#[test]
+#[allow(non_snake_case)]
 fn BRK() {
     let mut cpu: CPU = CPU::new();
     cpu.BRK();

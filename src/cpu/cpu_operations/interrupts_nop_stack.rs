@@ -34,7 +34,7 @@ impl CPU {
 
     ///  No Operation
     pub fn NOP(&mut self) {
-        return
+        return;
     }
 
     //////////////////////////
@@ -43,7 +43,8 @@ impl CPU {
 
     ///  Return from Interrupt
     pub fn RTI(&mut self) {
-        todo!()
+        self.status |= self.stack_pull() & 0b11001111; // for some wierd reason, bits 4 and 5 are probably ignored
+        self.program_counter = self.stack_pull_u16();
     }
 
     ///  Force Interrupt
