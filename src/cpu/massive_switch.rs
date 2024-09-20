@@ -265,7 +265,7 @@ impl CPU {
             0x00 => {
                 let addressing_mode = AddressingMode::NoneAddressing;
                 self.BRK();
-                return false;
+                return false; // we return if we want to continue. By returning false, brk will stop the program
             }
 
             ////////////////
