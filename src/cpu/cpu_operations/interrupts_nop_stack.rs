@@ -16,7 +16,8 @@ impl CPU {
 
     ///  Push Processor Status
     pub fn PHP(&mut self) {
-        todo!()
+        self.write_memory(STACK_END + self.stack_pointer as u16, self.status);
+        self.stack_pointer = self.stack_pointer.wrapping_sub(1);
     }
 
     ///  Pull Accumulator
@@ -28,7 +29,8 @@ impl CPU {
 
     ///  Pull Processor Status
     pub fn PLP(&mut self) {
-        todo!()
+        self.stack_pointer = self.stack_pointer.wrapping_add(1);
+        self.status = self.read_memory(STACK_END + self.stack_pointer as u16);
     }
 
     ////////////////////////////

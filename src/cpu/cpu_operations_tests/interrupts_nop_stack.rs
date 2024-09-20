@@ -1,6 +1,5 @@
 use crate::cpu::CPU;
 
-const STACK_END: u16 = 0x100;
 const STACK_START: u16 = 0x1ff;
 
 #[test]
@@ -21,6 +20,27 @@ fn PHA_and_PLA() {
         assert_eq!(cpu.register_a, a_values[ith_from_end]);
         assert_eq!(cpu.get_status_z(), a_values[ith_from_end] == 0);
         assert_eq!(cpu.get_status_n(), a_values[ith_from_end] >= 0x80);
+    }
+    assert_eq!(cpu.stack_pointer, 0xff);
+}
+
+
+#[test]
+#[allow(non_snake_case)]
+fn PHP_and_PLP() {
+    let mut cpu = CPU::new();
+    cpu.stack_pointer = 0xff;
+    let status_values = [0_u8, 0x98, 0xff, 0x98, 0x1d, 0xd1, 0, 0, 0x15];
+    for possible_value in status_values {
+        cpu.status = possible_value;
+        cpu.PHP();
+    }
+    assert_eq!(cpu.stack_pointer, 0xff - status_values.len() as u8);
+    for i in 0..status_values.len() {
+        let ith_from_end = status_values.len() - 1 - i;
+        assert_eq!(cpu.read_memory(STACK_START - ith_from_end as u16), status_values[ith_from_end]);
+        cpu.PLP();
+        assert_eq!(cpu.status, status_values[ith_from_end]);
     }
     assert_eq!(cpu.stack_pointer, 0xff);
 }
