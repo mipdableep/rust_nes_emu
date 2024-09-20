@@ -1,5 +1,7 @@
 use super::super::CPU;
 
+const STACK_END: u16 = 0x100;
+
 #[allow(dead_code, non_snake_case)]
 impl CPU {
     /////////////////////////////
@@ -8,7 +10,8 @@ impl CPU {
 
     ///  Push Accumulator
     pub fn PHA(&mut self) {
-        todo!()
+        self.write_memory(STACK_END + self.stack_pointer as u16, self.register_a);
+        self.stack_pointer = self.stack_pointer.wrapping_sub(1);
     }
 
     ///  Push Processor Status
@@ -18,7 +21,9 @@ impl CPU {
 
     ///  Pull Accumulator
     pub fn PLA(&mut self) {
-        todo!()
+        self.stack_pointer = self.stack_pointer.wrapping_add(1);
+        self.register_a = self.read_memory(STACK_END + self.stack_pointer as u16);
+        self.set_zero_and_negative_flag(self.register_a);
     }
 
     ///  Pull Processor Status
