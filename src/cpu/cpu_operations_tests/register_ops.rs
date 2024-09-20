@@ -329,3 +329,37 @@ fn LDY() {
         test_load(&mut cpu, "Y", value)
     }
 }
+
+
+#[allow(non_snake_case)]
+#[test]
+fn STA() {
+    let mut cpu = CPU::new();
+    for (address,value) in get_random_u8_and_u16_pairs() {
+        cpu.register_a = value;
+        cpu.STA(address);
+        assert_eq!(value, cpu.read_memory(address));
+    }
+}
+
+#[allow(non_snake_case)]
+#[test]
+fn STX() {
+    let mut cpu = CPU::new();
+    for (address,value) in get_random_u8_and_u16_pairs() {
+        cpu.register_x = value;
+        cpu.STX(address);
+        assert_eq!(value, cpu.read_memory(address));
+    }
+}
+
+#[allow(non_snake_case)]
+#[test]
+fn STY() {
+    let mut cpu = CPU::new();
+    for (address,value) in get_random_u8_and_u16_pairs() {
+        cpu.register_y = value;
+        cpu.STY(address);
+        assert_eq!(value, cpu.read_memory(address));
+    }
+}

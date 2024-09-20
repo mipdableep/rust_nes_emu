@@ -160,59 +160,59 @@ impl CPU {
             // STA : Store Accumulator
             0x85 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.STA();
+                // self.STA();
             }
             0x95 => {
                 let addressing_mode = AddressingMode::ZeroPage_X;
-                self.STA();
+                // self.STA();
             }
             0x8D => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.STA();
+                // self.STA();
             }
             0x9D => {
                 let addressing_mode = AddressingMode::Absolute_X;
-                self.STA();
+                // self.STA();
             }
             0x99 => {
                 let addressing_mode = AddressingMode::Absolute_Y;
-                self.STA();
+                // self.STA();
             }
             0x81 => {
                 let addressing_mode = AddressingMode::Indirect_X;
-                self.STA();
+                // self.STA();
             }
             0x91 => {
                 let addressing_mode = AddressingMode::Indirect_Y;
-                self.STA();
+                // self.STA();
             }
 
             // STX : Store X Register
             0x86 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.STX();
+                // self.STX();
             }
             0x96 => {
                 let addressing_mode = AddressingMode::ZeroPage_Y;
-                self.STX();
+                // self.STX();
             }
             0x8E => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.STX();
+                // self.STX();
             }
 
             // STY : Store Y Register
             0x84 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.STY();
+                // self.STY();
             }
             0x94 => {
                 let addressing_mode = AddressingMode::ZeroPage_X;
-                self.STY();
+                // self.STY();
             }
             0x8C => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.STY();
+                // self.STY();
             }
 
             // TAX : Transfer Accumulator to X

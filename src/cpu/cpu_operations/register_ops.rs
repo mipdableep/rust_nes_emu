@@ -93,18 +93,18 @@ impl CPU {
     }
 
     ///  Store Accumulator
-    pub fn STA(&mut self) {
-        todo!()
+    pub fn STA(&mut self, address: u16) {
+        self.write_memory(address, self.register_a);
     }
 
     ///  Store X Register
-    pub fn STX(&mut self) {
-        todo!()
+    pub fn STX(&mut self, address: u16) {
+        self.write_memory(address, self.register_x);
     }
 
     ///  Store Y Register
-    pub fn STY(&mut self) {
-        todo!()
+    pub fn STY(&mut self, address: u16) {
+        self.write_memory(address, self.register_y)
     }
 
     ///  Transfer Accumulator to X
