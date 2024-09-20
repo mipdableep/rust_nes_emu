@@ -32,7 +32,7 @@ impl CPU {
 
     ///  No Operation
     pub fn NOP(&mut self) {
-        todo!()
+        return
     }
 
     //////////////////////////
