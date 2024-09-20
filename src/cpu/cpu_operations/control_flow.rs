@@ -67,8 +67,8 @@ impl CPU {
     }
 
     ///  Jump
-    pub fn JMP(&mut self) {
-        todo!()
+    pub fn JMP(&mut self, address: u16) {
+        self.program_counter = address;
     }
 
     ///  Jump to Subroutine

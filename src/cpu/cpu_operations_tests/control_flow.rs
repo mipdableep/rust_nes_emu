@@ -79,3 +79,14 @@ fn BVC_and_BVS(){
     cpu.BNE(0x5a);
     assert_eq!(cpu.program_counter, 0x859);
 }
+
+
+#[allow(non_snake_case)]
+#[test]
+fn JMP() {
+    let mut cpu = CPU::new();
+    cpu.JMP(0x31a9);
+    assert_eq!(cpu.program_counter, 0x31a9);
+    cpu.JMP(0x15ff);
+    assert_eq!(cpu.program_counter, 0x15ff);
+}
