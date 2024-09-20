@@ -15,3 +15,11 @@ fn NOP() {
     cpu.NOP();
     check_cpu_not_changed(&cpu);
 }
+
+#[test]
+#[allow(non_snake_case)]
+fn BRK() {
+    let mut cpu:CPU = CPU::new();
+    cpu.BRK();
+    assert!(!cpu.massive_switch(0x00, &vec!(0_u8))); // assert the massive switch returns false
+}
