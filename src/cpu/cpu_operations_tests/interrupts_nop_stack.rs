@@ -1,6 +1,7 @@
 use crate::cpu::CPU;
 
 const STACK_START: u16 = 0x1ff;
+const BRK_ADDRESS: u16 = 0xfffe;
 
 #[test]
 #[allow(non_snake_case)]
@@ -77,6 +78,9 @@ fn RTI() {
 #[allow(non_snake_case)]
 fn BRK() {
     let mut cpu: CPU = CPU::new();
+    cpu.write_memory(BRK_ADDRESS, 0xaa);
+    cpu.write_memory(BRK_ADDRESS+1, 0xbb);
     cpu.BRK();
+    assert_eq!(cpu.program_counter, 0xbbaa);
     assert!(!cpu.massive_switch(0x00, &vec!(0_u8))); // assert the massive switch returns false
 }

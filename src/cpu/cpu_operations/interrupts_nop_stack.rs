@@ -1,5 +1,6 @@
 use super::super::CPU;
 
+const BRK_ADDRESS: u16 = 0xfffe;
 
 #[allow(dead_code, non_snake_case)]
 impl CPU {
@@ -49,6 +50,8 @@ impl CPU {
 
     ///  Force Interrupt
     pub fn BRK(&mut self) {
-        return;
+        self.stack_push_u16(self.program_counter.wrapping_add(1));
+        self.stack_push(self.status | 0b00010000);
+        self.program_counter = self.read_memory_2_bytes(BRK_ADDRESS);
     }
 }
