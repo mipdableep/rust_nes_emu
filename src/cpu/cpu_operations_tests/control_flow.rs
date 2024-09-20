@@ -28,3 +28,54 @@ fn BCC_and_BCS(){
     cpu.BCC(0x5a);
     assert_eq!(cpu.program_counter, 0x859);
 }
+
+#[test]
+#[allow(non_snake_case)]
+fn BEQ_and_BNQ(){
+    let mut cpu = CPU::new();
+    cpu.program_counter = 0x800;
+    cpu.set_zero(true);
+    cpu.BEQ(0xff);
+    assert_eq!(cpu.program_counter, 0x7ff);
+    cpu.BNE(0x5a);
+    assert_eq!(cpu.program_counter, 0x7ff);
+    cpu.set_zero(false);
+    cpu.BEQ(0xff);
+    assert_eq!(cpu.program_counter, 0x7ff);
+    cpu.BNE(0x5a);
+    assert_eq!(cpu.program_counter, 0x859);
+}
+
+#[test]
+#[allow(non_snake_case)]
+fn BMI_and_BPL(){
+    let mut cpu = CPU::new();
+    cpu.program_counter = 0x800;
+    cpu.set_negative(true);
+    cpu.BMI(0xff);
+    assert_eq!(cpu.program_counter, 0x7ff);
+    cpu.BPL(0x5a);
+    assert_eq!(cpu.program_counter, 0x7ff);
+    cpu.set_negative(false);
+    cpu.BMI(0xff);
+    assert_eq!(cpu.program_counter, 0x7ff);
+    cpu.BPL(0x5a);
+    assert_eq!(cpu.program_counter, 0x859);
+}
+
+#[test]
+#[allow(non_snake_case)]
+fn BVC_and_BVS(){
+    let mut cpu = CPU::new();
+    cpu.program_counter = 0x800;
+    cpu.set_overflow(true);
+    cpu.BVS(0xff);
+    assert_eq!(cpu.program_counter, 0x7ff);
+    cpu.BVC(0x5a);
+    assert_eq!(cpu.program_counter, 0x7ff);
+    cpu.set_overflow(false);
+    cpu.BVS(0xff);
+    assert_eq!(cpu.program_counter, 0x7ff);
+    cpu.BNE(0x5a);
+    assert_eq!(cpu.program_counter, 0x859);
+}

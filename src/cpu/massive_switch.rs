@@ -621,37 +621,37 @@ impl CPU {
             // BEQ : Branch if Equal
             0xF0 => {
                 let addressing_mode = AddressingMode::Relative;
-                self.BEQ();
+                // self.BEQ();
             }
 
             // BMI : Branch if Minus
             0x30 => {
                 let addressing_mode = AddressingMode::Relative;
-                self.BMI();
+                // self.BMI();
             }
 
             // BNE : Branch if Not Equal
             0xD0 => {
                 let addressing_mode = AddressingMode::Relative;
-                self.BNE();
+                // self.BNE();
             }
 
             // BPL : Branch if Positive
             0x10 => {
                 let addressing_mode = AddressingMode::Relative;
-                self.BPL();
+                // self.BPL();
             }
 
             // BVC : Branch if Overflow Clear
             0x50 => {
                 let addressing_mode = AddressingMode::Relative;
-                self.BVC();
+                // self.BVC();
             }
 
             // BVS : Branch if Overflow Set
             0x70 => {
                 let addressing_mode = AddressingMode::Relative;
-                self.BVS();
+                // self.BVS();
             }
 
             // JMP : Jump
