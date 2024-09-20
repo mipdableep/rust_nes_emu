@@ -45,12 +45,14 @@ impl CPU {
 
     ///  Decrement X Register
     pub fn DEX(&mut self) {
-        todo!()
+        self.register_x = self.register_x.wrapping_sub(1);
+        self.set_zero_and_negative_flag(self.register_x);
     }
 
     ///  Decrement Y Register
     pub fn DEY(&mut self) {
-        todo!()
+        self.register_y = self.register_y.wrapping_sub(1);
+        self.set_zero_and_negative_flag(self.register_y);
     }
 
     ///  Increment Memory
