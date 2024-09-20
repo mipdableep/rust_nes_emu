@@ -79,6 +79,6 @@ impl CPU {
 
     ///  Return from Subroutine
     pub fn RTS(&mut self) {
-        todo!()
+        self.program_counter = self.stack_pull_u16();
     }
 }

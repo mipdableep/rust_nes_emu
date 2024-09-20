@@ -101,3 +101,16 @@ fn JSR() {
     assert_eq!(cpu.program_counter, 0x15ff);
     assert_eq!(cpu.stack_pull_u16(), 0x31a8); // should push pc-1
 }
+
+#[allow(non_snake_case)]
+#[test]
+fn RTS() {
+    let mut cpu = CPU::new();
+    cpu.stack_pointer = 0xff;
+    cpu.program_counter = 0x15df;
+    cpu.JSR(0x41f5);
+    assert_eq!(cpu.stack_pointer, 0xfd);
+    cpu.RTS();
+    assert_eq!(cpu.program_counter, 0x15de); // JSR push pc-1
+    assert_eq!(cpu.stack_pointer, 0xff);
+}
