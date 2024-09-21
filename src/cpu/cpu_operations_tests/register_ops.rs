@@ -307,7 +307,7 @@ fn test_load(cpu: &mut CPU, register_name: &str, register_value: u8) {
 #[test]
 fn LDA() {
     let mut cpu = CPU::new();
-    for value in get_random_u8_values(){
+    for value in get_random_u8_values() {
         test_load(&mut cpu, "A", value)
     }
 }
@@ -316,7 +316,7 @@ fn LDA() {
 #[test]
 fn LDX() {
     let mut cpu = CPU::new();
-    for value in get_random_u8_values(){
+    for value in get_random_u8_values() {
         test_load(&mut cpu, "X", value)
     }
 }
@@ -325,7 +325,7 @@ fn LDX() {
 #[test]
 fn LDY() {
     let mut cpu = CPU::new();
-    for value in get_random_u8_values(){
+    for value in get_random_u8_values() {
         test_load(&mut cpu, "Y", value)
     }
 }
@@ -335,7 +335,7 @@ fn LDY() {
 #[test]
 fn STA() {
     let mut cpu = CPU::new();
-    for (address,value) in get_random_u8_and_u16_pairs() {
+    for (address, value) in get_random_u8_and_u16_pairs() {
         cpu.register_a = value;
         cpu.STA(address);
         assert_eq!(value, cpu.read_memory(address));
@@ -346,7 +346,7 @@ fn STA() {
 #[test]
 fn STX() {
     let mut cpu = CPU::new();
-    for (address,value) in get_random_u8_and_u16_pairs() {
+    for (address, value) in get_random_u8_and_u16_pairs() {
         cpu.register_x = value;
         cpu.STX(address);
         assert_eq!(value, cpu.read_memory(address));
@@ -357,9 +357,77 @@ fn STX() {
 #[test]
 fn STY() {
     let mut cpu = CPU::new();
-    for (address,value) in get_random_u8_and_u16_pairs() {
+    for (address, value) in get_random_u8_and_u16_pairs() {
         cpu.register_y = value;
         cpu.STY(address);
         assert_eq!(value, cpu.read_memory(address));
     }
+}
+
+
+fn prepare_transfer_tests(cpu: &mut CPU, source_name: &str, destination_name: &str, value: u8) {
+    let old_flags = cpu.status;
+    // set source
+    match source_name {
+        "A" => { cpu.register_a = value }
+        "X" => { cpu.register_x = value }
+        "Y" => { cpu.register_y = value }
+        "S" => { cpu.stack_pointer = value }
+        _ => { panic!("Unknown source register {:} in transfer", source_name) }
+    }
+    // transfer correct flags
+    match (source_name, destination_name) {
+        ("A", "X") => {
+            cpu.TAX()
+        }
+        ("A", "Y") => {
+            cpu.TAY()
+        }
+        ("S", "X") => {
+            cpu.TSX()
+        }
+        ("X", "A") => {
+            cpu.TXA()
+        }
+        ("X", "S") => {
+            cpu.TXS()
+        }
+        ("Y", "A") => {
+            cpu.TYA()
+        }
+        _ => panic!("Unknown command T{}{} in tests transfer", source_name, destination_name)
+    }
+
+    //check target
+    match destination_name {
+        "A" => { assert_eq!(cpu.register_a, value) }
+        "X" => { assert_eq!(cpu.register_x, value) }
+        "Y" => { assert_eq!(cpu.register_y, value) }
+        "S" => { assert_eq!(cpu.stack_pointer, value) }
+        _ => { panic!("Unknown destination register {:} in transfer", source_name) }
+    }
+
+    //check for flags. should be set unless the source is sp
+    if destination_name == "S" {
+        assert_eq!(cpu.status, old_flags);
+    } else {
+        // check we did not change the old flags
+        let zero_negative_mask = 0x82_u8;
+        assert_eq!(cpu.status | zero_negative_mask, old_flags | zero_negative_mask);
+        // check that the zero and negative flags were changed
+        assert_eq!(cpu.get_status_n(), value >= 0x80);
+        assert_eq!(cpu.get_status_z(), value == 0);
+    }
+}
+
+
+#[test]
+fn test_transfer() {
+    let mut cpu = CPU::new();
+    for value in get_random_u8_values() { prepare_transfer_tests(&mut cpu, "A", "X", value) }
+    for value in get_random_u8_values() { prepare_transfer_tests(&mut cpu, "A", "Y", value) }
+    for value in get_random_u8_values() { prepare_transfer_tests(&mut cpu, "S", "X", value) }
+    for value in get_random_u8_values() { prepare_transfer_tests(&mut cpu, "X", "A", value) }
+    for value in get_random_u8_values() { prepare_transfer_tests(&mut cpu, "X", "S", value) }
+    for value in get_random_u8_values() { prepare_transfer_tests(&mut cpu, "Y", "A", value) }
 }

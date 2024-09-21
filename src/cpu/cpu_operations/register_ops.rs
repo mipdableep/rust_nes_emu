@@ -109,31 +109,36 @@ impl CPU {
 
     ///  Transfer Accumulator to X
     pub fn TAX(&mut self) {
-        todo!()
+        self.register_x = self.register_a;
+        self.set_zero_and_negative_flag(self.register_x);
     }
 
     ///  Transfer Accumulator to Y
     pub fn TAY(&mut self) {
-        todo!()
+        self.register_y = self.register_a;
+        self.set_zero_and_negative_flag(self.register_y);
     }
 
     ///  Transfer Stack Pointer to X
     pub fn TSX(&mut self) {
-        todo!()
+        self.register_x = self.stack_pointer;
+        self.set_zero_and_negative_flag(self.register_x);
     }
 
     ///  Transfer X to Accumulator
     pub fn TXA(&mut self) {
-        todo!()
+        self.register_a = self.register_x;
+        self.set_zero_and_negative_flag(self.register_a);
     }
 
     ///  Transfer X to Stack Pointer
     pub fn TXS(&mut self) {
-        todo!()
+        self.stack_pointer = self.register_x;
     }
 
     ///  Transfer Y to Accumulator
     pub fn TYA(&mut self) {
-        todo!()
+        self.register_a = self.register_y;
+        self.set_zero_and_negative_flag(self.register_a);
     }
 }
