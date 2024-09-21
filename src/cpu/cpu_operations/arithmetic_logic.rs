@@ -108,7 +108,7 @@ impl CPU {
         self.set_zero_and_negative_flag(self.register_a);
     }
 
-    // Rotate right memory
+    /// Rotate right memory
     pub fn ROR_memory(&mut self, address: u16) {
         let initial = self.read_memory(address);
 
