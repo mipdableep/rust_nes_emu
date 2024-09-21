@@ -129,6 +129,58 @@ fn ASL_memory() {
     assert_eq!(cpu.read_memory(address), 0b11001000);
 }
 
+fn set_lsr_accumulator_test(cpu: &mut CPU, reg_a: u8) {
+    let expected_result = reg_a / 2; // integer division
+    let should_carry = reg_a % 2 == 1;
+    cpu.register_a = reg_a;
+    cpu.LSR_accumulator();
+    assert_eq!(cpu.register_a, expected_result);
+    assert_eq!(cpu.get_status_z(), cpu.register_a == 0);
+    assert_eq!(cpu.get_status_n(), cpu.register_a >> 7 == 1);
+    assert_eq!(cpu.get_status_c(), should_carry);
+}
+
+#[test]
+#[allow(non_snake_case)]
+fn LSR_accumulator() {
+    let mut cpu: CPU = CPU::new();
+    set_lsr_accumulator_test(&mut cpu, 0);
+    set_lsr_accumulator_test(&mut cpu, 128);
+    set_lsr_accumulator_test(&mut cpu, 0x1f);
+    set_lsr_accumulator_test(&mut cpu, 0xFF);
+    set_lsr_accumulator_test(&mut cpu, 0x01);
+}
+
+fn set_lsr_memory_tests(cpu: &mut CPU, value: u8, address: u16) {
+    cpu.write_memory(address, value);
+    let should_carry = value % 2 == 1;
+    let expected_result = value / 2; // integer division
+    cpu.LSR_memory(address);
+    assert_eq!(cpu.read_memory(address), expected_result);
+    assert_eq!(cpu.get_status_z(), cpu.read_memory(address) == 0);
+    assert_eq!(cpu.get_status_n(), cpu.read_memory(address) >> 7 == 1);
+    assert_eq!(cpu.get_status_c(), should_carry);
+}
+
+#[test]
+#[allow(non_snake_case)]
+fn LSR_memory() {
+    let mut cpu: CPU = CPU::new();
+    // test for some memory addresses and values:
+    for (address, value) in get_random_u8_and_u16_pairs() {
+        set_lsr_memory_tests(&mut cpu, value, address);
+    }
+    // test for multiple shifts of the same memory
+    let address: u16 = 0x51d0;
+    cpu.write_memory(address, 0b10110010);
+    cpu.LSR_memory(address);
+    assert!(!cpu.get_status_c());
+    assert_eq!(cpu.read_memory(address), 0b01011001);
+    cpu.LSR_memory(address);
+    assert!(cpu.get_status_c());
+    assert_eq!(cpu.read_memory(address), 0b00101100);
+}
+
 fn set_bit_test(cpu: &mut CPU, operand: u8) {
     let old_reg_a = cpu.register_a;
     cpu.BIT(operand);
