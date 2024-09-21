@@ -571,35 +571,35 @@ impl CPU {
             // SBC : Subtract with Carry
             0xE9 => {
                 let addressing_mode = AddressingMode::Immediate;
-                self.SBC();
+                self.SBC(self.convert_mode_to_val(addressing_mode));
             }
             0xE5 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.SBC();
+                self.SBC(self.convert_mode_to_val(addressing_mode));
             }
             0xF5 => {
                 let addressing_mode = AddressingMode::ZeroPage_X;
-                self.SBC();
+                self.SBC(self.convert_mode_to_val(addressing_mode));
             }
             0xED => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.SBC();
+                self.SBC(self.convert_mode_to_val(addressing_mode));
             }
             0xFD => {
                 let addressing_mode = AddressingMode::Absolute_X;
-                self.SBC();
+                self.SBC(self.convert_mode_to_val(addressing_mode));
             }
             0xF9 => {
                 let addressing_mode = AddressingMode::Absolute_Y;
-                self.SBC();
+                self.SBC(self.convert_mode_to_val(addressing_mode));
             }
             0xE1 => {
                 let addressing_mode = AddressingMode::Indirect_X;
-                self.SBC();
+                self.SBC(self.convert_mode_to_val(addressing_mode));
             }
             0xF1 => {
                 let addressing_mode = AddressingMode::Indirect_Y;
-                self.SBC();
+                self.SBC(self.convert_mode_to_val(addressing_mode));
             }
 
             ///////////////////////

@@ -377,3 +377,47 @@ fn ORA() {
     }
 }
 
+fn set_sub_test(cpu: &mut CPU, reg_a: u8, operand: u8, should_overflow: bool, should_carry: bool, old_carry: bool) {
+    let expected_result = reg_a.wrapping_sub(operand.wrapping_add(match old_carry { true => 0, false => 1}));
+    cpu.set_carry(old_carry);
+    cpu.register_a = reg_a;
+    cpu.SBC(operand);
+    assert_eq!(cpu.register_a, expected_result);
+    assert_eq!(cpu.get_status_v(), should_overflow);
+    assert_eq!(cpu.get_status_c(), should_carry);
+    assert_eq!(cpu.get_status_z(), cpu.register_a == 0);
+    assert_eq!(cpu.get_status_n(), cpu.register_a >> 7 == 1);
+}
+
+#[test]
+#[allow(non_snake_case)]
+fn SBC() {
+    let mut cpu: CPU = CPU::new();
+    // manual tests
+    set_sub_test(&mut cpu, 0x00,0x00, false, true, true);
+    set_sub_test(&mut cpu, 0x00,0x00, false, false, false);
+    set_sub_test(&mut cpu, 0x40,0xbf, true, false, false);
+    set_sub_test(&mut cpu, 0x40,0x7f, false, false, false);
+    set_sub_test(&mut cpu, 0x40,0x7f, false, false, true);
+
+    // generated some random values using the python script and chugged them to https://skilldrick.github.io/easy6502/
+    set_sub_test(&mut cpu, 0x34,0xCC, false, false, true);
+    set_sub_test(&mut cpu, 0xCA,0x77, true, true, true);
+    set_sub_test(&mut cpu, 0x97,0x77, true, true, true);
+    set_sub_test(&mut cpu, 0xAF,0xFF, false, false, false);
+    set_sub_test(&mut cpu, 0x35,0xBB, false, false, true);
+    set_sub_test(&mut cpu, 0x79,0x33, false, true, false);
+    set_sub_test(&mut cpu, 0x08,0x66, false, false, true);
+    set_sub_test(&mut cpu, 0xE7,0x66, false, true, false);
+    set_sub_test(&mut cpu, 0xE1,0xAA, false, true, false);
+
+
+
+
+
+
+
+
+
+
+}

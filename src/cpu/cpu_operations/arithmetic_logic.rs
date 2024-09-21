@@ -159,7 +159,9 @@ impl CPU {
     }
 
     ///  Subtract with Carry
-    pub fn SBC(&mut self) {
-        todo!()
+    pub fn SBC(&mut self, operand: u8) {
+        // a - x = a + (-x) = a + (!x + 1)
+        // the +1 comes from the carry
+        self.ADC(!operand);
     }
 }
