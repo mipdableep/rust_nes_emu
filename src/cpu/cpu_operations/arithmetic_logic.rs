@@ -89,11 +89,40 @@ impl CPU {
         self.set_zero_and_negative_flag(self.register_a);
     }
 
-    ///  Rotate Left
-    pub fn ROL(&mut self) {
-        todo!()
+    ///  Rotate left accumulator
+    pub fn ROL_accumulator(&mut self) {
+        let bit0: u8 = match self.get_status_c() {
+            true => 1,
+            false => 0,
+        };
+        self.set_carry(match self.register_a & 0x80 {
+            0 => false,
+            0x80 => true,
+            _ => unreachable!(),
+        });
+        self.register_a = (self.register_a << 1) | bit0;
+        self.set_zero_and_negative_flag(self.register_a);
     }
-    ///  Rotate Right accumulator
+
+    /// Rotate right memory
+    pub fn ROL_memory(&mut self, address: u16) {
+        let initial = self.read_memory(address);
+
+        let bit0: u8 = match self.get_status_c() {
+            true => 1,
+            false => 0,
+        };
+        self.set_carry(match initial & 0x80 {
+            0 => false,
+            0x80 => true,
+            _ => unreachable!(),
+        });
+        let res = (initial << 1) | bit0;
+        self.write_memory(address, res);
+        self.set_zero_and_negative_flag(res);
+    }
+
+    ///  Rotate left accumulator
     pub fn ROR_accumulator(&mut self) {
         let bit7: u8 = match self.get_status_c() {
             true => 1 << 7,

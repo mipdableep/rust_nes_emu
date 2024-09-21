@@ -527,23 +527,23 @@ impl CPU {
             // ROL : Rotate Left
             0x2A => {
                 let addressing_mode = AddressingMode::Accumulator;
-                self.ROL();
+                self.ROL_accumulator();
             }
             0x26 => {
                 let addressing_mode = AddressingMode::ZeroPage;
-                self.ROL();
+                self.ROL_memory(self.convert_mode_to_operand_mem_address(addressing_mode));
             }
             0x36 => {
                 let addressing_mode = AddressingMode::ZeroPage_X;
-                self.ROL();
+                self.ROL_memory(self.convert_mode_to_operand_mem_address(addressing_mode));
             }
             0x2E => {
                 let addressing_mode = AddressingMode::Absolute;
-                self.ROL();
+                self.ROL_memory(self.convert_mode_to_operand_mem_address(addressing_mode));
             }
             0x3E => {
                 let addressing_mode = AddressingMode::Absolute_X;
-                self.ROL();
+                self.ROL_memory(self.convert_mode_to_operand_mem_address(addressing_mode));
             }
 
             // ROR : Rotate Right
