@@ -1,9 +1,11 @@
 mod cpu_operations;
 #[cfg(test)]
 mod cpu_tests;
+#[cfg(test)]
+mod cpu_operations_tests;
 mod massive_switch;
 pub mod mem_utils;
-mod cpu_operations_tests;
+
 
 const STACK_END: u16 = 0x100;
 
