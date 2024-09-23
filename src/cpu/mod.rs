@@ -133,7 +133,7 @@ impl CPU {
 
         loop {
             let opcode = program[self.program_counter as usize];
-            if !self.massive_switch(opcode, &program) {
+            if !self.massive_switch(opcode) {
                 return;
             }
         }

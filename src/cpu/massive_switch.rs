@@ -3,7 +3,7 @@ use super::CPU;
 
 #[allow(unused_variables)]
 impl CPU {
-    pub fn massive_switch(&mut self, op_code: u8, program: &Vec<u8>) -> bool {
+    pub fn massive_switch(&mut self, op_code: u8) -> bool {
         match op_code {
 
             ///////////////////////
