@@ -143,13 +143,14 @@ for cat in catagories:
         for op_j in j:
             if op_j["name"] == op:
                 opcode = op_j["opcode"]
-                adressing_mode = op_j["mode"]
-                print(
-                    f"{opcode} => ",
-                    "{\nlet _addressing_mode = AddressingMode::",
-                    adressing_mode,
-                    ";\nself.",
-                    op_name,
-                    "();\n}",
-                    sep="",
-                )
+                addressing_mode = op_j["mode"]
+                bytes_number = int(op_j["bytes"])
+                print(f"{opcode} => {{",
+                      f"self.program_counter += 1;",
+                      f"let addressing_mode = AddressingMode::{addressing_mode};",
+                      f"let value = self.convert_mode_to_val(addressing_mode);",
+                      f"self.program_counter += {bytes_number-1};",
+                      f"self.{op_name}(value);",
+                      # this is true for most operations, but if we need the address the LSP will give us the nice
+                      # red line, and we will fix it manually
+                      f"}}", sep="\n")

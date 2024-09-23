@@ -82,5 +82,4 @@ fn BRK() {
     cpu.write_memory(BRK_ADDRESS+1, 0xbb);
     cpu.BRK();
     assert_eq!(cpu.program_counter, 0xbbaa);
-    assert!(!cpu.massive_switch(0x00, &vec!(0_u8))); // assert the massive switch returns false
 }
