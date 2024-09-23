@@ -111,6 +111,6 @@ fn RTS() {
     cpu.JSR(0x41f5);
     assert_eq!(cpu.stack_pointer, 0xfd);
     cpu.RTS();
-    assert_eq!(cpu.program_counter, 0x15de); // JSR push pc-1
+    assert_eq!(cpu.program_counter, 0x15df); // JSR push pc-1, and RTS adds 1
     assert_eq!(cpu.stack_pointer, 0xff);
 }
