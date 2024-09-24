@@ -9,6 +9,7 @@ use sdl2::pixels::PixelFormatEnum;
 use sdl2::render::{Texture, WindowCanvas};
 
 const SCREEN_START: u16 = 0x0200;
+const SCREEN_SIZE: usize = 32;
 const SLEEP_TIME_NANOS: u128 = 5_000;
 const SCREEN_FACTOR: f32 = 10.0;
 
@@ -16,11 +17,11 @@ const SCREEN_FACTOR: f32 = 10.0;
 struct SnakeGame<'a, 'sdl> {
     cpu: CPU,
     event_pump: EventPump,
-    screen_state:  [u8; 32 * 32 * 3],
+    screen_state: [u8; 32 * 32 * 3],
     rng_gen: ThreadRng,
     texture: &'a mut Texture<'sdl>,
-
     canvas: &'a mut WindowCanvas,
+    is_paused: bool,
 }
 
 impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
@@ -53,7 +54,8 @@ impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
 
 
     fn handle_user_input(&mut self) {
-        for event in self.event_pump.poll_iter() {
+        // the collect is to be able to not borrow self in the poll iter, maybe will change in the future
+        for event in self.event_pump.poll_iter().collect::<Vec<Event>>() {
             match event {
                 Event::Quit { .. } | Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
                     std::process::exit(0)
@@ -70,6 +72,13 @@ impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
                 Event::KeyDown { keycode: Some(Keycode::D), .. } => {
                     self.cpu.write_memory(0xff, 0x64);
                 }
+                Event::KeyDown { keycode: Some(Keycode::P), .. } => {
+                    self.is_paused = !self.is_paused;
+                    if self.is_paused {
+                        self.draw_pause_symbol();
+                        self.update_actual_texture();
+                    }
+                }
                 _ => { /* do nothing */ }
             }
         }
@@ -80,16 +89,21 @@ impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
         loop {
             let now = std::time::Instant::now();
             self.handle_user_input();
+            if self.is_paused {
+                let elapsed = now.elapsed();
+                if elapsed.as_nanos() < SLEEP_TIME_NANOS {
+                    std::thread::sleep(std::time::Duration::new(0, (SLEEP_TIME_NANOS - elapsed.as_nanos()) as u32));
+                }
+                continue;
+            }
             self.cpu.write_memory(0xfe, self.rng_gen.gen_range(1..16));
             if self.update_screen_state() {
-                self.texture.update(None, &self.screen_state, 32 * 3).unwrap();
-                self.canvas.copy(self.texture, None, None).unwrap();
-                self.canvas.present();
+                self.update_actual_texture();
             }
 
             let opcode = self.cpu.memory[self.cpu.program_counter as usize];
             if debug {
-                println!("pc {:}, opcode {:}, args {:} {:}", self.cpu.program_counter, opcode, self.cpu.read_memory(self.cpu.program_counter+1), self.cpu.read_memory(self.cpu.program_counter+2));
+                println!("pc {:}, opcode {:}, args {:} {:}", self.cpu.program_counter, opcode, self.cpu.read_memory(self.cpu.program_counter + 1), self.cpu.read_memory(self.cpu.program_counter + 2));
             }
             if !self.cpu.massive_switch(opcode) {
                 return;
@@ -98,7 +112,6 @@ impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
             if elapsed.as_nanos() < SLEEP_TIME_NANOS {
                 std::thread::sleep(std::time::Duration::new(0, (SLEEP_TIME_NANOS - elapsed.as_nanos()) as u32));
             }
-
         }
     }
 
@@ -118,6 +131,27 @@ impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
             frame_idx += 3;
         }
         update
+    }
+
+    fn update_actual_texture(&mut self) {
+        self.texture.update(None, &self.screen_state, 32 * 3).unwrap();
+        self.canvas.copy(self.texture, None, None).unwrap();
+        self.canvas.present();
+    }
+
+    fn draw_pause_symbol(&mut self) {
+        // draw two line (the pause symbol) on screen, like ||
+        let line_start = SCREEN_SIZE / 4;
+        let line_x = (SCREEN_SIZE * 2 / 5) * 3;
+        for row in line_start..SCREEN_SIZE - line_start {
+            self.screen_state[row * SCREEN_SIZE * 3 + line_x] = 128;
+            self.screen_state[row * SCREEN_SIZE * 3 + line_x + 1] = 128;
+            self.screen_state[row * SCREEN_SIZE * 3 + line_x + 2] = 128;
+
+            self.screen_state[row * SCREEN_SIZE * 3 + SCREEN_SIZE * 3 - line_x] = 128;
+            self.screen_state[row * SCREEN_SIZE * 3 + SCREEN_SIZE * 3 - line_x + 1] = 128;
+            self.screen_state[row * SCREEN_SIZE * 3 + SCREEN_SIZE * 3 - line_x + 2] = 128;
+        }
     }
 }
 
@@ -163,6 +197,7 @@ fn main() {
         rng_gen: rng,
         texture: &mut texture,
         canvas: &mut canvas,
+        is_paused: false,
     };
     snake_game.load_snake_game();
     snake_game.run_snake(false);
