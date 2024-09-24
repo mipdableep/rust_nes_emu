@@ -1,9 +1,15 @@
 [package]
-name = "test_project"
+name = "nes_emulator"
 version = "0.1.0"
 edition = "2021"
+[[bin]]
+name = "SNAKE"
+path = "snake_game/snake_game.rs"
+
 [dependencies]
+rand = "0.8.5"
 rand_chacha = "0.3.1"
+sdl2 = "0.37.0"
 
 [dev-dependencies.cargo-husky]
 version = "1.5"
