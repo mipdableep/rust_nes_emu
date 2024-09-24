@@ -403,6 +403,7 @@ impl CPU {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
                 self.BRK();
+                return false
             }
 
             ////////////////
