@@ -61,8 +61,6 @@ impl CPU {
             0xCA => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.DEX();
             }
 
@@ -70,8 +68,6 @@ impl CPU {
             0x88 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.DEY();
             }
 
@@ -109,8 +105,6 @@ impl CPU {
             0xE8 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.INX();
             }
 
@@ -118,8 +112,6 @@ impl CPU {
             0xC8 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.INY();
             }
 
@@ -356,8 +348,6 @@ impl CPU {
             0xAA => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.TAX();
             }
 
@@ -365,8 +355,6 @@ impl CPU {
             0xA8 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.TAY();
             }
 
@@ -374,8 +362,6 @@ impl CPU {
             0xBA => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.TSX();
             }
 
@@ -383,8 +369,6 @@ impl CPU {
             0x8A => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.TXA();
             }
 
@@ -392,8 +376,6 @@ impl CPU {
             0x9A => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.TXS();
             }
 
@@ -401,8 +383,6 @@ impl CPU {
             0x98 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.TYA();
             }
 
@@ -415,8 +395,6 @@ impl CPU {
             0x40 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.RTI();
             }
 
@@ -424,8 +402,6 @@ impl CPU {
             0x00 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.BRK();
             }
 
@@ -438,8 +414,6 @@ impl CPU {
             0xEA => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.NOP();
             }
 
@@ -1096,8 +1070,6 @@ impl CPU {
             0x60 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.RTS();
             }
 
@@ -1110,8 +1082,6 @@ impl CPU {
             0x48 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.PHA();
             }
 
@@ -1119,8 +1089,6 @@ impl CPU {
             0x08 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.PHP();
             }
 
@@ -1128,8 +1096,6 @@ impl CPU {
             0x68 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.PLA();
             }
 
@@ -1137,8 +1103,6 @@ impl CPU {
             0x28 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.PLP();
             }
 
@@ -1151,8 +1115,6 @@ impl CPU {
             0x18 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.CLC();
             }
 
@@ -1160,8 +1122,6 @@ impl CPU {
             0xD8 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.CLD();
             }
 
@@ -1169,8 +1129,6 @@ impl CPU {
             0x58 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.CLI();
             }
 
@@ -1178,8 +1136,6 @@ impl CPU {
             0xB8 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.CLV();
             }
 
@@ -1187,8 +1143,6 @@ impl CPU {
             0x38 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.SEC();
             }
 
@@ -1196,8 +1150,6 @@ impl CPU {
             0xF8 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.SED();
             }
 
@@ -1205,8 +1157,6 @@ impl CPU {
             0x78 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
-                let value = self.convert_mode_to_val(addressing_mode);
-                self.program_counter += 0;
                 self.SEI();
             }
             _ => panic!("opcode {:} is not supported", op_code)
