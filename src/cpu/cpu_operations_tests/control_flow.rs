@@ -18,14 +18,14 @@ fn BCC_and_BCS(){
     let mut cpu = CPU::new();
     cpu.program_counter = 0x800;
     cpu.set_carry(true);
-    cpu.BCS(0xff);
+    cpu.BCS(0x7ff);
     assert_eq!(cpu.program_counter, 0x7ff);
     cpu.BCC(0x5a);
     assert_eq!(cpu.program_counter, 0x7ff);
     cpu.set_carry(false);
     cpu.BCS(0xff);
     assert_eq!(cpu.program_counter, 0x7ff);
-    cpu.BCC(0x5a);
+    cpu.BCC(0x859);
     assert_eq!(cpu.program_counter, 0x859);
 }
 
@@ -35,14 +35,14 @@ fn BEQ_and_BNQ(){
     let mut cpu = CPU::new();
     cpu.program_counter = 0x800;
     cpu.set_zero(true);
-    cpu.BEQ(0xff);
+    cpu.BEQ(0x7ff);
     assert_eq!(cpu.program_counter, 0x7ff);
     cpu.BNE(0x5a);
     assert_eq!(cpu.program_counter, 0x7ff);
     cpu.set_zero(false);
     cpu.BEQ(0xff);
     assert_eq!(cpu.program_counter, 0x7ff);
-    cpu.BNE(0x5a);
+    cpu.BNE(0x859);
     assert_eq!(cpu.program_counter, 0x859);
 }
 
@@ -52,14 +52,14 @@ fn BMI_and_BPL(){
     let mut cpu = CPU::new();
     cpu.program_counter = 0x800;
     cpu.set_negative(true);
-    cpu.BMI(0xff);
+    cpu.BMI(0x7ff);
     assert_eq!(cpu.program_counter, 0x7ff);
     cpu.BPL(0x5a);
     assert_eq!(cpu.program_counter, 0x7ff);
     cpu.set_negative(false);
     cpu.BMI(0xff);
     assert_eq!(cpu.program_counter, 0x7ff);
-    cpu.BPL(0x5a);
+    cpu.BPL(0x859);
     assert_eq!(cpu.program_counter, 0x859);
 }
 
@@ -69,14 +69,14 @@ fn BVC_and_BVS(){
     let mut cpu = CPU::new();
     cpu.program_counter = 0x800;
     cpu.set_overflow(true);
-    cpu.BVS(0xff);
+    cpu.BVS(0x7ff);
     assert_eq!(cpu.program_counter, 0x7ff);
     cpu.BVC(0x5a);
     assert_eq!(cpu.program_counter, 0x7ff);
     cpu.set_overflow(false);
     cpu.BVS(0xff);
     assert_eq!(cpu.program_counter, 0x7ff);
-    cpu.BNE(0x5a);
+    cpu.BNE(0x859);
     assert_eq!(cpu.program_counter, 0x859);
 }
 
@@ -111,6 +111,6 @@ fn RTS() {
     cpu.JSR(0x41f5);
     assert_eq!(cpu.stack_pointer, 0xfd);
     cpu.RTS();
-    assert_eq!(cpu.program_counter, 0x15df); // JSR push pc-1, and RTS adds 1
+    assert_eq!(cpu.program_counter, 0x15df); // JSR push pc-1, RTS adds 1
     assert_eq!(cpu.stack_pointer, 0xff);
 }

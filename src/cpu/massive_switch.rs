@@ -974,72 +974,72 @@ impl CPU {
             0x90 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::Relative;
-                let value = self.convert_mode_to_val(addressing_mode);
+                let new_address = self.convert_mode_to_operand_mem_address(addressing_mode);
                 self.program_counter += 1;
-                self.BCC(value);
+                self.BCC(new_address.wrapping_sub(1)); // we jump one to many since we already incremented the pc
             }
 
             // BCS : Branch if Carry Set
             0xB0 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::Relative;
-                let value = self.convert_mode_to_val(addressing_mode);
+                let new_address = self.convert_mode_to_operand_mem_address(addressing_mode);
                 self.program_counter += 1;
-                self.BCS(value);
+                self.BCS(new_address.wrapping_sub(1)); // we jump one to many since we already incremented the pc
             }
 
             // BEQ : Branch if Equal
             0xF0 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::Relative;
-                let value = self.convert_mode_to_val(addressing_mode);
+                let new_address = self.convert_mode_to_operand_mem_address(addressing_mode);
                 self.program_counter += 1;
-                self.BEQ(value);
+                self.BEQ(new_address.wrapping_sub(1)); // we jump one to many since we already incremented the pc
             }
 
             // BMI : Branch if Minus
             0x30 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::Relative;
-                let value = self.convert_mode_to_val(addressing_mode);
+                let new_address = self.convert_mode_to_operand_mem_address(addressing_mode);
                 self.program_counter += 1;
-                self.BMI(value);
+                self.BMI(new_address.wrapping_sub(1)); // we jump one to many since we already incremented the pc
             }
 
             // BNE : Branch if Not Equal
             0xD0 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::Relative;
-                let value = self.convert_mode_to_val(addressing_mode);
+                let new_address = self.convert_mode_to_operand_mem_address(addressing_mode);
                 self.program_counter += 1;
-                self.BNE(value);
+                self.BNE(new_address.wrapping_sub(1)); // we jump one to many since we already incremented the pc
             }
 
             // BPL : Branch if Positive
             0x10 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::Relative;
-                let value = self.convert_mode_to_val(addressing_mode);
+                let new_address = self.convert_mode_to_operand_mem_address(addressing_mode);
                 self.program_counter += 1;
-                self.BPL(value);
+                self.BPL(new_address.wrapping_sub(1)); // we jump one to many since we already incremented the pc
             }
 
             // BVC : Branch if Overflow Clear
             0x50 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::Relative;
-                let value = self.convert_mode_to_val(addressing_mode);
+                let new_address = self.convert_mode_to_operand_mem_address(addressing_mode);
                 self.program_counter += 1;
-                self.BVC(value);
+                self.BVC(new_address.wrapping_sub(1)); // we jump one to many since we already incremented the pc
             }
 
             // BVS : Branch if Overflow Set
             0x70 => {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::Relative;
-                let value = self.convert_mode_to_val(addressing_mode);
+                let new_address = self.convert_mode_to_operand_mem_address(addressing_mode);
                 self.program_counter += 1;
-                self.BVS(value);
+                self.BVS(new_address.wrapping_sub(1)); // we jump one to many since we already incremented the pc
             }
 
             // JMP : Jump

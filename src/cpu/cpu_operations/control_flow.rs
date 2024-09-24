@@ -11,58 +11,58 @@ fn change_pc_by_offset(cpu: &mut CPU, offset: u8) {
 #[allow(dead_code, non_snake_case)]
 impl CPU {
     ///  Branch if Carry Clear
-    pub fn BCC(&mut self, offset: u8) {
+    pub fn BCC(&mut self, new_address: u16) {
         if !self.get_status_c() {
-            change_pc_by_offset(self, offset);
+            self.program_counter = new_address;
         }
     }
 
     ///  Branch if Carry Set
-    pub fn BCS(&mut self, offset: u8) {
+    pub fn BCS(&mut self, new_address: u16) {
         if self.get_status_c() {
-            change_pc_by_offset(self, offset);
+            self.program_counter = new_address;
         }
     }
 
     ///  Branch if Equal
-    pub fn BEQ(&mut self, offset: u8) {
+    pub fn BEQ(&mut self, new_address: u16) {
         if self.get_status_z() {
-            change_pc_by_offset(self, offset);
+            self.program_counter = new_address;
         }
     }
 
     ///  Branch if Minus
-    pub fn BMI(&mut self, offset: u8) {
+    pub fn BMI(&mut self, new_address: u16) {
         if self.get_status_n() {
-            change_pc_by_offset(self, offset);
+            self.program_counter = new_address;
         }
     }
 
     ///  Branch if Not Equal
-    pub fn BNE(&mut self, offset: u8) {
+    pub fn BNE(&mut self, new_address: u16) {
         if !self.get_status_z() {
-            change_pc_by_offset(self, offset);
+            self.program_counter = new_address;
         }
     }
 
     ///  Branch if Positive
-    pub fn BPL(&mut self, offset: u8) {
+    pub fn BPL(&mut self, new_address: u16) {
         if !self.get_status_n() {
-            change_pc_by_offset(self, offset);
+            self.program_counter = new_address;
         }
     }
 
     ///  Branch if Overflow Clear
-    pub fn BVC(&mut self, offset: u8) {
+    pub fn BVC(&mut self, new_address: u16) {
         if !self.get_status_v() {
-            change_pc_by_offset(self, offset);
+            self.program_counter = new_address;
         }
     }
 
     ///  Branch if Overflow Set
-    pub fn BVS(&mut self, offset: u8) {
+    pub fn BVS(&mut self, new_address: u16) {
         if self.get_status_v() {
-            change_pc_by_offset(self, offset);
+            self.program_counter = new_address;
         }
     }
 
