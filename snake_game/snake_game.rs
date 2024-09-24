@@ -1,3 +1,4 @@
+use std::thread::sleep;
 use rand::rngs::ThreadRng;
 use rand::{thread_rng, Rng};
 use nes_emulator::cpu::CPU;
@@ -106,11 +107,20 @@ impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
                 println!("pc {:}, opcode {:}, args {:} {:}", self.cpu.program_counter, opcode, self.cpu.read_memory(self.cpu.program_counter + 1), self.cpu.read_memory(self.cpu.program_counter + 2));
             }
             if !self.cpu.massive_switch(opcode) {
+                // game over
+                self.is_paused = true;
+                self.draw_pause_symbol(); // draw pause
+                self.update_actual_texture();
+
+                while self.is_paused && now.elapsed().as_secs() < 10 { // give the user 10 sec to manually exit
+                    self.handle_user_input();
+                    sleep(std::time::Duration::new(0, SLEEP_TIME_NANOS as u32));
+                }
                 return;
             }
             let elapsed = now.elapsed();
             if elapsed.as_nanos() < SLEEP_TIME_NANOS {
-                std::thread::sleep(std::time::Duration::new(0, (SLEEP_TIME_NANOS - elapsed.as_nanos()) as u32));
+                sleep(std::time::Duration::new(0, (SLEEP_TIME_NANOS - elapsed.as_nanos()) as u32));
             }
         }
     }
