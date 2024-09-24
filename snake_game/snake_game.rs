@@ -9,6 +9,7 @@ use sdl2::pixels::PixelFormatEnum;
 use sdl2::render::{Texture, WindowCanvas};
 
 const SCREEN_START: u16 = 0x0200;
+const SLEEP_TIME_NANOS: u128 = 5_000;
 
 
 struct SnakeGame<'a, 'sdl> {
@@ -76,6 +77,7 @@ impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
     fn run_snake(&mut self, debug: bool)
     {
         loop {
+            let now = std::time::Instant::now();
             self.handle_user_input();
             self.cpu.write_memory(0xfe, self.rng_gen.gen_range(1..16));
             if self.update_screen_state() {
@@ -83,7 +85,6 @@ impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
                 self.canvas.copy(self.texture, None, None).unwrap();
                 self.canvas.present();
             }
-            // std::thread::sleep(std::time::Duration::new(0, 100));
 
             let opcode = self.cpu.memory[self.cpu.program_counter as usize];
             if debug {
@@ -92,6 +93,11 @@ impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
             if !self.cpu.massive_switch(opcode) {
                 return;
             }
+            let elapsed = now.elapsed();
+            if elapsed.as_nanos() < SLEEP_TIME_NANOS {
+                std::thread::sleep(std::time::Duration::new(0, (SLEEP_TIME_NANOS - elapsed.as_nanos()) as u32));
+            }
+
         }
     }
 
