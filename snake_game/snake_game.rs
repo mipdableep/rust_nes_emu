@@ -10,6 +10,7 @@ use sdl2::render::{Texture, WindowCanvas};
 
 const SCREEN_START: u16 = 0x0200;
 const SLEEP_TIME_NANOS: u128 = 5_000;
+const SCREEN_FACTOR: f32 = 10.0;
 
 
 struct SnakeGame<'a, 'sdl> {
@@ -140,13 +141,13 @@ fn main() {
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
     let window = video_subsystem
-        .window("Snake game", (32.0 * 10.0) as u32, (32.0 * 10.0) as u32)
+        .window("Snake game", (32.0 * SCREEN_FACTOR) as u32, (32.0 * SCREEN_FACTOR) as u32)
         .position_centered()
         .build().unwrap();
 
     let mut canvas = window.into_canvas().present_vsync().build().unwrap();
     let event_pump = sdl_context.event_pump().unwrap();
-    canvas.set_scale(10.0, 10.0).unwrap();
+    canvas.set_scale(SCREEN_FACTOR, SCREEN_FACTOR).unwrap();
 
     // telling sdl that the texture is 32x32 and rgb, so it is 32x32x3
     let creator = canvas.texture_creator();
