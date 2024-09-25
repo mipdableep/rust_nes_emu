@@ -4,7 +4,7 @@ mod mem_tests;
 use crate::cpu::CPU;
 
 #[derive(Debug)]
-#[allow(non_camel_case_types, dead_code)]
+#[allow(non_camel_case_types)]
 pub enum AddressingMode {
     Immediate,
     ZeroPage,
@@ -23,7 +23,6 @@ pub enum AddressingMode {
     Indirect,
 }
 
-#[allow(dead_code)]
 impl CPU {
     pub fn read_memory(&self, addr: u16) -> u8 {
         self.memory[addr as usize]

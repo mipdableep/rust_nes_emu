@@ -2,7 +2,7 @@ use super::super::CPU;
 
 const BRK_ADDRESS: u16 = 0xfffe;
 
-#[allow(dead_code, non_snake_case)]
+#[allow(non_snake_case)]
 impl CPU {
     /////////////////////////////
     /////// STACK RELATED ///////

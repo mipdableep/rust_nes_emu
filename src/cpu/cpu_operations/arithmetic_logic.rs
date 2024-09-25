@@ -1,6 +1,6 @@
 use super::super::CPU;
 
-#[allow(dead_code, non_snake_case)]
+#[allow(non_snake_case)]
 impl CPU {
     ///  Add with Carry
     pub fn ADC(&mut self, operand: u8) {

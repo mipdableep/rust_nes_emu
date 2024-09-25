@@ -1,6 +1,6 @@
 use super::super::CPU;
 
-#[allow(dead_code, non_snake_case)]
+#[allow(non_snake_case)]
 impl CPU {
     fn compare(&mut self, register: u8, operand: u8) {
         // compare register to operand and set flags
