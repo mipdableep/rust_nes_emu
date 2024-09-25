@@ -1,11 +1,10 @@
 mod cpu_operations;
 #[cfg(test)]
-mod cpu_tests;
-#[cfg(test)]
 mod cpu_operations_tests;
+#[cfg(test)]
+mod cpu_tests;
 mod massive_switch;
 pub mod mem_utils;
-
 
 const STACK_END: u16 = 0x100;
 
@@ -74,7 +73,8 @@ impl CPU {
             self.status &= !0b01000000;
         }
     }
-    pub fn set_decimal(&mut self, decimal: bool) { // the decimal flag is not used in operation (such as ADC), but still exists
+    pub fn set_decimal(&mut self, decimal: bool) {
+        // the decimal flag is not used in operation (such as ADC), but still exists
         if decimal {
             self.status |= 0b00001000;
         } else {
@@ -118,7 +118,7 @@ impl CPU {
     }
     pub fn stack_push_u16(&mut self, value: u16) {
         let low = (value & 0x00ff) as u8;
-        let high = ((value & 0xff00 ) >> 8) as u8;
+        let high = ((value & 0xff00) >> 8) as u8;
         self.stack_push(high);
         self.stack_push(low);
     }

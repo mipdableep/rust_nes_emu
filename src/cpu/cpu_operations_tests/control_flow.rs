@@ -2,7 +2,7 @@ use crate::cpu::CPU;
 
 #[test]
 #[allow(non_snake_case)]
-fn BCC_and_BCS(){
+fn BCC_and_BCS() {
     let mut cpu = CPU::new();
     cpu.program_counter = 0x800;
     cpu.set_carry(true);
@@ -19,7 +19,7 @@ fn BCC_and_BCS(){
 
 #[test]
 #[allow(non_snake_case)]
-fn BEQ_and_BNQ(){
+fn BEQ_and_BNQ() {
     let mut cpu = CPU::new();
     cpu.program_counter = 0x800;
     cpu.set_zero(true);
@@ -36,7 +36,7 @@ fn BEQ_and_BNQ(){
 
 #[test]
 #[allow(non_snake_case)]
-fn BMI_and_BPL(){
+fn BMI_and_BPL() {
     let mut cpu = CPU::new();
     cpu.program_counter = 0x800;
     cpu.set_negative(true);
@@ -53,7 +53,7 @@ fn BMI_and_BPL(){
 
 #[test]
 #[allow(non_snake_case)]
-fn BVC_and_BVS(){
+fn BVC_and_BVS() {
     let mut cpu = CPU::new();
     cpu.program_counter = 0x800;
     cpu.set_overflow(true);
@@ -67,7 +67,6 @@ fn BVC_and_BVS(){
     cpu.BNE(0x859);
     assert_eq!(cpu.program_counter, 0x859);
 }
-
 
 #[allow(non_snake_case)]
 #[test]

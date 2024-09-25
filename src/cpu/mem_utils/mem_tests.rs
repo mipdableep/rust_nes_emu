@@ -1,6 +1,6 @@
 use super::{AddressingMode, CPU};
-use rand_chacha::ChaCha12Rng;
 use rand_chacha::rand_core::{RngCore, SeedableRng};
+use rand_chacha::ChaCha12Rng;
 
 fn get_full_memory_from_seed(seed: u8) -> [u8; 1 << 16] {
     let mut generator = ChaCha12Rng::from_seed([seed; 32]);
@@ -44,7 +44,8 @@ fn test_read_memory_2_bytes() {
     }
     for i in 0u8..=0x70 {
         // 6502 is little endian
-        let expected_result: u16 = ((memory_contents[(2 * i + 1) as usize] as u16) << 8) + (memory_contents[(2 * i) as usize] as u16);
+        let expected_result: u16 = ((memory_contents[(2 * i + 1) as usize] as u16) << 8)
+            + (memory_contents[(2 * i) as usize] as u16);
         assert_eq!(cpu.read_memory_2_bytes(i as u16 * 2), expected_result);
     }
 }
@@ -55,7 +56,6 @@ fn test_memory_violation() {
     let cpu = CPU::new();
     cpu.read_memory_2_bytes(0xffff);
 }
-
 
 #[test]
 fn mode_to_mem_addr_immediate() {
@@ -250,7 +250,10 @@ fn mod_to_mem_indirect_x() {
     cpu.write_memory(0x2074, 0x5a);
     cpu.write_memory(0x2075, 0xbb);
     cpu.load(vec![0x20]); // 0x20 + 0x04 = 0x24
-    assert_eq!(0x2074, cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_X));
+    assert_eq!(
+        0x2074,
+        cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_X)
+    );
     assert_eq!(0x5a, cpu.convert_mode_to_val(AddressingMode::Indirect_X));
     // test with overflow
     cpu.register_x = 0x5a;
@@ -258,10 +261,12 @@ fn mod_to_mem_indirect_x() {
     cpu.write_memory(0x14, 0xaa);
     cpu.write_memory(0xaabb, 0x60);
     cpu.load(vec![0xb9]); // 0xb9 + 0x5a = 0x113
-    assert_eq!(0xaabb, cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_X));
+    assert_eq!(
+        0xaabb,
+        cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_X)
+    );
     assert_eq!(0x60, cpu.convert_mode_to_val(AddressingMode::Indirect_X));
 }
-
 
 #[test]
 fn mod_to_mem_indirect_y() {
@@ -273,7 +278,10 @@ fn mod_to_mem_indirect_y() {
     cpu.write_memory(0x87, 0x40);
     cpu.write_memory(0x4038, 0x5a); // 0X4028 + 0X10 = 0X4038
     cpu.load(vec![0x86]);
-    assert_eq!(0x4038, cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_Y));
+    assert_eq!(
+        0x4038,
+        cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_Y)
+    );
     assert_eq!(0x5a, cpu.convert_mode_to_val(AddressingMode::Indirect_Y));
     // test with overflow around zero page, that should not occur
     cpu.register_y = 0x01;
@@ -281,7 +289,10 @@ fn mod_to_mem_indirect_y() {
     cpu.write_memory(0x14, 0x00);
     cpu.write_memory(0x0100, 0x60);
     cpu.load(vec![0x13]); // 0xb9 + 0x5a = 0x113
-    assert_eq!(0x0100, cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_Y));
+    assert_eq!(
+        0x0100,
+        cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_Y)
+    );
     assert_eq!(0x60, cpu.convert_mode_to_val(AddressingMode::Indirect_Y));
     // test with overflow around all the pages, which should occur
     cpu.register_y = 0xb9;
@@ -289,6 +300,9 @@ fn mod_to_mem_indirect_y() {
     cpu.write_memory(0x87, 0xff); // 0xff5a + 0xb9 = 0x10013
     cpu.write_memory(0x13, 0x5a);
     cpu.load(vec![0x86]);
-    assert_eq!(0x13, cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_Y));
+    assert_eq!(
+        0x13,
+        cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_Y)
+    );
     assert_eq!(0x5a, cpu.convert_mode_to_val(AddressingMode::Indirect_Y));
 }

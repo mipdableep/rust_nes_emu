@@ -4,10 +4,12 @@ use super::super::CPU;
 impl CPU {
     ///  Add with Carry
     pub fn ADC(&mut self, operand: u8) {
-        let res_as_u16: u16 = self.register_a as u16 + operand as u16 + match self.get_status_c() {
-            true => 1,
-            false => 0
-        };
+        let res_as_u16: u16 = self.register_a as u16
+            + operand as u16
+            + match self.get_status_c() {
+                true => 1,
+                false => 0,
+            };
         // check for carry
         self.set_carry((res_as_u16 & 0x0100) == 0x0100);
 

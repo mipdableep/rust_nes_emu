@@ -16,7 +16,10 @@ fn PHA_and_PLA() {
     assert_eq!(cpu.stack_pointer, 0xff - a_values.len() as u8);
     for i in 0..a_values.len() {
         let ith_from_end = a_values.len() - 1 - i;
-        assert_eq!(cpu.read_memory(STACK_START - ith_from_end as u16), a_values[ith_from_end]);
+        assert_eq!(
+            cpu.read_memory(STACK_START - ith_from_end as u16),
+            a_values[ith_from_end]
+        );
         cpu.PLA();
         assert_eq!(cpu.register_a, a_values[ith_from_end]);
         assert_eq!(cpu.get_status_z(), a_values[ith_from_end] == 0);
@@ -24,7 +27,6 @@ fn PHA_and_PLA() {
     }
     assert_eq!(cpu.stack_pointer, 0xff);
 }
-
 
 #[test]
 #[allow(non_snake_case)]
@@ -39,13 +41,15 @@ fn PHP_and_PLP() {
     assert_eq!(cpu.stack_pointer, 0xff - status_values.len() as u8);
     for i in 0..status_values.len() {
         let ith_from_end = status_values.len() - 1 - i;
-        assert_eq!(cpu.read_memory(STACK_START - ith_from_end as u16), status_values[ith_from_end]);
+        assert_eq!(
+            cpu.read_memory(STACK_START - ith_from_end as u16),
+            status_values[ith_from_end]
+        );
         cpu.PLP();
         assert_eq!(cpu.status, status_values[ith_from_end]);
     }
     assert_eq!(cpu.stack_pointer, 0xff);
 }
-
 
 fn check_cpu_not_changed(cpu: &CPU) {
     assert_eq!(cpu.memory, [0; 0x10000]);
@@ -71,7 +75,7 @@ fn RTI() {
     cpu.stack_push(0xff);
     cpu.RTI();
     assert_eq!(cpu.program_counter, 0x58fa);
-    assert_eq!(cpu.status, 0xcf);//ignore bits 4 and 5!
+    assert_eq!(cpu.status, 0xcf); //ignore bits 4 and 5!
 }
 
 #[test]
@@ -79,11 +83,10 @@ fn RTI() {
 fn BRK() {
     let mut cpu: CPU = CPU::new();
     cpu.write_memory(BRK_ADDRESS, 0xaa);
-    cpu.write_memory(BRK_ADDRESS+1, 0xbb);
+    cpu.write_memory(BRK_ADDRESS + 1, 0xbb);
     cpu.BRK();
     assert_eq!(cpu.program_counter, 0xbbaa);
     cpu.program_counter = 0x800;
     cpu.write_memory(0x800, 0);
     assert!(!cpu.massive_switch(0x00)); // assert the massive switch returns false
-
 }

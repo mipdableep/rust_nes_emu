@@ -1,7 +1,14 @@
-use crate::cpu::CPU;
 use crate::cpu::cpu_operations_tests::arithmetic_logic::get_random_u8_and_u16_pairs;
+use crate::cpu::CPU;
 
-fn set_compare_tests(cpu: &mut CPU, register_name: &str, register_value: u8, operand: u8, should_negative: bool, should_carry: bool) {
+fn set_compare_tests(
+    cpu: &mut CPU,
+    register_name: &str,
+    register_value: u8,
+    operand: u8,
+    should_negative: bool,
+    should_carry: bool,
+) {
     match register_name {
         "A" => {
             cpu.register_a = register_value;
@@ -24,7 +31,7 @@ fn set_compare_tests(cpu: &mut CPU, register_name: &str, register_value: u8, ope
             assert_eq!(cpu.get_status_c(), should_carry);
             assert_eq!(cpu.get_status_z(), cpu.register_y == operand);
         }
-        _ => panic!("Unknown register called {:?}", register_name)
+        _ => panic!("Unknown register called {:?}", register_name),
     }
 }
 
@@ -60,13 +67,18 @@ fn CPY() {
     test_compare(&mut cpu, "Y");
 }
 
-
 fn set_dec_test(cpu: &mut CPU, memory_address: u16, memory_value: u8) {
     cpu.write_memory(memory_address, memory_value);
     cpu.DEC(memory_address);
-    assert_eq!(cpu.read_memory(memory_address).wrapping_add(1), memory_value);
+    assert_eq!(
+        cpu.read_memory(memory_address).wrapping_add(1),
+        memory_value
+    );
     assert_eq!(cpu.get_status_z(), cpu.read_memory(memory_address) == 0);
-    assert_eq!(cpu.get_status_n(), (cpu.read_memory(memory_address) >> 7) & 1 == 1);
+    assert_eq!(
+        cpu.get_status_n(),
+        (cpu.read_memory(memory_address) >> 7) & 1 == 1
+    );
 }
 
 #[test]
@@ -92,13 +104,18 @@ fn DEC() {
     assert!(cpu.get_status_n());
 }
 
-
 fn set_inc_test(cpu: &mut CPU, memory_address: u16, memory_value: u8) {
     cpu.write_memory(memory_address, memory_value);
     cpu.INC(memory_address);
-    assert_eq!(cpu.read_memory(memory_address).wrapping_sub(1), memory_value);
+    assert_eq!(
+        cpu.read_memory(memory_address).wrapping_sub(1),
+        memory_value
+    );
     assert_eq!(cpu.get_status_z(), cpu.read_memory(memory_address) == 0);
-    assert_eq!(cpu.get_status_n(), (cpu.read_memory(memory_address) >> 7) & 1 == 1);
+    assert_eq!(
+        cpu.get_status_n(),
+        (cpu.read_memory(memory_address) >> 7) & 1 == 1
+    );
 }
 
 #[test]
@@ -129,26 +146,10 @@ fn INC() {
 }
 
 fn get_random_u8_values() -> Vec<u8> {
-    vec!(3,
-         0,
-         0xFF,
-         0xFF,
-         0x84,
-         0xde,
-         0x0a,
-         0x53,
-         0xde,
-         0xde,
-         0x75,
-         0x27,
-         0x00,
-         0,
-         0x81,
-         0xff,
-         0x00,
-         0x00,
-         0xff,
-         0x2a)
+    vec![
+        3, 0, 0xFF, 0xFF, 0x84, 0xde, 0x0a, 0x53, 0xde, 0xde, 0x75, 0x27, 0x00, 0, 0x81, 0xff,
+        0x00, 0x00, 0xff, 0x2a,
+    ]
 }
 
 fn set_dex_test(cpu: &mut CPU, register_x_value: u8) {
@@ -299,7 +300,7 @@ fn test_load(cpu: &mut CPU, register_name: &str, register_value: u8) {
             assert_eq!(cpu.register_y == 0, cpu.get_status_z());
             assert_eq!(cpu.register_y >= 0x80, cpu.get_status_n());
         }
-        _ => panic!("Unknown register {:} in load", register_name)
+        _ => panic!("Unknown register {:} in load", register_name),
     }
 }
 
@@ -329,7 +330,6 @@ fn LDY() {
         test_load(&mut cpu, "Y", value)
     }
 }
-
 
 #[allow(non_snake_case)]
 #[test]
@@ -364,47 +364,49 @@ fn STY() {
     }
 }
 
-
 fn prepare_transfer_tests(cpu: &mut CPU, source_name: &str, destination_name: &str, value: u8) {
     let old_flags = cpu.status;
     // set source
     match source_name {
-        "A" => { cpu.register_a = value }
-        "X" => { cpu.register_x = value }
-        "Y" => { cpu.register_y = value }
-        "S" => { cpu.stack_pointer = value }
-        _ => { panic!("Unknown source register {:} in transfer", source_name) }
+        "A" => cpu.register_a = value,
+        "X" => cpu.register_x = value,
+        "Y" => cpu.register_y = value,
+        "S" => cpu.stack_pointer = value,
+        _ => {
+            panic!("Unknown source register {:} in transfer", source_name)
+        }
     }
     // transfer correct flags
     match (source_name, destination_name) {
-        ("A", "X") => {
-            cpu.TAX()
-        }
-        ("A", "Y") => {
-            cpu.TAY()
-        }
-        ("S", "X") => {
-            cpu.TSX()
-        }
-        ("X", "A") => {
-            cpu.TXA()
-        }
-        ("X", "S") => {
-            cpu.TXS()
-        }
-        ("Y", "A") => {
-            cpu.TYA()
-        }
-        _ => panic!("Unknown command T{}{} in tests transfer", source_name, destination_name)
+        ("A", "X") => cpu.TAX(),
+        ("A", "Y") => cpu.TAY(),
+        ("S", "X") => cpu.TSX(),
+        ("X", "A") => cpu.TXA(),
+        ("X", "S") => cpu.TXS(),
+        ("Y", "A") => cpu.TYA(),
+        _ => panic!(
+            "Unknown command T{}{} in tests transfer",
+            source_name, destination_name
+        ),
     }
 
     //check target
     match destination_name {
-        "A" => { assert_eq!(cpu.register_a, value) }
-        "X" => { assert_eq!(cpu.register_x, value) }
-        "Y" => { assert_eq!(cpu.register_y, value) }
-        "S" => { assert_eq!(cpu.stack_pointer, value) }
-        _ => { panic!("Unknown destination register {:} in transfer", source_name) }
+        "A" => {
+            assert_eq!(cpu.register_a, value)
+        }
+        "X" => {
+            assert_eq!(cpu.register_x, value)
+        }
+        "Y" => {
+            assert_eq!(cpu.register_y, value)
+        }
+        "S" => {
+            assert_eq!(cpu.stack_pointer, value)
+        }
+        _ => {
+            panic!("Unknown destination register {:} in transfer", source_name)
+        }
     }
 
     //check for flags. should be set unless the source is sp
@@ -413,21 +415,35 @@ fn prepare_transfer_tests(cpu: &mut CPU, source_name: &str, destination_name: &s
     } else {
         // check we did not change the old flags
         let zero_negative_mask = 0x82_u8;
-        assert_eq!(cpu.status | zero_negative_mask, old_flags | zero_negative_mask);
+        assert_eq!(
+            cpu.status | zero_negative_mask,
+            old_flags | zero_negative_mask
+        );
         // check that the zero and negative flags were changed
         assert_eq!(cpu.get_status_n(), value >= 0x80);
         assert_eq!(cpu.get_status_z(), value == 0);
     }
 }
 
-
 #[test]
 fn test_transfer() {
     let mut cpu = CPU::new();
-    for value in get_random_u8_values() { prepare_transfer_tests(&mut cpu, "A", "X", value) }
-    for value in get_random_u8_values() { prepare_transfer_tests(&mut cpu, "A", "Y", value) }
-    for value in get_random_u8_values() { prepare_transfer_tests(&mut cpu, "S", "X", value) }
-    for value in get_random_u8_values() { prepare_transfer_tests(&mut cpu, "X", "A", value) }
-    for value in get_random_u8_values() { prepare_transfer_tests(&mut cpu, "X", "S", value) }
-    for value in get_random_u8_values() { prepare_transfer_tests(&mut cpu, "Y", "A", value) }
+    for value in get_random_u8_values() {
+        prepare_transfer_tests(&mut cpu, "A", "X", value)
+    }
+    for value in get_random_u8_values() {
+        prepare_transfer_tests(&mut cpu, "A", "Y", value)
+    }
+    for value in get_random_u8_values() {
+        prepare_transfer_tests(&mut cpu, "S", "X", value)
+    }
+    for value in get_random_u8_values() {
+        prepare_transfer_tests(&mut cpu, "X", "A", value)
+    }
+    for value in get_random_u8_values() {
+        prepare_transfer_tests(&mut cpu, "X", "S", value)
+    }
+    for value in get_random_u8_values() {
+        prepare_transfer_tests(&mut cpu, "Y", "A", value)
+    }
 }

@@ -5,11 +5,9 @@ use super::CPU;
 impl CPU {
     pub fn massive_switch(&mut self, op_code: u8) -> bool {
         match op_code {
-
             ///////////////////////
             //// register_ops /////
             ///////////////////////
-
 
             // CPX : Compare X Register
             0xE0 => {
@@ -390,7 +388,6 @@ impl CPU {
             //// interrupts /////
             /////////////////////
 
-
             // RTI : Return from Interrupt
             0x40 => {
                 self.program_counter += 1;
@@ -403,13 +400,12 @@ impl CPU {
                 self.program_counter += 1;
                 let addressing_mode = AddressingMode::NoneAddressing;
                 self.BRK();
-                return false
+                return false;
             }
 
             ////////////////
             //// no_op /////
             ////////////////
-
 
             // NOP : No Operation
             0xEA => {
@@ -421,7 +417,6 @@ impl CPU {
             ///////////////////////////
             //// arithmatic_logic /////
             ///////////////////////////
-
 
             // ADC : Add with Carry
             0x69 => {
@@ -969,7 +964,6 @@ impl CPU {
             //// control_flow /////
             ///////////////////////
 
-
             // BCC : Branch if Carry Clear
             0x90 => {
                 self.program_counter += 1;
@@ -1078,7 +1072,6 @@ impl CPU {
             //// stack_related /////
             ////////////////////////
 
-
             // PHA : Push Accumulator
             0x48 => {
                 self.program_counter += 1;
@@ -1110,7 +1103,6 @@ impl CPU {
             //////////////////////////
             //// status_register /////
             //////////////////////////
-
 
             // CLC : Clear Carry Flag
             0x18 => {
@@ -1160,7 +1152,7 @@ impl CPU {
                 let addressing_mode = AddressingMode::NoneAddressing;
                 self.SEI();
             }
-            _ => panic!("opcode {:} is not supported", op_code)
+            _ => panic!("opcode {:} is not supported", op_code),
         }
         true
     }

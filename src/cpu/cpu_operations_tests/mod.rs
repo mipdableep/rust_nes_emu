@@ -1,5 +1,5 @@
 mod arithmetic_logic;
-mod status_register;
-mod interrupts_nop_stack;
 mod control_flow;
+mod interrupts_nop_stack;
 mod register_ops;
+mod status_register;

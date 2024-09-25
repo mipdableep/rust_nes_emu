@@ -1,7 +1,17 @@
 use crate::cpu::CPU;
 
-fn set_add_test(cpu: &mut CPU, reg_a: u8, operand: u8, should_overflow: bool, should_carry: bool, old_carry: bool) {
-    let expected_result = operand.wrapping_add(reg_a).wrapping_add(match old_carry { true => 1, false => 0});
+fn set_add_test(
+    cpu: &mut CPU,
+    reg_a: u8,
+    operand: u8,
+    should_overflow: bool,
+    should_carry: bool,
+    old_carry: bool,
+) {
+    let expected_result = operand.wrapping_add(reg_a).wrapping_add(match old_carry {
+        true => 1,
+        false => 0,
+    });
     cpu.set_carry(old_carry);
     cpu.register_a = reg_a;
     cpu.ADC(operand);
@@ -43,7 +53,6 @@ fn ADC() {
     set_add_test(&mut cpu, 0x080, 0x7f, false, true, true);
     set_add_test(&mut cpu, 0x40, 0x40, true, false, true);
     set_add_test(&mut cpu, 0x3f, 0x40, true, false, true);
-
 }
 
 fn get_random_u8_pairs() -> Vec<[u8; 2]> {
@@ -199,10 +208,11 @@ fn LSR_memory() {
 }
 
 fn set_ror_accumulator_test(cpu: &mut CPU, reg_a: u8) {
-    let expected_result = reg_a >> 1 | match cpu.get_status_c() {
-        true => { 0x80 }
-        false => { 0x00 }
-    }; // integer division
+    let expected_result = reg_a >> 1
+        | match cpu.get_status_c() {
+            true => 0x80,
+            false => 0x00,
+        }; // integer division
     let should_carry = reg_a % 2 == 1;
     cpu.register_a = reg_a;
     cpu.ROR_accumulator();
@@ -226,10 +236,11 @@ fn ROR_accumulator() {
 fn set_ror_memory_tests(cpu: &mut CPU, value: u8, address: u16) {
     cpu.write_memory(address, value);
     let should_carry = value % 2 == 1;
-    let expected_result = value >> 1 | match cpu.get_status_c() {
-        true => { 0x80 }
-        false => { 0x00 }
-    }; // integer division
+    let expected_result = value >> 1
+        | match cpu.get_status_c() {
+            true => 0x80,
+            false => 0x00,
+        }; // integer division
     cpu.ROR_memory(address);
     assert_eq!(cpu.read_memory(address), expected_result);
     assert_eq!(cpu.get_status_z(), cpu.read_memory(address) == 0);
@@ -257,12 +268,12 @@ fn ROR_memory() {
     assert_eq!(cpu.read_memory(address), 0b01101100);
 }
 
-
 fn set_rol_accumulator_test(cpu: &mut CPU, reg_a: u8) {
-    let expected_result = reg_a << 1 | match cpu.get_status_c() {
-        true => { 0x01 }
-        false => { 0x00 }
-    }; // integer division
+    let expected_result = reg_a << 1
+        | match cpu.get_status_c() {
+            true => 0x01,
+            false => 0x00,
+        }; // integer division
     let should_carry = reg_a & 0x80 == 0x80;
     cpu.register_a = reg_a;
     cpu.ROL_accumulator();
@@ -286,10 +297,11 @@ fn ROL_accumulator() {
 fn set_rol_memory_tests(cpu: &mut CPU, value: u8, address: u16) {
     cpu.write_memory(address, value);
     let should_carry = value & 0x80 == 0x80;
-    let expected_result = value << 1 | match cpu.get_status_c() {
-        true => { 0x01 }
-        false => { 0x00 }
-    }; // integer division
+    let expected_result = value << 1
+        | match cpu.get_status_c() {
+            true => 0x01,
+            false => 0x00,
+        }; // integer division
     cpu.ROL_memory(address);
     assert_eq!(cpu.read_memory(address), expected_result);
     assert_eq!(cpu.get_status_z(), cpu.read_memory(address) == 0);
@@ -317,7 +329,6 @@ fn ROL_memory() {
     assert_eq!(cpu.read_memory(address), 0b11001001);
 }
 
-
 fn set_bit_test(cpu: &mut CPU, operand: u8) {
     let old_reg_a = cpu.register_a;
     cpu.BIT(operand);
@@ -339,7 +350,6 @@ fn BIT() {
     set_bit_test(&mut cpu, 0x5d);
     set_bit_test(&mut cpu, 0x6a);
 }
-
 
 fn set_eor_test(cpu: &mut CPU, reg_a: u8, operand: u8) {
     let expected_result = operand ^ reg_a;
@@ -377,8 +387,18 @@ fn ORA() {
     }
 }
 
-fn set_sub_test(cpu: &mut CPU, reg_a: u8, operand: u8, should_overflow: bool, should_carry: bool, old_carry: bool) {
-    let expected_result = reg_a.wrapping_sub(operand.wrapping_add(match old_carry { true => 0, false => 1}));
+fn set_sub_test(
+    cpu: &mut CPU,
+    reg_a: u8,
+    operand: u8,
+    should_overflow: bool,
+    should_carry: bool,
+    old_carry: bool,
+) {
+    let expected_result = reg_a.wrapping_sub(operand.wrapping_add(match old_carry {
+        true => 0,
+        false => 1,
+    }));
     cpu.set_carry(old_carry);
     cpu.register_a = reg_a;
     cpu.SBC(operand);
@@ -394,30 +414,20 @@ fn set_sub_test(cpu: &mut CPU, reg_a: u8, operand: u8, should_overflow: bool, sh
 fn SBC() {
     let mut cpu: CPU = CPU::new();
     // manual tests
-    set_sub_test(&mut cpu, 0x00,0x00, false, true, true);
-    set_sub_test(&mut cpu, 0x00,0x00, false, false, false);
-    set_sub_test(&mut cpu, 0x40,0xbf, true, false, false);
-    set_sub_test(&mut cpu, 0x40,0x7f, false, false, false);
-    set_sub_test(&mut cpu, 0x40,0x7f, false, false, true);
+    set_sub_test(&mut cpu, 0x00, 0x00, false, true, true);
+    set_sub_test(&mut cpu, 0x00, 0x00, false, false, false);
+    set_sub_test(&mut cpu, 0x40, 0xbf, true, false, false);
+    set_sub_test(&mut cpu, 0x40, 0x7f, false, false, false);
+    set_sub_test(&mut cpu, 0x40, 0x7f, false, false, true);
 
     // generated some random values using the python script and chugged them to https://skilldrick.github.io/easy6502/
-    set_sub_test(&mut cpu, 0x34,0xCC, false, false, true);
-    set_sub_test(&mut cpu, 0xCA,0x77, true, true, true);
-    set_sub_test(&mut cpu, 0x97,0x77, true, true, true);
-    set_sub_test(&mut cpu, 0xAF,0xFF, false, false, false);
-    set_sub_test(&mut cpu, 0x35,0xBB, false, false, true);
-    set_sub_test(&mut cpu, 0x79,0x33, false, true, false);
-    set_sub_test(&mut cpu, 0x08,0x66, false, false, true);
-    set_sub_test(&mut cpu, 0xE7,0x66, false, true, false);
-    set_sub_test(&mut cpu, 0xE1,0xAA, false, true, false);
-
-
-
-
-
-
-
-
-
-
+    set_sub_test(&mut cpu, 0x34, 0xCC, false, false, true);
+    set_sub_test(&mut cpu, 0xCA, 0x77, true, true, true);
+    set_sub_test(&mut cpu, 0x97, 0x77, true, true, true);
+    set_sub_test(&mut cpu, 0xAF, 0xFF, false, false, false);
+    set_sub_test(&mut cpu, 0x35, 0xBB, false, false, true);
+    set_sub_test(&mut cpu, 0x79, 0x33, false, true, false);
+    set_sub_test(&mut cpu, 0x08, 0x66, false, false, true);
+    set_sub_test(&mut cpu, 0xE7, 0x66, false, true, false);
+    set_sub_test(&mut cpu, 0xE1, 0xAA, false, true, false);
 }

@@ -1,6 +1,5 @@
 use super::super::CPU;
 
-
 #[allow(non_snake_case)]
 impl CPU {
     ///  Branch if Carry Clear

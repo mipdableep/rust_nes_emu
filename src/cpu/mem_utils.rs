@@ -89,7 +89,8 @@ impl CPU {
             }
             AddressingMode::Indirect_Y => {
                 let zero_page_mem_location: u16 = self.read_memory(self.program_counter) as u16;
-                self.read_memory_2_bytes_with_overflow(zero_page_mem_location).wrapping_add(self.register_y as u16)
+                self.read_memory_2_bytes_with_overflow(zero_page_mem_location)
+                    .wrapping_add(self.register_y as u16)
             }
             AddressingMode::Accumulator => 0,
             AddressingMode::NoneAddressing => {
