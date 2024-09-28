@@ -2,9 +2,9 @@ use super::{AddressingMode, CPU};
 use rand_chacha::rand_core::{RngCore, SeedableRng};
 use rand_chacha::ChaCha12Rng;
 
-fn get_full_memory_from_seed(seed: u8) -> [u8; 1 << 16] {
+fn get_zeropage_from_seed(seed: u8) -> [u8; 256] {
     let mut generator = ChaCha12Rng::from_seed([seed; 32]);
-    let mut result: [u8; 1 << 16] = [0; 1 << 16];
+    let mut result: [u8; 1 << 8] = [0; 1 << 8];
     for i in 0..0xFF {
         result[i] = generator.next_u32() as u8;
     }
@@ -12,9 +12,9 @@ fn get_full_memory_from_seed(seed: u8) -> [u8; 1 << 16] {
 }
 
 #[test]
-fn test_read_memory() {
+fn test_read_memory_zeropage() {
     let mut cpu = CPU::new();
-    let memory_contents = get_full_memory_from_seed(42);
+    let memory_contents = get_zeropage_from_seed(42);
     for i in 0..=0xff {
         cpu.write_memory(i, memory_contents[i as usize]);
     }
@@ -24,9 +24,9 @@ fn test_read_memory() {
 }
 
 #[test]
-fn test_write_memory() {
+fn test_write_memory_zeropage() {
     let mut cpu = CPU::new();
-    let memory_contents = get_full_memory_from_seed(42);
+    let memory_contents = get_zeropage_from_seed(42);
     for i in 0..=0xff {
         cpu.write_memory(i, memory_contents[i as usize]);
     }
@@ -38,7 +38,7 @@ fn test_write_memory() {
 #[test]
 fn test_read_memory_2_bytes() {
     let mut cpu = CPU::new();
-    let memory_contents: [u8; 0xffff + 1] = get_full_memory_from_seed(42);
+    let memory_contents: [u8; 0xff + 1] = get_zeropage_from_seed(42);
     for i in 0..=0xff {
         cpu.write_memory(i, memory_contents[i as usize]);
     }
