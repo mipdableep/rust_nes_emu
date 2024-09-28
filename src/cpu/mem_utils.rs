@@ -68,14 +68,12 @@ impl CPU {
                 ((self.program_counter + 2) as i32 + signed_offset as i32) as u16
             }
             AddressingMode::Absolute => self.read_memory_2_bytes(self.program_counter),
-            AddressingMode::Absolute_X => {
-                self.read_memory_2_bytes((self.program_counter) as u16)
-                    .wrapping_add(self.register_x as u16) as u16
-            }
-            AddressingMode::Absolute_Y => {
-                self.read_memory_2_bytes((self.program_counter) as u16)
-                    .wrapping_add(self.register_y as u16) as u16
-            }
+            AddressingMode::Absolute_X => self
+                .read_memory_2_bytes(self.program_counter)
+                .wrapping_add(self.register_x as u16),
+            AddressingMode::Absolute_Y => self
+                .read_memory_2_bytes(self.program_counter)
+                .wrapping_add(self.register_y as u16),
             AddressingMode::Indirect => {
                 self.read_memory_2_bytes(self.read_memory_2_bytes(self.program_counter))
             }
