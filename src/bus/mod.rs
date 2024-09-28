@@ -1,4 +1,7 @@
+#[cfg(test)]
+mod mem_tests;
 pub(crate) mod memory;
+
 use memory_mapping_constants::*;
 
 pub(crate) mod memory_mapping_constants {
@@ -20,8 +23,8 @@ pub(crate) mod memory_mapping_constants {
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct Bus {
-    cpu_ram: [u8; (CPU_RAM_MEM_UNIQUE_SIZE + 1) as usize],
-    ppu_registers: [u8; (PPU_REGISTERS_UNIQUE_SIZE + 1) as usize],
+    cpu_ram: [u8; CPU_RAM_MEM_UNIQUE_SIZE as usize],
+    ppu_registers: [u8; PPU_REGISTERS_UNIQUE_SIZE as usize],
     io_and_audio_registers:
         [u8; (IO_AND_AUDIO_REGISTERS_END - IO_AND_AUDIO_REGISTERS_START + 1) as usize],
     unmapped_seg: [u8; (UNMAPPED_SEG_END - UNMAPPED_SEG_START + 1) as usize],
@@ -32,8 +35,8 @@ pub struct Bus {
 impl Bus {
     pub fn new() -> Bus {
         Bus {
-            cpu_ram: [0; (CPU_RAM_MEM_UNIQUE_SIZE + 1) as usize],
-            ppu_registers: [0; (PPU_REGISTERS_UNIQUE_SIZE + 1) as usize],
+            cpu_ram: [0; CPU_RAM_MEM_UNIQUE_SIZE as usize],
+            ppu_registers: [0; PPU_REGISTERS_UNIQUE_SIZE as usize],
             io_and_audio_registers: [0; (IO_AND_AUDIO_REGISTERS_END - IO_AND_AUDIO_REGISTERS_START
                 + 1) as usize],
             unmapped_seg: [0; (UNMAPPED_SEG_END - UNMAPPED_SEG_START + 1) as usize],
