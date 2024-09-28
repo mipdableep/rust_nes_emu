@@ -61,7 +61,11 @@ impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
 
     fn handle_user_input(&mut self) {
         // the collect is to be able to not borrow self in the poll iter, maybe will change in the future
-        for event in self.event_pump.poll_iter().collect::<Vec<Event>>() {
+        loop {
+            let event = match self.event_pump.poll_event() {
+                Some(i) => i,
+                None => break,
+            };
             match event {
                 Event::Quit { .. }
                 | Event::KeyDown {
