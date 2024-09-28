@@ -16,7 +16,7 @@ fn test_read_memory() {
     let mut cpu = CPU::new();
     let memory_contents = get_full_memory_from_seed(42);
     for i in 0..=0xff {
-        cpu.memory[i] = memory_contents[i];
+        cpu.write_memory(i, memory_contents[i as usize]);
     }
     for i in 0..=0xff {
         assert_eq!(cpu.read_memory(i), memory_contents[i as usize]);

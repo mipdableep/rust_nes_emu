@@ -51,7 +51,9 @@ impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
             0xa2, 0x00, 0xa9, 0x01, 0x81, 0x10, 0x60, 0xa2, 0x00, 0xea, 0xea, 0xca, 0xd0, 0xfb,
             0x60,
         ];
-        self.cpu.memory[0x0600..(0x0600 + game_code.len())].copy_from_slice(&game_code[..]);
+        for i in 0x0600..0x0600 + game_code.len() as u16 {
+            self.cpu.write_memory(i, game_code[i as usize]);
+        }
         self.cpu.program_counter = 0x600;
         self.cpu.write_memory(0xFFFC, 0x00);
         self.cpu.write_memory(0xFFFD, 0x06); // mem[0xFFFC] = 0x0600, little endian
@@ -124,7 +126,7 @@ impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
                 self.update_actual_texture();
             }
 
-            let opcode = self.cpu.memory[self.cpu.program_counter as usize];
+            let opcode = self.cpu.read_memory(self.cpu.program_counter);
             if debug {
                 println!(
                     "pc {:}, opcode {:}, args {:} {:}",

@@ -1,4 +1,5 @@
 use super::CPU;
+use crate::bus::Bus;
 
 #[test]
 fn new() {
@@ -9,7 +10,7 @@ fn new() {
     assert_eq!(c.register_x, 0);
     assert_eq!(c.register_y, 0);
     assert_eq!(c.stack_pointer, 0xff);
-    assert_eq!(c.memory, [0; 0x10000]);
+    assert_eq!(c.bus, Bus::new());
 }
 
 #[test]

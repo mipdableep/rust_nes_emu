@@ -1,3 +1,4 @@
+use crate::bus::Bus;
 use crate::cpu::CPU;
 
 const STACK_START: u16 = 0x1ff;
@@ -52,7 +53,7 @@ fn PHP_and_PLP() {
 }
 
 fn check_cpu_not_changed(cpu: &CPU) {
-    assert_eq!(cpu.memory, [0; 0x10000]);
+    assert_eq!(cpu.bus, Bus::new());
     assert_eq!(cpu.register_a, 0);
     assert_eq!(cpu.register_x, 0);
     assert_eq!(cpu.register_y, 0);

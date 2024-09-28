@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod mem_tests;
 
+use crate::bus::memory::Mem;
 use crate::cpu::CPU;
 
 #[derive(Debug)]
@@ -25,23 +26,21 @@ pub enum AddressingMode {
 
 impl CPU {
     pub fn read_memory(&self, addr: u16) -> u8 {
-        self.memory[addr as usize]
+        self.bus.read_memory(addr)
     }
 
     pub fn read_memory_2_bytes(&self, addr: u16) -> u16 {
-        let low = self.read_memory(addr) as u16;
-        let high = self.read_memory(addr + 1) as u16;
-        (high << 8) | (low as u16)
+        self.bus.read_memory_2_bytes(addr)
     }
 
     pub fn read_memory_2_bytes_with_overflow(&self, addr: u16) -> u16 {
-        let low = self.read_memory(addr) as u16;
-        let high = self.read_memory(addr.wrapping_add(1)) as u16;
+        let low = self.bus.read_memory(addr) as u16;
+        let high = self.bus.read_memory(addr.wrapping_add(1)) as u16;
         (high << 8) | (low as u16)
     }
 
     pub fn write_memory(&mut self, addr: u16, data: u8) {
-        self.memory[addr as usize] = data;
+        self.bus.write_memory(addr, data);
     }
 
     pub fn convert_mode_to_val(&self, mode: AddressingMode) -> u8 {

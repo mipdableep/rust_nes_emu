@@ -5,6 +5,8 @@ mod cpu_operations_tests;
 mod cpu_tests;
 mod massive_switch;
 pub mod mem_utils;
+use crate::bus::memory_mapping_constants::PRG_ROM_START;
+use crate::bus::Bus;
 
 const STACK_END: u16 = 0x100;
 
@@ -16,7 +18,7 @@ pub struct CPU {
     pub register_x: u8,
     pub register_y: u8,
     pub stack_pointer: u8,
-    pub memory: [u8; 0xFFFF + 1],
+    pub bus: Bus,
 }
 
 impl CPU {
@@ -28,13 +30,13 @@ impl CPU {
             register_x: 0,
             register_y: 0,
             stack_pointer: 0xff,
-            memory: [0; 0xFFFF + 1],
+            bus: Bus::new(),
         }
     }
 
     pub fn load(&mut self, program: Vec<u8>) {
-        self.memory[0x8000..(0x8000 + program.len())].copy_from_slice(&program[..]);
-        self.program_counter = 0x8000;
+        self.bus.prg_rom[0..(0 + program.len())].copy_from_slice(&program[..]);
+        self.program_counter = PRG_ROM_START;
     }
 
     pub fn get_status_n(&self) -> bool {
