@@ -1,5 +1,6 @@
+mod cartrige;
 #[cfg(test)]
-mod mem_tests;
+pub mod mem_tests;
 pub(crate) mod memory;
 
 use memory_mapping_constants::*;
