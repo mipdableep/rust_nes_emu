@@ -2,12 +2,12 @@ use crate::bus::memory_mapping_constants::*;
 
 #[derive(Debug, PartialEq)]
 pub enum Mirroring {
-    VERTICAL,
-    HORIZONTAL,
-    FOUR_SCREEN,
+    Vertical,
+    Horizontal,
+    FourScreen,
 }
 
-pub struct Cartrige {
+pub struct Cartridge {
     pub prg_rom: Vec<u8>,
     pub chr_rom: Vec<u8>,
     pub mapper: u8,
@@ -16,7 +16,7 @@ pub struct Cartrige {
 
 static NES_TAG: [u8; 4] = [b'N', b'E', b'S', 0x1A];
 
-impl Cartrige {
+impl Cartridge {
     pub fn new(raw_dump: &Vec<u8>) -> Result<Self, &str> {
         let tag = &raw_dump[0..=3];
         let prg_rom_size_16kb = raw_dump[4];
@@ -34,11 +34,11 @@ impl Cartrige {
         let mapper = (control_byte_2 & 0b11110000) | (control_byte_1 & 0b11110000) >> 4;
         // if ctrl b 1 bit 3 on - 4 screen. if not - match bit 0
         let screen_mirroring = if control_byte_1 & 0b1000 != 0 {
-            Mirroring::FOUR_SCREEN
+            Mirroring::FourScreen
         } else {
             match control_byte_1 & 0b1 {
-                0 => Mirroring::HORIZONTAL,
-                1 => Mirroring::VERTICAL,
+                0 => Mirroring::Horizontal,
+                1 => Mirroring::Vertical,
                 _ => unreachable!(),
             }
         };

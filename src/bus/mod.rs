@@ -1,4 +1,4 @@
-mod cartrige;
+mod cartridge;
 #[cfg(test)]
 pub mod mem_tests;
 pub(crate) mod memory;
