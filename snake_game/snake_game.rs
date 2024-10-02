@@ -52,7 +52,7 @@ impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
             0x60,
         ];
         for i in 0x0600..0x0600 + game_code.len() as u16 {
-            self.cpu.write_memory(i, game_code[i as usize]);
+            self.cpu.write_memory(i, game_code[i as usize - 0x600]);
         }
         self.cpu.program_counter = 0x600;
         self.cpu.write_memory(0xFFFC, 0x00);
