@@ -3,7 +3,7 @@ pub enum Mirroring {
     Vertical,
     Horizontal,
     FourScreen,
-    Unloaded
+    Unloaded,
 }
 
 pub struct Cartridge {
