@@ -63,10 +63,7 @@ impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
     }
 
     fn load_from_dump(&mut self) {
-        let bytes = std::fs::read(
-            r"<YOUR PATH TO snake.nes HERE>",
-        )
-        .unwrap();
+        let bytes = std::fs::read(r"<YOUR PATH TO snake.nes HERE>").unwrap();
         self.cpu.bus.cartridge.load_from_dump(&bytes);
         self.cpu.program_counter = self.cpu.read_memory_2_bytes(0xFFFC);
     }
