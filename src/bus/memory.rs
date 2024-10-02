@@ -70,7 +70,7 @@ impl Mem for Bus {
                 self.unmapped_seg[(addr - UNMAPPED_SEG_START) as usize]
             }
             PRG_RAM_START..=PRG_RAM_END => self.prg_ram[(addr - PRG_RAM_START) as usize],
-            PRG_ROM_START..=PRG_ROM_END => self.prg_rom[(addr - PRG_ROM_START) as usize],
+            PRG_ROM_START..=PRG_ROM_END => self.cartridge.read_prg_rom(addr - PRG_ROM_START),
         }
     }
 }

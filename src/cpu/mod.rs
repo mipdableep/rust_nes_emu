@@ -35,7 +35,7 @@ impl CPU {
     }
 
     pub fn load(&mut self, program: Vec<u8>) {
-        self.bus.prg_rom[0..(0 + program.len())].copy_from_slice(&program[..]);
+        self.bus.cartridge.raw_load(program);
         self.program_counter = PRG_ROM_START;
     }
 

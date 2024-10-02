@@ -3,6 +3,7 @@ mod cartridge;
 pub mod mem_tests;
 pub(crate) mod memory;
 
+use crate::bus::cartridge::Cartridge;
 use memory_mapping_constants::*;
 
 pub(crate) mod memory_mapping_constants {
@@ -30,7 +31,7 @@ pub struct Bus {
         [u8; (IO_AND_AUDIO_REGISTERS_END - IO_AND_AUDIO_REGISTERS_START + 1) as usize],
     unmapped_seg: [u8; (UNMAPPED_SEG_END - UNMAPPED_SEG_START + 1) as usize],
     prg_ram: [u8; (PRG_RAM_END - PRG_RAM_START + 1) as usize],
-    pub prg_rom: [u8; (PRG_ROM_END - PRG_ROM_START + 1) as usize],
+    pub cartridge: Cartridge,
 }
 
 impl Bus {
@@ -42,7 +43,7 @@ impl Bus {
                 + 1) as usize],
             unmapped_seg: [0; (UNMAPPED_SEG_END - UNMAPPED_SEG_START + 1) as usize],
             prg_ram: [0; (PRG_RAM_END - PRG_RAM_START + 1) as usize],
-            prg_rom: [0; (PRG_ROM_END - PRG_ROM_START + 1) as usize],
+            cartridge: Cartridge::new(),
         }
     }
 }

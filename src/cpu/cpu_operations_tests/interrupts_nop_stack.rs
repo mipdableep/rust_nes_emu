@@ -2,7 +2,6 @@ use crate::bus::Bus;
 use crate::cpu::CPU;
 
 const STACK_START: u16 = 0x1ff;
-#[allow(unused_variables)]
 const BRK_ADDRESS: u16 = 0xfffe;
 
 #[test]
@@ -84,11 +83,16 @@ fn RTI() {
 #[allow(non_snake_case)]
 fn BRK() {
     let mut cpu: CPU = CPU::new();
-    // ignore this tests for now - they need to write to the ROM
-    // cpu.write_memory(BRK_ADDRESS, 0xaa);
-    // cpu.write_memory(BRK_ADDRESS + 1, 0xbb);
-    // cpu.BRK();
-    // assert_eq!(cpu.program_counter, 0xbbaa);
+
+    // prepare the prg rom
+    let mut program_vector = vec![0_u8; 0x8000];
+    program_vector[BRK_ADDRESS as usize - 0x8000] = 0xaa;
+    program_vector[BRK_ADDRESS as usize + 1 - 0x8000] = 0xbb;
+    cpu.bus.cartridge.raw_load(program_vector);
+
+    cpu.BRK();
+
+    assert_eq!(cpu.program_counter, 0xbbaa);
     cpu.program_counter = 0x800;
     cpu.write_memory(0x800, 0);
     assert!(!cpu.massive_switch(0x00)); // assert the massive switch returns false

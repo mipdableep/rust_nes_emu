@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Mirroring {
     Vertical,
     Horizontal,
@@ -6,6 +6,7 @@ pub enum Mirroring {
     Unloaded,
 }
 
+#[derive(Debug, Eq, PartialEq)]
 pub struct Cartridge {
     pub prg_rom: Vec<u8>,
     pub chr_rom: Vec<u8>,
@@ -57,9 +58,22 @@ impl Cartridge {
         let prg_rom_start = 16 + if trainer_512_byte_exists { 512 } else { 0 };
         let chr_rom_start = prg_rom_start + prg_rom_size_u8;
 
+        assert!(prg_rom_size_u8 == 0x4000 || prg_rom_size_u8 == 0x8000); // assert the prg rom size is plausible
+
         self.prg_rom = raw_dump[prg_rom_start..(prg_rom_start + prg_rom_size_u8)].to_vec();
         self.chr_rom = raw_dump[chr_rom_start..(chr_rom_start + chr_vrom_size_u8)].to_vec();
         self.mapper = mapper;
         self.screen_mirroring = screen_mirroring;
+    }
+    pub fn raw_load(&mut self, program: Vec<u8>) {
+        self.prg_rom = program;
+    }
+
+    pub fn read_prg_rom(&self, mut addr: u16) -> u8 {
+        // get address mapped 0x0000 to 0x7FFF, and returns the corresponding ROM value
+        if self.prg_rom.len() == 0x4000 {
+            addr -= 0x4000;
+        }
+        self.prg_rom[addr as usize]
     }
 }
