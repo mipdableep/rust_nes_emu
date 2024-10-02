@@ -77,8 +77,8 @@ pub fn get_random_u8_and_u16_pairs() -> Vec<(u16, u8)> {
     res.push((0x00fa, 0x00));
     res.push((0x5501, 0));
     res.push((0x1f01, 0x81));
-    res.push((0xffff, 0xff));
-    res.push((0xffff, 0x00));
+    res.push((0x7fff, 0xff));
+    res.push((0x7fff, 0x00));
     res.push((0x0000, 0x00));
     res.push((0x0000, 0xff));
     res.push((0x5501, 0x2a));

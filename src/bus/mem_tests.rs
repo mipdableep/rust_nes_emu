@@ -22,13 +22,11 @@ fn test_bus_memory_boundaries() {
     bus.write_memory(IO_AND_AUDIO_REGISTERS_END, 0x03);
     bus.write_memory(UNMAPPED_SEG_END, 0x04);
     bus.write_memory(PRG_RAM_END, 0x05);
-    bus.write_memory(PRG_ROM_END, 0x06);
     assert_eq!(*bus.cpu_ram.last().unwrap(), 0x01);
     assert_eq!(*bus.ppu_registers.last().unwrap(), 0x02);
     assert_eq!(*bus.io_and_audio_registers.last().unwrap(), 0x03);
     assert_eq!(*bus.unmapped_seg.last().unwrap(), 0x04);
     assert_eq!(*bus.prg_ram.last().unwrap(), 0x05);
-    assert_eq!(*bus.prg_rom.last().unwrap(), 0x06);
 }
 
 #[test]
@@ -64,8 +62,8 @@ fn test_ppu_reg_mirroring() {
 #[test]
 fn test_memory_retrieval() {
     let mut bus = Bus::new();
-    let memory = get_random_vector_from_seed(42, 0xFFFF);
-    for i in 0..=0xFFFF {
+    let memory = get_random_vector_from_seed(42, 0x7FFF);
+    for i in 0..=0x7FFF {
         bus.write_memory(i, memory[i as usize]);
         assert_eq!(bus.read_memory(i), memory[i as usize]);
     }

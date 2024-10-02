@@ -182,60 +182,60 @@ fn mode_to_mem_relative() {
 #[test]
 fn mode_to_mem_absolute() {
     let mut cpu = CPU::new();
-    cpu.load(vec![0xab, 0xcd, 0xfa, 0xa8]);
+    cpu.load(vec![0xab, 0x12, 0xfa, 0x75]);
 
-    cpu.write_memory(0xcdab, 11);
+    cpu.write_memory(0x12ab, 11);
     assert_eq!(11, cpu.convert_mode_to_val(AddressingMode::Absolute));
 
     cpu.program_counter += 2;
-    cpu.write_memory(0xa8fa, 22);
+    cpu.write_memory(0x75fa, 22);
     assert_eq!(22, cpu.convert_mode_to_val(AddressingMode::Absolute));
 }
 
 #[test]
 fn mode_to_mem_absolute_x() {
     let mut cpu = CPU::new();
-    cpu.load(vec![0xab, 0xcd, 0xfa, 0xa8]);
+    cpu.load(vec![0xab, 0x12, 0xfa, 0x75]);
     cpu.register_x = 48;
 
-    cpu.write_memory(0xcdab + 48, 11);
+    cpu.write_memory(0x12ab + 48, 11);
     assert_eq!(11, cpu.convert_mode_to_val(AddressingMode::Absolute_X));
 
     cpu.program_counter += 2;
     cpu.register_x = 183;
-    cpu.write_memory(0xa8fa + 183, 22);
+    cpu.write_memory(0x75fa + 183, 22);
     assert_eq!(22, cpu.convert_mode_to_val(AddressingMode::Absolute_X));
 }
 
 #[test]
 fn mode_to_mem_absolute_y() {
     let mut cpu = CPU::new();
-    cpu.load(vec![0xab, 0xcd, 0xfa, 0xa8]);
+    cpu.load(vec![0xab, 0x12, 0xfa, 0x75]);
     cpu.register_y = 48;
 
-    cpu.write_memory(0xcdab + 48, 11);
+    cpu.write_memory(0x12ab + 48, 11);
     assert_eq!(11, cpu.convert_mode_to_val(AddressingMode::Absolute_Y));
 
     cpu.program_counter += 2;
     cpu.register_y = 183;
-    cpu.write_memory(0xa8fa + 183, 22);
+    cpu.write_memory(0x75fa + 183, 22);
     assert_eq!(22, cpu.convert_mode_to_val(AddressingMode::Absolute_Y));
 }
 
 #[test]
 fn mode_to_mem_indirect() {
     let mut cpu = CPU::new();
-    cpu.load(vec![0xab, 0xcd, 0xfa, 0xa8]);
+    cpu.load(vec![0xab, 0x12, 0xfa, 0x75]);
 
-    cpu.write_memory(0xcdab_u16, 0x44);
-    cpu.write_memory(0xcdab_u16 + 1, 0xee);
-    cpu.write_memory(0xee44_u16, 11);
+    cpu.write_memory(0x12ab_u16, 0x44);
+    cpu.write_memory(0x12ab_u16 + 1, 0x66);
+    cpu.write_memory(0x6644_u16, 11);
     assert_eq!(11, cpu.convert_mode_to_val(AddressingMode::Indirect));
 
     cpu.program_counter += 2;
-    cpu.write_memory(0xa8fa_u16, 0x8f);
-    cpu.write_memory(0xa8fa_u16 + 1, 0xc3);
-    cpu.write_memory(0xc38f_u16, 0x8f);
+    cpu.write_memory(0x75fa_u16, 0x8f);
+    cpu.write_memory(0x75fa_u16 + 1, 0x4d);
+    cpu.write_memory(0x4d8f_u16, 0x8f);
     assert_eq!(0x8f, cpu.convert_mode_to_val(AddressingMode::Indirect));
 }
 
@@ -258,11 +258,11 @@ fn mod_to_mem_indirect_x() {
     // test with overflow
     cpu.register_x = 0x5a;
     cpu.write_memory(0x13, 0xbb);
-    cpu.write_memory(0x14, 0xaa);
-    cpu.write_memory(0xaabb, 0x60);
+    cpu.write_memory(0x14, 0x11);
+    cpu.write_memory(0x11bb, 0x60);
     cpu.load(vec![0xb9]); // 0xb9 + 0x5a = 0x113
     assert_eq!(
-        0xaabb,
+        0x11bb,
         cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_X)
     );
     assert_eq!(0x60, cpu.convert_mode_to_val(AddressingMode::Indirect_X));

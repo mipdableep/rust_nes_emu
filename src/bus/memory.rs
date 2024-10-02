@@ -35,7 +35,7 @@ impl Mem for Bus {
                 self.prg_ram[(addr - PRG_RAM_START) as usize] = data;
             }
             PRG_ROM_START..=PRG_ROM_END => {
-                self.prg_rom[(addr - PRG_ROM_START) as usize] = data;
+                panic!("trying to write to the ROM in address {addr}");
             }
         }
     }
