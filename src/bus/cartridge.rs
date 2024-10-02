@@ -52,8 +52,8 @@ impl Cartridge {
         };
         let trainer_512_byte_exists = control_byte_1 & 0b100 != 0;
 
-        let prg_rom_size_u8 = prg_rom_size_16kb as usize * 2048;
-        let chr_vrom_size_u8 = chr_vrom_size_8kb as usize * 1024;
+        let prg_rom_size_u8 = prg_rom_size_16kb as usize * 0x4000; // 0x4000 = 16k
+        let chr_vrom_size_u8 = chr_vrom_size_8kb as usize * 0x2000; // 0x2000 = 16k
 
         let prg_rom_start = 16 + if trainer_512_byte_exists { 512 } else { 0 };
         let chr_rom_start = prg_rom_start + prg_rom_size_u8;

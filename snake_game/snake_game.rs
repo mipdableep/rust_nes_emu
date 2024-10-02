@@ -55,8 +55,20 @@ impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
             self.cpu.write_memory(i, game_code[i as usize - 0x600]);
         }
         self.cpu.program_counter = 0x600;
-        self.cpu.write_memory(0xFFFC, 0x00);
-        self.cpu.write_memory(0xFFFD, 0x06); // mem[0xFFFC] = 0x0600, little endian
+
+        let mut program_vector = vec![0_u8; 0x8000];
+        program_vector[0xFFFC - 0x8000] = 0x00;
+        program_vector[0xFFFD - 0x8000] = 0x06;
+        self.cpu.bus.cartridge.raw_load(program_vector); // mem[0xFFFC] = 0x0600, little endian
+    }
+
+    fn load_from_dump(&mut self) {
+        let bytes = std::fs::read(
+            r"<YOUR PATH TO snake.nes HERE>",
+        )
+        .unwrap();
+        self.cpu.bus.cartridge.load_from_dump(&bytes);
+        self.cpu.program_counter = self.cpu.read_memory_2_bytes(0xFFFC);
     }
 
     fn handle_user_input(&mut self) {
@@ -257,6 +269,8 @@ fn main() {
         canvas: &mut canvas,
         is_paused: false,
     };
-    snake_game.load_snake_game();
+
+    // snake_game.load_snake_game();
+    snake_game.load_from_dump();
     snake_game.run_snake(false);
 }
