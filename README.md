@@ -78,3 +78,13 @@ cargo test
 cargo run --bin SNAKE
 ```
 
+There is even (kind of) cli! you can choose to load the snake game from a dump (.nes file found in snake_game directory)
+or "hard coded" (the values are hard coded in the code). You can also choose to see some kind of basic debug print (that
+prints the current pc, opcode, and two bytes after the opcode). Run it with
+
+```bash
+cargo run --bin SNAKE hard_coded/dump true/false
+```
+
+The values also have default values - dump and false (no debug print), but you must set the hard_coded/dump argument
+before passing the debug argument.
