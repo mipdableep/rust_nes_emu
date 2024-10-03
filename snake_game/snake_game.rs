@@ -54,12 +54,12 @@ impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
         for i in 0x0600..0x0600 + game_code.len() as u16 {
             self.cpu.write_memory(i, game_code[i as usize - 0x600]);
         }
-        self.cpu.program_counter = 0x600;
 
         let mut program_vector = vec![0_u8; 0x8000];
         program_vector[0xFFFC - 0x8000] = 0x00;
         program_vector[0xFFFD - 0x8000] = 0x06;
         self.cpu.bus.cartridge.raw_load(program_vector); // mem[0xFFFC] = 0x0600, little endian
+        self.cpu.program_counter = self.cpu.read_memory_2_bytes(0xFFFC); // set pc from 0xFFFC
     }
 
     fn load_from_dump(&mut self) {
@@ -231,7 +231,18 @@ fn byte_to_color(byte: u8) -> Color {
     }
 }
 
+fn load_game_based_on_string(snake_game: &mut SnakeGame, s: &str) {
+    match s {
+        "hard_coded" => snake_game.load_snake_game(),
+        "dump" => snake_game.load_from_dump(),
+        _ => panic!("Unknown argument \"{s}\". Currently support only \"hard_code\" and \"dump\""),
+    }
+}
+
 fn main() {
+    // use command line arguments to choose the load type
+    let args: Vec<String> = std::env::args().collect();
+
     // init sdl2
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
@@ -267,7 +278,31 @@ fn main() {
         is_paused: false,
     };
 
-    // snake_game.load_snake_game();
-    snake_game.load_from_dump();
-    snake_game.run_snake(false);
+    match args.len() {
+        1 => {
+            snake_game.load_from_dump();
+            snake_game.run_snake(false);
+        }
+        2 => {
+            let s = args[1].as_str();
+            load_game_based_on_string(&mut snake_game, s);
+            snake_game.run_snake(false);
+        }
+        3 => {
+            let s = args[1].as_str();
+            load_game_based_on_string(&mut snake_game, s);
+            let run_debug = args[2].as_str();
+            match run_debug {
+                "true" => snake_game.run_snake(true),
+                "false" => snake_game.run_snake(false),
+                _ => panic!("unknown debug value {run_debug}"),
+            }
+        }
+        _ => panic!(
+            "Unknown number of cli arguments {}. Currently supporting up to two args - \
+                    the first is hard_coded/dump (default dump), \
+                    and the second is debug print false/true (default false)",
+            args.len() - 1
+        ),
+    }
 }
