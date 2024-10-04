@@ -5,6 +5,9 @@ edition = "2021"
 [[bin]]
 name = "SNAKE"
 path = "snake_game/snake_game.rs"
+[[bin]]
+name = "gen_cpu_tests_logs"
+path = "full_tests/generate_cpu_logs.rs"
 
 [dependencies]
 rand = "0.8.5"

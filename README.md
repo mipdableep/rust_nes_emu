@@ -12,6 +12,8 @@
         * [Our Snake Game](#our-snake-game)
     * [How to run...](#how-to-run)
         * [Tests](#tests)
+            * [Unittests](#unittests)
+            * [Full CPU Tests](#full-cpu-tests)
         * [Snake game](#snake-game-1)
 
 <!-- TOC -->
@@ -70,9 +72,39 @@ auto-paused after death (and can be released by pressing the "P" key again, or b
 
 ### Tests
 
+#### Unittests
+
+Unittests are written in rust and can be run using
+
 ```bash
 cargo test
 ```
+
+#### Full CPU Tests
+
+We also have tests on the full CPU based on a known test suite for nes
+named [nestest](https://github.com/dbousamra/hnes/tree/master/roms/tests/cpu). The test contains a ROM (can be found in
+`full_tests/nestes.nes`), and the results of the ROM (`full_tests/nestes_result_good.log`). Our tests have two parts -
+first we emulate the Running of the `nestes.nes` using our cpu, and write the result after each opcode to `.txt` file in
+`full_tests` (this is in `.gitignore`). Then, we compare our result to the good result using a python script in the same
+directory.
+
+We check only upto line 5004, since there the opcode is 0x04, which is undocumented opcode (read about it!).
+
+To generate our logs run
+
+```bash
+cargo run --package nes_emulator --bin gen_cpu_tests_logs -- ./full_tests/nestest.nes ./full_tests/foo.txt
+```
+
+To run the python script, that both generate the logs (using a subprocess of the previous command) and compare them (
+using itself), run
+
+```bash
+python3 .\full_tests\compare_logs.py
+```
+
+You may need to install `pydantic` before running the script (`pip install pydantic`).
 
 ### Snake game
 
