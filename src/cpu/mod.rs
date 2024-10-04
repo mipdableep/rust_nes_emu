@@ -80,14 +80,14 @@ impl CPU {
         if decimal {
             self.status |= 0b00001000;
         } else {
-            self.status &= !0b01001000;
+            self.status &= !0b00001000;
         }
     }
     pub fn set_interrupt(&mut self, interrupt: bool) {
         if interrupt {
             self.status |= 0b00000100;
         } else {
-            self.status &= !0b01000100;
+            self.status &= !0b00000100;
         }
     }
     pub fn set_zero(&mut self, zero: bool) {
