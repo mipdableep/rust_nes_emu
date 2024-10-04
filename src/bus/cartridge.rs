@@ -72,7 +72,9 @@ impl Cartridge {
     pub fn read_prg_rom(&self, mut addr: u16) -> u8 {
         // get address mapped 0x0000 to 0x7FFF, and returns the corresponding ROM value
         if self.prg_rom.len() == 0x4000 {
-            addr -= 0x4000;
+            if addr >= 0x4000 {
+                addr -= 0x4000;
+            }
         }
         self.prg_rom[addr as usize]
     }
