@@ -266,6 +266,15 @@ fn mod_to_mem_indirect_x() {
         cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_X)
     );
     assert_eq!(0x60, cpu.convert_mode_to_val(AddressingMode::Indirect_X));
+    // test with overflow on page zero
+    cpu.register_x = 0x77;
+    cpu.write_memory(0xff, 0x11);
+    cpu.write_memory(0x00, 0x22);
+    cpu.load(vec![0x88]); // 0x88 + 0x77 = 0xff
+    assert_eq!(
+        0x2211,
+        cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_X)
+    );
 }
 
 #[test]

@@ -33,10 +33,12 @@ impl CPU {
         self.bus.read_memory_2_bytes(addr)
     }
 
-    pub fn read_memory_2_bytes_with_overflow(&self, addr: u16) -> u16 {
-        let low = self.bus.read_memory(addr) as u16;
-        let high = self.bus.read_memory(addr.wrapping_add(1)) as u16;
-        (high << 8) | (low as u16)
+    pub fn read_memory_2_bytes_with_overflow_page_zero(&self, addr: u8) -> u16 {
+        let low_byte_location = addr as u16;
+        let high_byte_location = addr.wrapping_add(1) as u16; // the +1 is before the access!!
+        let low = self.bus.read_memory(low_byte_location) as u16;
+        let high = self.bus.read_memory(high_byte_location) as u16;
+        (high << 8) | low
     }
 
     pub fn write_memory(&mut self, addr: u16, data: u8) {
@@ -81,11 +83,11 @@ impl CPU {
                 let zero_page_location: u8 = self
                     .register_x
                     .wrapping_add(self.read_memory(self.program_counter));
-                self.read_memory_2_bytes_with_overflow(zero_page_location as u16)
+                self.read_memory_2_bytes_with_overflow_page_zero(zero_page_location)
             }
             AddressingMode::Indirect_Y => {
-                let zero_page_mem_location: u16 = self.read_memory(self.program_counter) as u16;
-                self.read_memory_2_bytes_with_overflow(zero_page_mem_location)
+                let zero_page_mem_location = self.read_memory(self.program_counter);
+                self.read_memory_2_bytes_with_overflow_page_zero(zero_page_mem_location)
                     .wrapping_add(self.register_y as u16)
             }
             AddressingMode::Accumulator => 0,
