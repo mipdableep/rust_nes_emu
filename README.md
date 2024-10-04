@@ -3,7 +3,7 @@
 <!-- TOC -->
 
 * [Our Awsome NES Emulator](#our-awsome-nes-emulator)
-    * [Current Progress - ~25%](#current-progress---25)
+    * [Current Progress - ~35%](#current-progress---35)
     * [Background](#background)
         * [Why?](#why)
         * [How do we Code?](#how-do-we-code)
@@ -18,9 +18,9 @@
 
 <!-- TOC -->
 
-### Current Progress - ~25%
+### Current Progress - ~35%
 
-Just finished the cpu
+Just finished the cpu, and ROM loading
 
 ## Background
 
