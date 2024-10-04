@@ -8,9 +8,11 @@
         * [Why?](#why)
         * [How do we Code?](#how-do-we-code)
     * [Technical](#technical)
+    * [Snake Game!](#snake-game)
+        * [Our Snake Game](#our-snake-game)
     * [How to run...](#how-to-run)
         * [Tests](#tests)
-        * [Snake game](#snake-game)
+        * [Snake game](#snake-game-1)
 
 <!-- TOC -->
 
