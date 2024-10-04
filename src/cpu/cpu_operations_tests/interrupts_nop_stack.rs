@@ -44,10 +44,13 @@ fn PHP_and_PLP() {
         let ith_from_end = status_values.len() - 1 - i;
         assert_eq!(
             cpu.read_memory(STACK_START - ith_from_end as u16),
-            status_values[ith_from_end]
+            status_values[ith_from_end] | 0x30 // the break flag should always be set (also bit 6)!
         );
+        let old_bits_5_6_values = cpu.status & 0x30;
         cpu.PLP();
-        assert_eq!(cpu.status, status_values[ith_from_end]);
+        let new_bits_5_6_values = cpu.status & 0x30;
+        assert_eq!(cpu.status | 0x30, status_values[ith_from_end] | 0x30);
+        assert_eq!(old_bits_5_6_values, new_bits_5_6_values);
     }
     assert_eq!(cpu.stack_pointer, 0xff);
 }
@@ -77,6 +80,12 @@ fn RTI() {
     cpu.RTI();
     assert_eq!(cpu.program_counter, 0x58fa);
     assert_eq!(cpu.status, 0xcf); //ignore bits 4 and 5!
+    cpu.status = 0xff;
+    cpu.stack_push_u16(0x1f92);
+    cpu.stack_push(0x00);
+    cpu.RTI();
+    assert_eq!(cpu.program_counter, 0x1f92);
+    assert_eq!(cpu.status, 0x30); //ignore bits 4 and 5!
 }
 
 #[test]

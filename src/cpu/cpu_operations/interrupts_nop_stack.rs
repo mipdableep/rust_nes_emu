@@ -15,7 +15,7 @@ impl CPU {
 
     ///  Push Processor Status
     pub fn PHP(&mut self) {
-        self.stack_push(self.status);
+        self.stack_push_status();
     }
 
     ///  Pull Accumulator
@@ -26,7 +26,7 @@ impl CPU {
 
     ///  Pull Processor Status
     pub fn PLP(&mut self) {
-        self.status = self.stack_pull();
+        self.stack_pull_status();
     }
 
     ////////////////////////////
@@ -44,7 +44,7 @@ impl CPU {
 
     ///  Return from Interrupt
     pub fn RTI(&mut self) {
-        self.status |= self.stack_pull() & 0b11001111; // for some wierd reason, bits 4 and 5 are probably ignored
+        self.stack_pull_status(); // for some wierd reason, bits 4 and 5 are probably ignored
         self.program_counter = self.stack_pull_u16();
     }
 

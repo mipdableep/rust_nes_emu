@@ -129,6 +129,18 @@ impl CPU {
         let high = self.stack_pull() as u16;
         high << 8 | low
     }
+    pub fn stack_push_status(&mut self) {
+        // this function push the status register to the stack
+        // it mostly regular push, but it ignores the B flag (always set it)
+        // this also always set bit 6
+        // this is because those are not actual flags - and created only when pushing status to stack (via brk, php or interrupt)
+        self.stack_push(self.status | 0x30);
+    }
+    pub fn stack_pull_status(&mut self) {
+        // this function pulls the status register from the stack
+        // it mostly regular pull, but it ignores the B flag and bit 6 (just use the old values)
+        self.status = (self.stack_pull() & !0x30) | (self.status & 0x30);
+    }
 
     pub fn interpret(&mut self, program: Vec<u8>) {
         self.program_counter = 0;
