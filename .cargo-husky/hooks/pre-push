@@ -25,5 +25,19 @@ if [ $TEST_EXIT_CODE -ne 0 ]; then
   exit 1
 fi
 
+# Generate logs of running a ROM with out CPU, and compare to a good known ROM
+echo "Running with our emulator, and comparing to known results..."
+python3 full_tests/compare_logs.py
+
+# Capture the exit code of cargo test
+PYTHON_TEST_EXIT_CODE=$?
+
+# If the test fails, prevent the push
+if [ $PYTHON_TEST_EXIT_CODE -ne 0 ]; then
+  echo "Python test failed. Push aborted"
+  exit 2
+fi
+
+
 echo "Cargo test passed. unstashing and proceeding with push."
 exit 0
