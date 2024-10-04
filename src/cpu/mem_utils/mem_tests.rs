@@ -225,7 +225,7 @@ fn mode_to_mem_absolute_y() {
 #[test]
 fn mode_to_mem_indirect() {
     let mut cpu = CPU::new();
-    cpu.load(vec![0xab, 0x12, 0xfa, 0x75]);
+    cpu.load(vec![0xab, 0x12, 0xfa, 0x75, 0xff, 0x5d]);
 
     cpu.write_memory(0x12ab_u16, 0x44);
     cpu.write_memory(0x12ab_u16 + 1, 0x66);
@@ -237,6 +237,15 @@ fn mode_to_mem_indirect() {
     cpu.write_memory(0x75fa_u16 + 1, 0x4d);
     cpu.write_memory(0x4d8f_u16, 0x8f);
     assert_eq!(0x8f, cpu.convert_mode_to_val(AddressingMode::Indirect));
+
+    cpu.program_counter += 2; // check that we don't cross the page boundaries
+    cpu.write_memory(0x5dff_u16, 0x11);
+    cpu.write_memory(0x5d00_u16, 0x00);
+    cpu.write_memory(0x5e00_u16, 0x33); // should not be accessed!
+    cpu.write_memory(0x0011_u16, 0xf9);
+    cpu.write_memory(0x3311_u16, 0x03); // should not be accessed!
+
+    assert_eq!(0xf9, cpu.convert_mode_to_val(AddressingMode::Indirect));
 }
 
 #[test]

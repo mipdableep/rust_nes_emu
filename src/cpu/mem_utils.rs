@@ -33,9 +33,14 @@ impl CPU {
         self.bus.read_memory_2_bytes(addr)
     }
 
-    pub fn read_memory_2_bytes_with_overflow_page_zero(&self, addr: u8) -> u16 {
-        let low_byte_location = addr as u16;
-        let high_byte_location = addr.wrapping_add(1) as u16; // the +1 is before the access!!
+    pub fn read_memory_2_bytes_without_page_cross(&self, addr: u16) -> u16 {
+        // this function is like read 2 bytes, but does not cross the page boundary
+        // so if we ask for 12ff it brings the bytes from 12ff and 1200, and not 12ff and 1300
+        let low_byte_location = addr;
+        let high_byte_location = match addr & 0xff {
+            0xff => addr - 0xff,
+            _ => addr.wrapping_add(1),
+        };
         let low = self.bus.read_memory(low_byte_location) as u16;
         let high = self.bus.read_memory(high_byte_location) as u16;
         (high << 8) | low
@@ -76,18 +81,18 @@ impl CPU {
             AddressingMode::Absolute_Y => self
                 .read_memory_2_bytes(self.program_counter)
                 .wrapping_add(self.register_y as u16),
-            AddressingMode::Indirect => {
-                self.read_memory_2_bytes(self.read_memory_2_bytes(self.program_counter))
-            }
+            AddressingMode::Indirect => self.read_memory_2_bytes_without_page_cross(
+                self.read_memory_2_bytes(self.program_counter),
+            ),
             AddressingMode::Indirect_X => {
                 let zero_page_location: u8 = self
                     .register_x
                     .wrapping_add(self.read_memory(self.program_counter));
-                self.read_memory_2_bytes_with_overflow_page_zero(zero_page_location)
+                self.read_memory_2_bytes_without_page_cross(zero_page_location as u16)
             }
             AddressingMode::Indirect_Y => {
                 let zero_page_mem_location = self.read_memory(self.program_counter);
-                self.read_memory_2_bytes_with_overflow_page_zero(zero_page_mem_location)
+                self.read_memory_2_bytes_without_page_cross(zero_page_mem_location as u16)
                     .wrapping_add(self.register_y as u16)
             }
             AddressingMode::Accumulator => 0,
