@@ -1,4 +1,6 @@
 #[cfg(test)]
+mod counting_page_cross_for_cycles_test;
+#[cfg(test)]
 mod mem_tests;
 
 use crate::bus::memory::Mem;
