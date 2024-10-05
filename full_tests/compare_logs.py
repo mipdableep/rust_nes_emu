@@ -30,7 +30,7 @@ def read_our(our_lines, i):
 
 def read_their(their_lines, i):
     their_line = their_lines[i].strip("\n")
-    their_template = r'([A-F\d]{4})  ([A-F\d]{2}) (.){2} (.){2}  ([A-Z]){3} (.){27} A:([A-F\d]{2}) X:([A-F\d]{2}) Y:([A-F\d]{2}) P:([A-F\d]{2}) SP:([A-F\d]{2}) PPU:(.){7} CYC:(\d)*'
+    their_template = r'([A-F\d]{4})  ([A-F\d]{2}) (.{2}) (.{2})  ([A-Z]{3}) (.{27}) A:([A-F\d]{2}) X:([A-F\d]{2}) Y:([A-F\d]{2}) P:([A-F\d]{2}) SP:([A-F\d]{2}) PPU:(.{7}) CYC:(\d*)'
     match = re.match(their_template, their_line)
 
     pc = int(match.group(1), 16)
