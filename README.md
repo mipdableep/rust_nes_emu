@@ -89,12 +89,13 @@ first we emulate the Running of the `nestes.nes` using our cpu, and write the re
 `full_tests` (this is in `.gitignore`). Then, we compare our result to the good result using a python script in the same
 directory.
 
-We check only upto line 5004, since there the opcode is 0x04, which is undocumented opcode (read about it!).
+We check only upto line 5004, which is pc 0xc6bd, since there the opcode is 0x04, which is undocumented opcode (read
+about it!).
 
 To generate our logs run
 
 ```bash
-cargo run --package nes_emulator --bin gen_cpu_tests_logs -- ./full_tests/nestest.nes ./full_tests/foo.txt
+cargo run --package nes_emulator --bin gen_cpu_tests_logs -- ./full_tests/nestest.nes ./full_tests/foo.txt 0xc6bd
 ```
 
 To run the python script, that both generate the logs (using a subprocess of the previous command) and compare them (

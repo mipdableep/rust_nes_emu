@@ -47,10 +47,10 @@ if __name__ == "__main__":
     cwd = os.path.dirname(os.path.realpath(__file__))
     results_file_path = os.path.join(cwd, "our_result.txt")
     test_file = os.path.join(cwd, "nestest.nes")
-    proc = subprocess.run(["cargo", "run", "--bin", "gen_cpu_tests_logs", "--", test_file, results_file_path])
+    proc = subprocess.run(["cargo", "run", "--bin", "gen_cpu_tests_logs", "--", test_file, results_file_path, "0xc6bd"])
     if proc.returncode != 0:
-        print(
-            "Cargo generation of cpu tests did not end successfully. Probably just the unimplemented unofiicial opcodes")
+        print("Cargo generation of cpu tests did not end successfully.")
+        exit(1)
     with open(results_file_path) as f:
         our_lines = f.readlines()
     with open(os.path.join(cwd, "nestest_result_good.log")) as f:
