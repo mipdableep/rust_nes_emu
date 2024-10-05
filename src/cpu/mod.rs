@@ -144,6 +144,16 @@ impl CPU {
         self.status = (self.stack_pull() & !0x30) | (self.status & 0x30);
     }
 
+    pub fn increase_cpu_idle_cycles(&mut self, inc: u8) {
+        // if we want to say certain action took x cycles, we just tell the cpu to rest in the next x cycles
+        self.bus.cpu_idle_cycles += inc;
+    }
+
+    pub fn decrease_cpu_idle_cycles(&mut self, dec: u8) {
+        // same thing, every cycle we decrease the number of cycles we need to wait
+        self.bus.cpu_idle_cycles -= dec;
+    }
+
     pub fn interpret(&mut self, program: Vec<u8>) {
         self.program_counter = 0;
 
