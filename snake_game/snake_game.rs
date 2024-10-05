@@ -11,7 +11,7 @@ use std::thread::sleep;
 
 const SCREEN_START: u16 = 0x0200;
 const SCREEN_SIZE: usize = 32;
-const SLEEP_TIME_NANOS: u128 = 5_000;
+const SLEEP_TIME_NANOS: u128 = 1_000;
 const SCREEN_FACTOR: f32 = 10.0;
 
 struct SnakeGame<'a, 'sdl> {
@@ -149,7 +149,7 @@ impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
                     self.cpu.read_memory(self.cpu.program_counter + 2)
                 );
             }
-            if !self.cpu.massive_switch(opcode) {
+            if !self.cpu.run_one_cycle() {
                 // game over
                 self.is_paused = true;
                 self.draw_pause_symbol(); // draw pause

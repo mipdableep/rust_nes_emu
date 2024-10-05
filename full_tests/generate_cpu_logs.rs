@@ -4,18 +4,23 @@ use std::io::Write;
 use std::path::Path;
 use std::u16;
 trait GenLogs {
-    fn get_status_string(&mut self, opcode: u8) -> String;
+    fn get_status_string(&mut self, opcode: u8, cycles: u64) -> String;
     fn run_and_write_to_file(&mut self, file_path: &Path, last_line: u16);
     fn load_test(&mut self, path: &Path);
 }
 
 impl GenLogs for CPU {
-    fn get_status_string(&mut self, opcode: u8) -> String {
+    fn get_status_string(&mut self, opcode: u8, cycles: u64) -> String {
         let pc_string = format!(" pc: {:#04x}", self.program_counter);
         let opcode_string = format!(" opcode: {:#02x}", opcode);
         let registers_string = format!(
-            " A: {:#02x}, X: {:#02x}, Y: {:#02x}, SP: {:#02x}, Status: {:#02x}",
-            self.register_a, self.register_x, self.register_y, self.stack_pointer, self.status
+            " A: {:#02x}, X: {:#02x}, Y: {:#02x}, SP: {:#02x}, Status: {:#02x}, Cycles: {:}",
+            self.register_a,
+            self.register_x,
+            self.register_y,
+            self.stack_pointer,
+            self.status,
+            cycles
         );
         let mut final_string: String = "".to_owned();
         final_string.push_str(&pc_string);
@@ -30,17 +35,20 @@ impl GenLogs for CPU {
             .append(true)
             .open(file_path)
             .unwrap();
+        let mut cycles = 7;
         loop {
             let opcode = self.read_memory(self.program_counter);
-            writeln!(file, "{}", self.get_status_string(opcode)).unwrap();
+            if self.bus.cpu_idle_cycles == 0 {
+                writeln!(file, "{}", self.get_status_string(opcode, cycles)).unwrap();
+            }
+
+            self.run_one_cycle();
 
             if self.program_counter == last_line {
                 // run only up to a specific line
                 return;
             }
-            if !self.massive_switch(opcode) {
-                return;
-            }
+            cycles += 1;
         }
     }
 
