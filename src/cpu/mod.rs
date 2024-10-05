@@ -154,13 +154,27 @@ impl CPU {
         self.bus.cpu_idle_cycles -= dec;
     }
 
+    pub fn run_one_cycle(&mut self) -> bool {
+        let mut return_value: bool = true;
+        if self.bus.cpu_idle_cycles == 0 {
+            let opcode = self.read_memory(self.program_counter);
+            return_value = self.massive_switch(opcode);
+        }
+        self.decrease_cpu_idle_cycles(1);
+        return_value
+    }
+
     pub fn interpret(&mut self, program: Vec<u8>) {
         self.program_counter = 0;
 
         loop {
-            let opcode = program[self.program_counter as usize];
-            if !self.massive_switch(opcode) {
-                return;
+            if self.bus.cpu_idle_cycles == 0 {
+                let opcode = program[self.program_counter as usize];
+                if !self.massive_switch(opcode) {
+                    return;
+                }
+            } else {
+                self.decrease_cpu_idle_cycles(1);
             }
         }
     }

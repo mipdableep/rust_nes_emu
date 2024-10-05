@@ -4,7 +4,7 @@ mod mem_tests;
 use crate::bus::memory::Mem;
 use crate::cpu::CPU;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 #[allow(non_camel_case_types)]
 pub enum AddressingMode {
     Immediate,
@@ -22,6 +22,10 @@ pub enum AddressingMode {
     Accumulator,
     Relative,
     Indirect,
+}
+
+pub fn check_if_on_different_pages(addr1: u16, addr2: u16) -> bool {
+    (addr1 & 0xFF00) != (addr2 & 0xFF00)
 }
 
 impl CPU {
@@ -96,9 +100,31 @@ impl CPU {
                     .wrapping_add(self.register_y as u16)
             }
             AddressingMode::Accumulator => 0,
-            AddressingMode::NoneAddressing => {
-                panic!("Unimplemented mode {:?}", mode)
+            AddressingMode::NoneAddressing => 0,
+        }
+    }
+
+    pub fn detect_page_cross(&self, addressing_mode: AddressingMode) -> bool {
+        // check if page cross happened while fetching the value
+        match addressing_mode {
+            AddressingMode::Absolute_X => check_if_on_different_pages(
+                self.read_memory_2_bytes(self.program_counter),
+                self.convert_mode_to_operand_mem_address(addressing_mode),
+            ),
+            AddressingMode::Absolute_Y => check_if_on_different_pages(
+                self.read_memory_2_bytes(self.program_counter),
+                self.convert_mode_to_operand_mem_address(addressing_mode),
+            ),
+            AddressingMode::Indirect_Y => {
+                let zero_page_mem_location = self.read_memory(self.program_counter);
+                let address_before_adding_y =
+                    self.read_memory_2_bytes_without_page_cross(zero_page_mem_location as u16);
+                check_if_on_different_pages(
+                    address_before_adding_y,
+                    self.convert_mode_to_operand_mem_address(addressing_mode),
+                )
             }
+            _ => false,
         }
     }
 }
