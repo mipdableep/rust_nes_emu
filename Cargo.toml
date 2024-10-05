@@ -10,6 +10,7 @@ name = "gen_cpu_tests_logs"
 path = "full_tests/generate_cpu_logs.rs"
 
 [dependencies]
+phf = { version = "0.11.2", features = ["macros"] }
 rand = "0.8.5"
 rand_chacha = "0.3.1"
 sdl2 = "0.37.0"

@@ -5,6 +5,8 @@ mod cpu_operations_tests;
 mod cpu_tests;
 mod massive_switch;
 pub mod mem_utils;
+mod opcodes;
+
 use crate::bus::memory_mapping_constants::PRG_ROM_START;
 use crate::bus::Bus;
 

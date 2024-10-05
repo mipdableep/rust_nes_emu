@@ -1,8 +1,7 @@
-# This file takes the opcodes_with_cycles json from https://github.com/ericTheEchidna/65C02-JSON/blob/main/opcodes_65c02.json
+# This file takes the opcodes_with_cycles json from https://gist.github.com/benhess02/3873f6e5f305cd22ee5e1067d080c016
 # and formats it to be more usable
 
 import json
-import pydantic
 from pydantic import BaseModel
 
 
@@ -11,8 +10,12 @@ class Instruction(BaseModel):
     bytes: int
     base_cycles: int
     increase_on_page_cross: bool
-    is_branch: bool
     address_mode: str
+
+    def to_string_rust_format(self) -> str:
+        return (f"{self.opcode}_u8 => OpcodeMetadata{{opcode: {self.opcode}, bytes: {self.bytes}, "
+                f"base_cycles: {self.base_cycles}, addressing_mode: AddressingMode::{self.address_mode}, "
+                f"increase_on_page_cross: {str(self.increase_on_page_cross).lower()} }}")
 
 
 x = {'address_mode': 'Immediate',
@@ -27,29 +30,28 @@ with open("./opcodes_6502.json") as f:
 our_instruction_list = []
 
 for instruction in instruction_set:
-    for opcode, opcode_metadata in instruction["opcodes"].items():
-        list_of_matching_instructions = [instruction_set_without_cycles[i] for i in
-                                         range(len(instruction_set_without_cycles)) if
-                                         instruction_set_without_cycles[i]["opcode"].lower() == opcode.lower()]
-        if not list_of_matching_instructions:
-            continue
-        if len(list_of_matching_instructions) != 1:
-            print("Found more than one matching opcode")
-            exit(1)
-        address_mode = list_of_matching_instructions[0]["mode"]
-
-        instruction_bytes = int(opcode_metadata["bytes"])
-        base_cycles = int(opcode_metadata["cycles"].split(" ")[0])
-        is_branch = "branch" in instruction["description"].lower()
-        if is_branch:
-            increase_on_page_cross = True  # always true for branch
-        else:
-            increase_on_page_cross = "+1" in opcode_metadata["cycles"].lower()
-
-        our_instruction_list.append(Instruction(opcode=opcode, bytes=instruction_bytes, base_cycles=base_cycles,
-                                                increase_on_page_cross=increase_on_page_cross, is_branch=is_branch,
-                                                address_mode=address_mode))
-
-        print(our_instruction_list[-1])
+    if bool(instruction["illegal"]):
+        continue
+    opcode = '0x{:02X}'.format(instruction["opcode"])
+    list_of_matching_instructions = [instruction_set_without_cycles[i] for i in
+                                     range(len(instruction_set_without_cycles)) if
+                                     instruction_set_without_cycles[i]["opcode"].lower() == opcode.lower()]
+    if not list_of_matching_instructions:
+        continue
+    if len(list_of_matching_instructions) != 1:
+        print("Found more than one matching opcode")
+        exit(1)
+    address_mode = list_of_matching_instructions[0]["mode"]
+    instruction_bytes = list_of_matching_instructions[0]["bytes"]
+    base_cycles = int(instruction["cycles"])
+    is_branch = False
+    increase_on_page_cross = instruction["pageBoundaryCycle"]
+    our_instruction_list.append(Instruction(opcode=opcode, bytes=instruction_bytes, base_cycles=base_cycles,
+                                            increase_on_page_cross=increase_on_page_cross, is_branch=is_branch,
+                                            address_mode=address_mode))
 
 assert (len(our_instruction_list) == len(instruction_set_without_cycles))
+print("pub const OPCODES_METADATA: phf::Map<u8, OpcodeMetadata> = phf_map! {")
+for instruction in our_instruction_list:
+    print(instruction.to_string_rust_format() + ",")
+print("};")
