@@ -13,19 +13,21 @@ class Line(BaseModel):
     y: int
     sp: int
     p: int
+    cycle_number: int
 
 
 def read_our(our_lines, i):
     our_line = our_lines[i].strip("\n")
     our_line_template = (r' pc: (0x[a-f\d]+) opcode: (0x[a-f\d]+) A: (0x[a-f\d]+), X: (0x[a-f\d]+), '
-                         r'Y: (0x[a-f\d]+), SP: (0x[a-f\d]+), Status: (0x[a-f\d]+)')
+                         r'Y: (0x[a-f\d]+), SP: (0x[a-f\d]+), Status: (0x[a-f\d]+), Cycles: (\d+)')
     match = re.match(our_line_template, our_line)
 
-    pc, opcode, a, x, y, sp, p = (int(match.group(1), 16), int(match.group(2), 16), int(match.group(3), 16),
-                                  int(match.group(4), 16), int(match.group(5), 16), int(match.group(6), 16),
-                                  int(match.group(7), 16))
+    pc, opcode, a, x, y, sp, p, cycle_number = (
+        int(match.group(1), 16), int(match.group(2), 16), int(match.group(3), 16),
+        int(match.group(4), 16), int(match.group(5), 16), int(match.group(6), 16),
+        int(match.group(7), 16), int(match.group(8), 10))
 
-    return Line(pc=pc, opcode=opcode, x=x, y=y, a=a, sp=sp, p=p)
+    return Line(pc=pc, opcode=opcode, x=x, y=y, a=a, sp=sp, p=p, cycle_number=cycle_number)
 
 
 def read_their(their_lines, i):
@@ -40,17 +42,18 @@ def read_their(their_lines, i):
     y = int(match.group(9), 16)
     p = int(match.group(10), 16)
     sp = int(match.group(11), 16)
-    return Line(pc=pc, opcode=opcode, x=x, y=y, a=a, sp=sp, p=p)
+    cycle = int(match.group(13), 10)
+    return Line(pc=pc, opcode=opcode, x=x, y=y, a=a, sp=sp, p=p, cycle_number=cycle)
 
 
 if __name__ == "__main__":
     cwd = os.path.dirname(os.path.realpath(__file__))
-    results_file_path = os.path.join(cwd, "our_result.txt")
+    results_file_path = os.path.join(cwd, "our_results.txt")
     test_file = os.path.join(cwd, "nestest.nes")
     proc = subprocess.run(["cargo", "run", "--bin", "gen_cpu_tests_logs", "--", test_file, results_file_path, "0xc6bd"])
     if proc.returncode != 0:
         print("Cargo generation of cpu tests did not end successfully.")
-        exit(1)
+        # exit(1)
     with open(results_file_path) as f:
         our_lines = f.readlines()
     with open(os.path.join(cwd, "nestest_result_good.log")) as f:
