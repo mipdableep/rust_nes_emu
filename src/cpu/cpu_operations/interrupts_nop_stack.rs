@@ -3,7 +3,7 @@ use super::super::CPU;
 const BRK_ADDRESS: u16 = 0xfffe;
 
 #[allow(non_snake_case)]
-impl CPU {
+impl<'a> CPU<'a> {
     /////////////////////////////
     /////// STACK RELATED ///////
     /////////////////////////////

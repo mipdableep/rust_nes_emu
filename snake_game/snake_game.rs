@@ -1,3 +1,4 @@
+use nes_emulator::bus::Bus;
 use nes_emulator::cpu::CPU;
 use rand::rngs::ThreadRng;
 use rand::{thread_rng, Rng};
@@ -15,7 +16,7 @@ const SLEEP_TIME_NANOS: u128 = 1_000;
 const SCREEN_FACTOR: f32 = 10.0;
 
 struct SnakeGame<'a, 'sdl> {
-    cpu: CPU,
+    cpu: CPU<'a>,
     event_pump: EventPump,
     screen_state: [u8; 32 * 32 * 3],
     rng_gen: ThreadRng,
@@ -268,8 +269,9 @@ fn main() {
 
     let current_frame = [0_u8; 32 * 32 * 3];
     let rng = thread_rng();
+    let mut bus = Bus::new();
     let mut snake_game = SnakeGame {
-        cpu: CPU::new(),
+        cpu: CPU::new(&mut bus),
         event_pump,
         screen_state: current_frame,
         rng_gen: rng,

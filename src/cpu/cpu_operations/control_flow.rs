@@ -2,7 +2,7 @@ use super::super::CPU;
 use crate::cpu::mem_utils::check_if_on_different_pages;
 
 #[allow(non_snake_case)]
-impl CPU {
+impl<'a> CPU<'a> {
     ///  Branch if Carry Clear
     pub fn BCC(&mut self, new_address: u16) {
         if !self.get_status_c() {

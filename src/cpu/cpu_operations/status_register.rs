@@ -1,7 +1,7 @@
 use super::super::CPU;
 
 #[allow(non_snake_case)]
-impl CPU {
+impl<'a> CPU<'a> {
     ///  Clear Carry Flag
     pub fn CLC(&mut self) {
         self.set_carry(false);

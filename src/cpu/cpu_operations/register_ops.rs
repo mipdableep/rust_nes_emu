@@ -1,7 +1,7 @@
 use super::super::CPU;
 
 #[allow(non_snake_case)]
-impl CPU {
+impl<'a> CPU<'a> {
     fn compare(&mut self, register: u8, operand: u8) {
         // compare register to operand and set flags
         if register == operand {

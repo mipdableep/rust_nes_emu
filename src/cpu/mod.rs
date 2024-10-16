@@ -13,18 +13,18 @@ use crate::bus::Bus;
 const STACK_END: u16 = 0x100;
 
 #[derive(Debug)]
-pub struct CPU {
+pub struct CPU<'a> {
     pub register_a: u8,
     pub status: u8,
     pub program_counter: u16,
     pub register_x: u8,
     pub register_y: u8,
     pub stack_pointer: u8,
-    pub bus: Bus,
+    pub bus: &'a mut Bus,
 }
 
-impl CPU {
-    pub fn new() -> Self {
+impl<'a> CPU<'a> {
+    pub fn new(bus: &'a mut Bus) -> Self {
         CPU {
             register_a: 0,
             status: 0,
@@ -32,7 +32,7 @@ impl CPU {
             register_x: 0,
             register_y: 0,
             stack_pointer: 0xff,
-            bus: Bus::new(),
+            bus: bus,
         }
     }
 

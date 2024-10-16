@@ -30,7 +30,7 @@ pub fn check_if_on_different_pages(addr1: u16, addr2: u16) -> bool {
     (addr1 & 0xFF00) != (addr2 & 0xFF00)
 }
 
-impl CPU {
+impl<'a> CPU<'a> {
     pub fn read_memory(&self, addr: u16) -> u8 {
         self.bus.read_memory(addr)
     }

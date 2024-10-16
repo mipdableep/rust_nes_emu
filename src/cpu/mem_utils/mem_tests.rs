@@ -1,4 +1,5 @@
 use super::{AddressingMode, CPU};
+use crate::bus::Bus;
 use rand_chacha::rand_core::{RngCore, SeedableRng};
 use rand_chacha::ChaCha12Rng;
 
@@ -13,7 +14,8 @@ fn get_zeropage_from_seed(seed: u8) -> [u8; 256] {
 
 #[test]
 fn test_read_memory_zeropage() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     let memory_contents = get_zeropage_from_seed(42);
     for i in 0..=0xff {
         cpu.write_memory(i, memory_contents[i as usize]);
@@ -25,7 +27,8 @@ fn test_read_memory_zeropage() {
 
 #[test]
 fn test_write_memory_zeropage() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     let memory_contents = get_zeropage_from_seed(42);
     for i in 0..=0xff {
         cpu.write_memory(i, memory_contents[i as usize]);
@@ -37,7 +40,8 @@ fn test_write_memory_zeropage() {
 
 #[test]
 fn test_read_memory_2_bytes() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     let memory_contents: [u8; 0xff + 1] = get_zeropage_from_seed(42);
     for i in 0..=0xff {
         cpu.write_memory(i, memory_contents[i as usize]);
@@ -53,14 +57,16 @@ fn test_read_memory_2_bytes() {
 #[test]
 #[should_panic]
 fn test_memory_violation() {
-    let cpu = CPU::new();
+    let mut bus = Bus::new();
+    let cpu = CPU::new(&mut bus);
     cpu.read_memory_2_bytes(0xffff);
 }
 
 #[test]
 fn mode_to_mem_addr_immediate() {
     let program = vec![5, 25, 3];
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     cpu.load(program.clone());
 
     assert_eq!(
@@ -83,7 +89,8 @@ fn mode_to_mem_addr_immediate() {
 
 #[test]
 fn mode_to_mem_addr_zeropage() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     cpu.write_memory(11, 24);
     cpu.write_memory(13, 21);
     cpu.write_memory(20, 15);
@@ -103,7 +110,8 @@ fn mode_to_mem_addr_zeropage() {
 
 #[test]
 fn mode_to_mem_zeropage_x() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     cpu.write_memory(11, 24);
     cpu.write_memory(13, 21);
     cpu.write_memory(20, 15);
@@ -126,7 +134,8 @@ fn mode_to_mem_zeropage_x() {
 
 #[test]
 fn mode_to_mem_zeropage_y() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     cpu.write_memory(11, 24);
     cpu.write_memory(13, 21);
     cpu.write_memory(20, 15);
@@ -149,7 +158,8 @@ fn mode_to_mem_zeropage_y() {
 
 #[test]
 fn mode_to_mem_relative() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     cpu.load(vec![15]);
     let pc = cpu.program_counter;
     assert_eq!(
@@ -181,7 +191,8 @@ fn mode_to_mem_relative() {
 
 #[test]
 fn mode_to_mem_absolute() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     cpu.load(vec![0xab, 0x12, 0xfa, 0x75]);
 
     cpu.write_memory(0x12ab, 11);
@@ -194,7 +205,8 @@ fn mode_to_mem_absolute() {
 
 #[test]
 fn mode_to_mem_absolute_x() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     cpu.load(vec![0xab, 0x12, 0xfa, 0x75]);
     cpu.register_x = 48;
 
@@ -209,7 +221,8 @@ fn mode_to_mem_absolute_x() {
 
 #[test]
 fn mode_to_mem_absolute_y() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     cpu.load(vec![0xab, 0x12, 0xfa, 0x75]);
     cpu.register_y = 48;
 
@@ -224,7 +237,8 @@ fn mode_to_mem_absolute_y() {
 
 #[test]
 fn mode_to_mem_indirect() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     cpu.load(vec![0xab, 0x12, 0xfa, 0x75, 0xff, 0x5d]);
 
     cpu.write_memory(0x12ab_u16, 0x44);
@@ -251,7 +265,8 @@ fn mode_to_mem_indirect() {
 #[test]
 fn mod_to_mem_indirect_x() {
     // based on http://www.emulator101.com/6502-addressing-modes.html
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     // test without wrapping
     cpu.register_x = 0x04;
     cpu.write_memory(0x24, 0x74);
@@ -289,7 +304,8 @@ fn mod_to_mem_indirect_x() {
 #[test]
 fn mod_to_mem_indirect_y() {
     // based on http://www.emulator101.com/6502-addressing-modes.html
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     // test without wrapping
     cpu.register_y = 0x10;
     cpu.write_memory(0x86, 0x28);

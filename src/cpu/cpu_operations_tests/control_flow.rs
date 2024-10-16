@@ -1,9 +1,11 @@
+use crate::bus::Bus;
 use crate::cpu::CPU;
 
 #[test]
 #[allow(non_snake_case)]
 fn BCC_and_BCS() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     cpu.program_counter = 0x800;
     cpu.set_carry(true);
     cpu.BCS(0x7ff);
@@ -20,7 +22,8 @@ fn BCC_and_BCS() {
 #[test]
 #[allow(non_snake_case)]
 fn BEQ_and_BNQ() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     cpu.program_counter = 0x800;
     cpu.set_zero(true);
     cpu.BEQ(0x7ff);
@@ -37,7 +40,8 @@ fn BEQ_and_BNQ() {
 #[test]
 #[allow(non_snake_case)]
 fn BMI_and_BPL() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     cpu.program_counter = 0x800;
     cpu.set_negative(true);
     cpu.BMI(0x7ff);
@@ -54,7 +58,8 @@ fn BMI_and_BPL() {
 #[test]
 #[allow(non_snake_case)]
 fn BVC_and_BVS() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     cpu.program_counter = 0x800;
     cpu.set_overflow(true);
     cpu.BVS(0x7ff);
@@ -71,7 +76,8 @@ fn BVC_and_BVS() {
 #[allow(non_snake_case)]
 #[test]
 fn JMP() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     cpu.JMP(0x31a9);
     assert_eq!(cpu.program_counter, 0x31a9);
     cpu.JMP(0x15ff);
@@ -81,7 +87,8 @@ fn JMP() {
 #[allow(non_snake_case)]
 #[test]
 fn JSR() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     cpu.JSR(0x31a9);
     assert_eq!(cpu.program_counter, 0x31a9);
     cpu.JSR(0x15ff);
@@ -92,7 +99,8 @@ fn JSR() {
 #[allow(non_snake_case)]
 #[test]
 fn RTS() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     cpu.stack_pointer = 0xff;
     cpu.program_counter = 0x15df;
     cpu.JSR(0x41f5);

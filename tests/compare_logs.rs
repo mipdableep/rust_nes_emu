@@ -1,18 +1,20 @@
 #[cfg(test)]
 mod generate_cpu_logs {
 
+    use nes_emulator::bus::Bus;
     use nes_emulator::cpu::CPU;
     use std::fs::File;
     use std::io::Write;
     use std::path::Path;
     use std::u16;
+
     trait GenLogs {
         fn get_status_string(&mut self, opcode: u8, cycles: u64) -> String;
         fn run_and_write_to_file(&mut self, file_path: &Path, last_line: u16);
         fn load_test(&mut self, path: &Path);
     }
 
-    impl GenLogs for CPU {
+    impl<'a> GenLogs for CPU<'a> {
         fn get_status_string(&mut self, opcode: u8, cycles: u64) -> String {
             let pc_string = format!(" pc: {:#04x}", self.program_counter);
             let opcode_string = format!(" opcode: {:#02x}", opcode);
@@ -68,7 +70,8 @@ mod generate_cpu_logs {
     pub fn run_and_log_all(args: Vec<String>) {
         // let path = std::env::current_dir().unwrap();
         // println!("The current directory is {}", path.display());
-        let mut cpu = CPU::new();
+        let mut bus = Bus::new();
+        let mut cpu = CPU::new(&mut bus);
         let (test_file_path, result_file_path, line_upto) = match args.len() {
         4 => {
             let last_pc = args[3].as_str();

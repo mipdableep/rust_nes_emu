@@ -1,3 +1,4 @@
+use crate::bus::Bus;
 use crate::cpu::CPU;
 
 fn get_random_status_flag_values() -> Vec<u8> {
@@ -13,7 +14,8 @@ fn assert_mostly_unchanged(old: u8, new: u8, mask: u8) {
 #[test]
 #[allow(non_snake_case)]
 fn CLC_and_SEC() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     for p in get_random_status_flag_values() {
         cpu.status = p;
         cpu.SEC();
@@ -34,7 +36,8 @@ fn CLC_and_SEC() {
 #[test]
 #[allow(non_snake_case)]
 fn CLD_and_SED() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     for p in get_random_status_flag_values() {
         cpu.status = p;
         cpu.SED();
@@ -55,7 +58,8 @@ fn CLD_and_SED() {
 #[test]
 #[allow(non_snake_case)]
 fn CLI_and_SEI() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     for p in get_random_status_flag_values() {
         cpu.status = p;
         cpu.SEI();
@@ -76,7 +80,8 @@ fn CLI_and_SEI() {
 #[test]
 #[allow(non_snake_case)]
 fn CLV() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     for p in get_random_status_flag_values() {
         cpu.status = p;
         cpu.set_overflow(true);

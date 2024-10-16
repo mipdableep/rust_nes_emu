@@ -1,7 +1,7 @@
 use super::super::CPU;
 
 #[allow(non_snake_case)]
-impl CPU {
+impl<'a> CPU<'a> {
     ///  Add with Carry
     pub fn ADC(&mut self, operand: u8) {
         let res_as_u16: u16 = self.register_a as u16

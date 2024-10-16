@@ -1,3 +1,4 @@
+use crate::bus::Bus;
 use crate::cpu::CPU;
 
 fn set_add_test(
@@ -25,7 +26,8 @@ fn set_add_test(
 #[test]
 #[allow(non_snake_case)]
 fn ADC() {
-    let mut cpu: CPU = CPU::new();
+    let mut bus: Bus = Bus::new();
+    let mut cpu: CPU = CPU::new(&mut bus);
     set_add_test(&mut cpu, 5, 3, false, false, false);
     set_add_test(&mut cpu, 0, 0, false, false, false);
     set_add_test(&mut cpu, 1, 0xFF, false, true, false);
@@ -97,7 +99,8 @@ fn set_and_test(cpu: &mut CPU, reg_a: u8, operand: u8) {
 #[test]
 #[allow(non_snake_case)]
 fn AND() {
-    let mut cpu: CPU = CPU::new();
+    let mut bus: Bus = Bus::new();
+    let mut cpu: CPU = CPU::new(&mut bus);
     for test_pair in get_random_u8_pairs() {
         set_and_test(&mut cpu, test_pair[0], test_pair[1]);
     }
@@ -117,7 +120,8 @@ fn set_asl_accumulator_test(cpu: &mut CPU, reg_a: u8) {
 #[test]
 #[allow(non_snake_case)]
 fn ASL_accumulator() {
-    let mut cpu: CPU = CPU::new();
+    let mut bus: Bus = Bus::new();
+    let mut cpu: CPU = CPU::new(&mut bus);
     set_asl_accumulator_test(&mut cpu, 0);
     set_asl_accumulator_test(&mut cpu, 128);
     set_asl_accumulator_test(&mut cpu, 0x1f);
@@ -139,7 +143,8 @@ fn set_asl_memory_tests(cpu: &mut CPU, value: u8, address: u16) {
 #[test]
 #[allow(non_snake_case)]
 fn ASL_memory() {
-    let mut cpu: CPU = CPU::new();
+    let mut bus: Bus = Bus::new();
+    let mut cpu: CPU = CPU::new(&mut bus);
     // test for some memory addresses and values:
     for (address, value) in get_random_u8_and_u16_pairs() {
         set_asl_memory_tests(&mut cpu, value, address);
@@ -169,7 +174,8 @@ fn set_lsr_accumulator_test(cpu: &mut CPU, reg_a: u8) {
 #[test]
 #[allow(non_snake_case)]
 fn LSR_accumulator() {
-    let mut cpu: CPU = CPU::new();
+    let mut bus: Bus = Bus::new();
+    let mut cpu: CPU = CPU::new(&mut bus);
     set_lsr_accumulator_test(&mut cpu, 0);
     set_lsr_accumulator_test(&mut cpu, 128);
     set_lsr_accumulator_test(&mut cpu, 0x1f);
@@ -191,7 +197,8 @@ fn set_lsr_memory_tests(cpu: &mut CPU, value: u8, address: u16) {
 #[test]
 #[allow(non_snake_case)]
 fn LSR_memory() {
-    let mut cpu: CPU = CPU::new();
+    let mut bus: Bus = Bus::new();
+    let mut cpu: CPU = CPU::new(&mut bus);
     // test for some memory addresses and values:
     for (address, value) in get_random_u8_and_u16_pairs() {
         set_lsr_memory_tests(&mut cpu, value, address);
@@ -225,7 +232,8 @@ fn set_ror_accumulator_test(cpu: &mut CPU, reg_a: u8) {
 #[test]
 #[allow(non_snake_case)]
 fn ROR_accumulator() {
-    let mut cpu: CPU = CPU::new();
+    let mut bus: Bus = Bus::new();
+    let mut cpu: CPU = CPU::new(&mut bus);
     set_ror_accumulator_test(&mut cpu, 0);
     set_ror_accumulator_test(&mut cpu, 128);
     set_ror_accumulator_test(&mut cpu, 0x1f);
@@ -251,7 +259,8 @@ fn set_ror_memory_tests(cpu: &mut CPU, value: u8, address: u16) {
 #[test]
 #[allow(non_snake_case)]
 fn ROR_memory() {
-    let mut cpu: CPU = CPU::new();
+    let mut bus: Bus = Bus::new();
+    let mut cpu: CPU = CPU::new(&mut bus);
     // test for some memory addresses and values:
     for (address, value) in get_random_u8_and_u16_pairs() {
         set_ror_memory_tests(&mut cpu, value, address);
@@ -286,7 +295,8 @@ fn set_rol_accumulator_test(cpu: &mut CPU, reg_a: u8) {
 #[test]
 #[allow(non_snake_case)]
 fn ROL_accumulator() {
-    let mut cpu: CPU = CPU::new();
+    let mut bus: Bus = Bus::new();
+    let mut cpu: CPU = CPU::new(&mut bus);
     set_rol_accumulator_test(&mut cpu, 0);
     set_rol_accumulator_test(&mut cpu, 128);
     set_rol_accumulator_test(&mut cpu, 0x1f);
@@ -312,7 +322,8 @@ fn set_rol_memory_tests(cpu: &mut CPU, value: u8, address: u16) {
 #[test]
 #[allow(non_snake_case)]
 fn ROL_memory() {
-    let mut cpu: CPU = CPU::new();
+    let mut bus: Bus = Bus::new();
+    let mut cpu: CPU = CPU::new(&mut bus);
     // test for some memory addresses and values:
     for (address, value) in get_random_u8_and_u16_pairs() {
         set_rol_memory_tests(&mut cpu, value, address);
@@ -341,7 +352,8 @@ fn set_bit_test(cpu: &mut CPU, operand: u8) {
 #[test]
 #[allow(non_snake_case)]
 fn BIT() {
-    let mut cpu = CPU::new();
+    let mut bus = Bus::new();
+    let mut cpu = CPU::new(&mut bus);
     set_bit_test(&mut cpu, 0);
     set_bit_test(&mut cpu, 0x80);
     set_bit_test(&mut cpu, 0xff);
@@ -363,7 +375,8 @@ fn set_eor_test(cpu: &mut CPU, reg_a: u8, operand: u8) {
 #[test]
 #[allow(non_snake_case)]
 fn EOR() {
-    let mut cpu: CPU = CPU::new();
+    let mut bus: Bus = Bus::new();
+    let mut cpu: CPU = CPU::new(&mut bus);
     for test_pair in get_random_u8_pairs() {
         set_eor_test(&mut cpu, test_pair[0], test_pair[1]);
     }
@@ -381,7 +394,8 @@ fn set_ora_test(cpu: &mut CPU, reg_a: u8, operand: u8) {
 #[test]
 #[allow(non_snake_case)]
 fn ORA() {
-    let mut cpu: CPU = CPU::new();
+    let mut bus: Bus = Bus::new();
+    let mut cpu: CPU = CPU::new(&mut bus);
     for test_pair in get_random_u8_pairs() {
         set_ora_test(&mut cpu, test_pair[0], test_pair[1]);
     }
@@ -412,7 +426,8 @@ fn set_sub_test(
 #[test]
 #[allow(non_snake_case)]
 fn SBC() {
-    let mut cpu: CPU = CPU::new();
+    let mut bus: Bus = Bus::new();
+    let mut cpu: CPU = CPU::new(&mut bus);
     // manual tests
     set_sub_test(&mut cpu, 0x00, 0x00, false, true, true);
     set_sub_test(&mut cpu, 0x00, 0x00, false, false, false);

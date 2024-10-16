@@ -2,7 +2,7 @@ use super::CPU;
 use crate::cpu::opcodes::OPCODES_METADATA;
 
 #[allow(unused_variables)]
-impl CPU {
+impl<'a> CPU<'a> {
     pub fn massive_switch(&mut self, op_code: u8) -> bool {
         self.program_counter += 1;
 
