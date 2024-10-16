@@ -5,12 +5,6 @@ edition = "2021"
 [[bin]]
 name = "SNAKE"
 path = "snake_game/snake_game.rs"
-[[bin]]
-name = "gen_cpu_tests_logs"
-path = "full_tests/generate_cpu_logs.rs"
-[[bin]]
-name = "compare_cpu_logs"
-path = "full_tests/compare_logs.rs"
 
 [dependencies]
 phf = { version = "0.11.2", features = ["macros"] }
