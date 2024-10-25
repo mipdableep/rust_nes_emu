@@ -46,3 +46,12 @@ fn test_mirroring() {
     addr_reg.write_byte(0x12);
     assert_eq!(addr_reg.get_address_as_u16(), 0xab12 & 0x3fff);
 }
+
+#[test]
+fn test_read_last_value() {
+    let mut addr_reg = PPUAddressReg::new();
+    addr_reg.write_byte(0xab);
+    assert_eq!(addr_reg.read(), 0xab);
+    addr_reg.write_byte(0x12);
+    assert_eq!(addr_reg.read(), 0x12);
+}

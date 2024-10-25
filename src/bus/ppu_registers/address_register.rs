@@ -2,6 +2,7 @@ pub struct PPUAddressReg {
     high_byte: u8,
     low_byte: u8,
     is_next_write_high: bool,
+    last_byte: u8, // only to be able to simulate read
 }
 
 impl PPUAddressReg {
@@ -10,6 +11,7 @@ impl PPUAddressReg {
             high_byte: 0,
             low_byte: 0,
             is_next_write_high: true,
+            last_byte: 0,
         }
     }
 
@@ -29,6 +31,7 @@ impl PPUAddressReg {
             self.low_byte = byte;
         }
         self.is_next_write_high = !self.is_next_write_high;
+        self.last_byte = byte;
     }
 
     pub fn increment(&mut self, incr: u8) {
@@ -41,5 +44,9 @@ impl PPUAddressReg {
 
     pub fn get_latch(&self) -> bool {
         self.is_next_write_high
+    }
+
+    pub fn read(&self) -> u8 {
+        self.last_byte
     }
 }
