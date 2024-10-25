@@ -1,4 +1,4 @@
-use crate::ppu::ppu_registers::control_register::PPUControlRegister;
+use crate::bus::ppu_registers::control_register::PPUControlRegister;
 
 #[test]
 fn test_read_and_write() {

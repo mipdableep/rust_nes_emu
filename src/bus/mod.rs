@@ -2,9 +2,13 @@ mod cartridge;
 #[cfg(test)]
 pub mod mem_tests;
 pub(crate) mod memory;
+pub mod ppu_registers;
+#[cfg(test)]
+mod ppu_registers_tests;
 
 use crate::bus::cartridge::Cartridge;
 use memory_mapping_constants::*;
+use ppu_registers::PPURegisters;
 
 pub(crate) mod memory_mapping_constants {
     pub const CPU_RAM_MEM_START: u16 = 0x0000;
@@ -25,9 +29,10 @@ pub(crate) mod memory_mapping_constants {
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct Bus {
+    // cpu stuff
     pub cpu_idle_cycles: u8,
     cpu_ram: [u8; CPU_RAM_MEM_UNIQUE_SIZE as usize],
-    ppu_registers: [u8; PPU_REGISTERS_UNIQUE_SIZE as usize],
+    ppu_registers: PPURegisters,
     io_and_audio_registers:
         [u8; (IO_AND_AUDIO_REGISTERS_END - IO_AND_AUDIO_REGISTERS_START + 1) as usize],
     unmapped_seg: [u8; (UNMAPPED_SEG_END - UNMAPPED_SEG_START + 1) as usize],
@@ -40,7 +45,7 @@ impl Bus {
         Bus {
             cpu_idle_cycles: 0,
             cpu_ram: [0; CPU_RAM_MEM_UNIQUE_SIZE as usize],
-            ppu_registers: [0; PPU_REGISTERS_UNIQUE_SIZE as usize],
+            ppu_registers: PPURegisters::new(),
             io_and_audio_registers: [0; (IO_AND_AUDIO_REGISTERS_END - IO_AND_AUDIO_REGISTERS_START
                 + 1) as usize],
             unmapped_seg: [0; (UNMAPPED_SEG_END - UNMAPPED_SEG_START + 1) as usize],

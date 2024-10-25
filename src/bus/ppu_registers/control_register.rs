@@ -1,3 +1,4 @@
+#[derive(Debug, Eq, PartialEq)]
 pub struct PPUControlRegister {
     misc_settings: u8, // 7  bit  0
                        // ---- ----

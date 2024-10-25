@@ -1,3 +1,4 @@
+#[derive(Debug, Eq, PartialEq)]
 pub struct PPUAddressReg {
     high_byte: u8,
     low_byte: u8,

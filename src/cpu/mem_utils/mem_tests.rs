@@ -255,9 +255,9 @@ fn mode_to_mem_indirect() {
     cpu.program_counter += 2; // check that we don't cross the page boundaries
     cpu.write_memory(0x5dff_u16, 0x11);
     cpu.write_memory(0x5d00_u16, 0x00);
-    cpu.write_memory(0x5e00_u16, 0x33); // should not be accessed!
+    cpu.write_memory(0x5e00_u16, 0x55); // should not be accessed!
     cpu.write_memory(0x0011_u16, 0xf9);
-    cpu.write_memory(0x3311_u16, 0x03); // should not be accessed!
+    cpu.write_memory(0x5511_u16, 0x03); // should not be accessed!
 
     assert_eq!(0xf9, cpu.convert_mode_to_val(AddressingMode::Indirect));
 }
@@ -269,13 +269,13 @@ fn mod_to_mem_indirect_x() {
     let mut cpu = CPU::new(&mut bus);
     // test without wrapping
     cpu.register_x = 0x04;
-    cpu.write_memory(0x24, 0x74);
-    cpu.write_memory(0x25, 0x20);
-    cpu.write_memory(0x2074, 0x5a);
-    cpu.write_memory(0x2075, 0xbb);
-    cpu.load(vec![0x20]); // 0x20 + 0x04 = 0x24
+    cpu.write_memory(0x12, 0x74);
+    cpu.write_memory(0x13, 0x1f);
+    cpu.write_memory(0x1f74, 0x5a);
+    cpu.write_memory(0x1f75, 0xbb);
+    cpu.load(vec![0x0e]); // 0x0e + 0x04 = 0x12
     assert_eq!(
-        0x2074,
+        0x1f74,
         cpu.convert_mode_to_operand_mem_address(AddressingMode::Indirect_X)
     );
     assert_eq!(0x5a, cpu.convert_mode_to_val(AddressingMode::Indirect_X));

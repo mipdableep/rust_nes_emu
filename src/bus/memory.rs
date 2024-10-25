@@ -23,7 +23,7 @@ impl Mem for Bus {
                 let offset_from_start = addr - PPU_REGISTERS_START;
                 let canonical_offset_from_start = offset_from_start % PPU_REGISTERS_UNIQUE_SIZE;
                 let canonical_address = PPU_REGISTERS_START + canonical_offset_from_start;
-                self.ppu_registers[(canonical_address - PPU_REGISTERS_START) as usize] = data;
+                self.ppu_registers.write(canonical_address, data);
             }
             IO_AND_AUDIO_REGISTERS_START..=IO_AND_AUDIO_REGISTERS_END => {
                 self.io_and_audio_registers[(addr - IO_AND_AUDIO_REGISTERS_START) as usize] = data;
@@ -61,7 +61,8 @@ impl Mem for Bus {
                 let offset_from_start = addr - PPU_REGISTERS_START;
                 let canonical_offset_from_start = offset_from_start % PPU_REGISTERS_UNIQUE_SIZE;
                 let canonical_address = PPU_REGISTERS_START + canonical_offset_from_start;
-                self.ppu_registers[(canonical_address - PPU_REGISTERS_START) as usize]
+
+                self.ppu_registers.read(canonical_address)
             }
             IO_AND_AUDIO_REGISTERS_START..=IO_AND_AUDIO_REGISTERS_END => {
                 self.io_and_audio_registers[(addr - IO_AND_AUDIO_REGISTERS_START) as usize]

@@ -1,7 +1,3 @@
-mod ppu_registers;
-#[cfg(test)]
-mod ppu_registers_tests;
-
 use crate::bus::Bus;
 
 pub struct PPU<'a> {

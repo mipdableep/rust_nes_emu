@@ -1,4 +1,4 @@
-use crate::ppu::ppu_registers::address_register::PPUAddressReg;
+use crate::bus::ppu_registers::address_register::PPUAddressReg;
 
 #[test]
 fn test_initialization() {
