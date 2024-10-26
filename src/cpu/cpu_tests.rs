@@ -10,6 +10,7 @@ macro_rules! generate_cpu {
 }
 
 #[test]
+#[allow(unused_mut)]
 fn new() {
     generate_cpu!(c);
     assert_eq!(c.register_a, 0);
@@ -21,6 +22,7 @@ fn new() {
 }
 
 #[test]
+#[allow(unused_mut)]
 #[should_panic]
 fn panic_new() {
     generate_cpu!(cpu);
