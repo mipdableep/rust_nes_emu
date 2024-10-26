@@ -56,7 +56,7 @@ fn test_read_memory_2_bytes() {
 #[should_panic]
 fn test_memory_violation() {
     let mut bus = Bus::new();
-    let cpu = CPU::new(&mut bus);
+    let mut cpu = CPU::new(&mut bus);
     cpu.read_memory_2_bytes(0xffff);
 }
 

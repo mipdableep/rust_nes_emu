@@ -46,7 +46,8 @@ impl<'a> CPU<'a> {
         let should_carry: bool = address_value & 0x80 == 0x80;
         self.write_memory(address, address_value << 1);
         self.set_carry(should_carry);
-        self.set_zero_and_negative_flag(self.read_memory(address));
+        let result = self.read_memory(address);
+        self.set_zero_and_negative_flag(result);
     }
 
     ///  Bit Test

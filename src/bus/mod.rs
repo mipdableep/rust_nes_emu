@@ -2,11 +2,13 @@ mod cartridge;
 #[cfg(test)]
 pub mod mem_tests;
 pub(crate) mod memory;
+mod ppu_memory;
 pub mod ppu_registers;
 #[cfg(test)]
 mod ppu_registers_tests;
 
 use crate::bus::cartridge::Cartridge;
+use crate::bus::ppu_memory::PPUMemory;
 use memory_mapping_constants::*;
 use ppu_registers::PPURegisters;
 
@@ -38,6 +40,7 @@ pub struct Bus {
     unmapped_seg: [u8; (UNMAPPED_SEG_END - UNMAPPED_SEG_START + 1) as usize],
     prg_ram: [u8; (PRG_RAM_END - PRG_RAM_START + 1) as usize],
     pub cartridge: Cartridge,
+    pub ppu_memory: PPUMemory,
 }
 
 impl Bus {
@@ -51,6 +54,7 @@ impl Bus {
             unmapped_seg: [0; (UNMAPPED_SEG_END - UNMAPPED_SEG_START + 1) as usize],
             prg_ram: [0; (PRG_RAM_END - PRG_RAM_START + 1) as usize],
             cartridge: Cartridge::new(),
+            ppu_memory: PPUMemory::new(),
         }
     }
 }

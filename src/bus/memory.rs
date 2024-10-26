@@ -3,8 +3,8 @@ use crate::bus::Bus;
 
 pub trait Mem {
     fn write_memory(&mut self, addr: u16, data: u8);
-    fn read_memory_2_bytes(&self, addr: u16) -> u16;
-    fn read_memory(&self, addr: u16) -> u8;
+    fn read_memory_2_bytes(&mut self, addr: u16) -> u16;
+    fn read_memory(&mut self, addr: u16) -> u8;
 }
 
 impl Mem for Bus {
@@ -40,14 +40,14 @@ impl Mem for Bus {
         }
     }
 
-    fn read_memory_2_bytes(&self, addr: u16) -> u16 {
+    fn read_memory_2_bytes(&mut self, addr: u16) -> u16 {
         let low = self.read_memory(addr) as u16;
         let high = self.read_memory(addr + 1) as u16;
         (high << 8) | (low as u16)
     }
 
     //noinspection RsNonExhaustiveMatch
-    fn read_memory(&self, addr: u16) -> u8 {
+    fn read_memory(&mut self, addr: u16) -> u8 {
         match addr {
             CPU_RAM_MEM_START..=CPU_RAM_MEM_END => {
                 // manage mirroring
@@ -61,8 +61,7 @@ impl Mem for Bus {
                 let offset_from_start = addr - PPU_REGISTERS_START;
                 let canonical_offset_from_start = offset_from_start % PPU_REGISTERS_UNIQUE_SIZE;
                 let canonical_address = PPU_REGISTERS_START + canonical_offset_from_start;
-
-                self.ppu_registers.read(canonical_address)
+                self.read_ppu_memory(canonical_address)
             }
             IO_AND_AUDIO_REGISTERS_START..=IO_AND_AUDIO_REGISTERS_END => {
                 self.io_and_audio_registers[(addr - IO_AND_AUDIO_REGISTERS_START) as usize]

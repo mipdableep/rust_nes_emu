@@ -31,15 +31,15 @@ pub fn check_if_on_different_pages(addr1: u16, addr2: u16) -> bool {
 }
 
 impl<'a> CPU<'a> {
-    pub fn read_memory(&self, addr: u16) -> u8 {
+    pub fn read_memory(&mut self, addr: u16) -> u8 {
         self.bus.read_memory(addr)
     }
 
-    pub fn read_memory_2_bytes(&self, addr: u16) -> u16 {
+    pub fn read_memory_2_bytes(&mut self, addr: u16) -> u16 {
         self.bus.read_memory_2_bytes(addr)
     }
 
-    pub fn read_memory_2_bytes_without_page_cross(&self, addr: u16) -> u16 {
+    pub fn read_memory_2_bytes_without_page_cross(&mut self, addr: u16) -> u16 {
         // this function is like read 2 bytes, but does not cross the page boundary
         // so if we ask for 12ff it brings the bytes from 12ff and 1200, and not 12ff and 1300
         let low_byte_location = addr;
@@ -56,11 +56,12 @@ impl<'a> CPU<'a> {
         self.bus.write_memory(addr, data);
     }
 
-    pub fn convert_mode_to_val(&self, mode: AddressingMode) -> u8 {
-        self.read_memory(self.convert_mode_to_operand_mem_address(mode))
+    pub fn convert_mode_to_val(&mut self, mode: AddressingMode) -> u8 {
+        let operand_memory_address = self.convert_mode_to_operand_mem_address(mode);
+        self.read_memory(operand_memory_address)
     }
 
-    pub fn convert_mode_to_operand_mem_address(&self, mode: AddressingMode) -> u16 {
+    pub fn convert_mode_to_operand_mem_address(&mut self, mode: AddressingMode) -> u16 {
         match mode {
             AddressingMode::Immediate => self.program_counter,
             AddressingMode::ZeroPage => self.read_memory(self.program_counter) as u16,
@@ -87,9 +88,10 @@ impl<'a> CPU<'a> {
             AddressingMode::Absolute_Y => self
                 .read_memory_2_bytes(self.program_counter)
                 .wrapping_add(self.register_y as u16),
-            AddressingMode::Indirect => self.read_memory_2_bytes_without_page_cross(
-                self.read_memory_2_bytes(self.program_counter),
-            ),
+            AddressingMode::Indirect => {
+                let let_intermediate_memory_value = self.read_memory_2_bytes(self.program_counter);
+                self.read_memory_2_bytes_without_page_cross(let_intermediate_memory_value)
+            }
             AddressingMode::Indirect_X => {
                 let zero_page_location: u8 = self
                     .register_x
@@ -106,7 +108,7 @@ impl<'a> CPU<'a> {
         }
     }
 
-    pub fn detect_page_cross(&self, addressing_mode: AddressingMode) -> bool {
+    pub fn detect_page_cross(&mut self, addressing_mode: AddressingMode) -> bool {
         // check if page cross happened while fetching the value
         match addressing_mode {
             AddressingMode::Absolute_X => check_if_on_different_pages(

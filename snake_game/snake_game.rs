@@ -142,12 +142,12 @@ impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
 
             let opcode = self.cpu.read_memory(self.cpu.program_counter);
             if debug {
+                let current_pc = self.cpu.program_counter;
+                let arg_1 = self.cpu.read_memory(self.cpu.program_counter + 1);
+                let arg_2 = self.cpu.read_memory(self.cpu.program_counter + 2);
                 println!(
                     "pc {:}, opcode {:}, args {:} {:}",
-                    self.cpu.program_counter,
-                    opcode,
-                    self.cpu.read_memory(self.cpu.program_counter + 1),
-                    self.cpu.read_memory(self.cpu.program_counter + 2)
+                    current_pc, opcode, arg_1, arg_2
                 );
             }
             if !self.cpu.run_one_cycle() {
