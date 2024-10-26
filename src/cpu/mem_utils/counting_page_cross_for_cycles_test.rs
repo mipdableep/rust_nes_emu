@@ -2,6 +2,7 @@ use super::super::mem_utils::check_if_on_different_pages;
 use super::super::CPU;
 use crate::bus::Bus;
 use crate::cpu::mem_utils::AddressingMode;
+use crate::generate_cpu;
 
 #[test]
 fn test_page_cross() {
@@ -16,8 +17,7 @@ fn test_page_cross() {
 
 #[test]
 fn test_page_cross_detection_absolute_x() {
-    let mut bus = Bus::new();
-    let mut cpu = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     let addressing_mode = AddressingMode::Absolute_X;
 
     cpu.write_memory(cpu.program_counter, 0xff);
@@ -50,8 +50,7 @@ fn test_page_cross_detection_absolute_x() {
 
 #[test]
 fn test_page_cross_detection_absolute_y() {
-    let mut bus = Bus::new();
-    let mut cpu = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     let addressing_mode = AddressingMode::Absolute_Y;
 
     cpu.write_memory(cpu.program_counter, 0xff);
@@ -84,8 +83,7 @@ fn test_page_cross_detection_absolute_y() {
 
 #[test]
 fn test_page_cross_detection_indirect_y() {
-    let mut bus = Bus::new();
-    let mut cpu = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     let addressing_mode = AddressingMode::Indirect_Y;
 
     cpu.program_counter = 0x100;

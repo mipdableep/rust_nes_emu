@@ -1,5 +1,6 @@
 use crate::bus::Bus;
 use crate::cpu::CPU;
+use crate::generate_cpu;
 
 const STACK_START: u16 = 0x1ff;
 const BRK_ADDRESS: u16 = 0xfffe;
@@ -7,8 +8,7 @@ const BRK_ADDRESS: u16 = 0xfffe;
 #[test]
 #[allow(non_snake_case)]
 fn PHA_and_PLA() {
-    let mut bus = Bus::new();
-    let mut cpu = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     cpu.stack_pointer = 0xff;
     let a_values = [0_u8, 0x98, 0xff, 0x98, 0x1d, 0xd1, 0, 0, 0x15];
     for possible_value in a_values {
@@ -33,8 +33,7 @@ fn PHA_and_PLA() {
 #[test]
 #[allow(non_snake_case)]
 fn PHP_and_PLP() {
-    let mut bus = Bus::new();
-    let mut cpu = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     cpu.stack_pointer = 0xff;
     let status_values = [0_u8, 0x98, 0xff, 0x98, 0x1d, 0xd1, 0, 0, 0x15];
     for possible_value in status_values {
@@ -68,8 +67,7 @@ fn check_cpu_not_changed(cpu: &CPU) {
 #[test]
 #[allow(non_snake_case)]
 fn NOP() {
-    let mut bus: Bus = Bus::new();
-    let mut cpu: CPU = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     cpu.NOP();
     check_cpu_not_changed(&cpu);
 }
@@ -77,8 +75,7 @@ fn NOP() {
 #[test]
 #[allow(non_snake_case)]
 fn RTI() {
-    let mut bus = Bus::new();
-    let mut cpu = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     cpu.stack_push_u16(0x58fa);
     cpu.stack_push(0xff);
     cpu.RTI();
@@ -95,9 +92,7 @@ fn RTI() {
 #[test]
 #[allow(non_snake_case)]
 fn BRK() {
-    let mut bus: Bus = Bus::new();
-    let mut cpu: CPU = CPU::new(&mut bus);
-
+    generate_cpu!(cpu);
     // prepare the prg rom
     let mut program_vector = vec![0_u8; 0x8000];
     program_vector[BRK_ADDRESS as usize - 0x8000] = 0xaa;

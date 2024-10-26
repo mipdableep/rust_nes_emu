@@ -1,6 +1,7 @@
 use crate::bus::Bus;
 use crate::cpu::cpu_operations_tests::arithmetic_logic::get_random_u8_and_u16_pairs;
 use crate::cpu::CPU;
+use crate::generate_cpu;
 
 fn set_compare_tests(
     cpu: &mut CPU,
@@ -50,24 +51,21 @@ fn test_compare(cpu: &mut CPU, register_name: &str) {
 #[test]
 #[allow(non_snake_case)]
 fn CMP() {
-    let mut bus: Bus = Bus::new();
-    let mut cpu: CPU = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     test_compare(&mut cpu, "A");
 }
 
 #[test]
 #[allow(non_snake_case)]
 fn CPX() {
-    let mut bus: Bus = Bus::new();
-    let mut cpu: CPU = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     test_compare(&mut cpu, "X");
 }
 
 #[test]
 #[allow(non_snake_case)]
 fn CPY() {
-    let mut bus: Bus = Bus::new();
-    let mut cpu: CPU = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     test_compare(&mut cpu, "Y");
 }
 
@@ -88,8 +86,7 @@ fn set_dec_test(cpu: &mut CPU, memory_address: u16, memory_value: u8) {
 #[test]
 #[allow(non_snake_case)]
 fn DEC() {
-    let mut bus: Bus = Bus::new();
-    let mut cpu: CPU = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     // test for some memory addresses and values:
     for (address, value) in get_random_u8_and_u16_pairs() {
         set_dec_test(&mut cpu, address, value);
@@ -126,8 +123,7 @@ fn set_inc_test(cpu: &mut CPU, memory_address: u16, memory_value: u8) {
 #[test]
 #[allow(non_snake_case)]
 fn INC() {
-    let mut bus: Bus = Bus::new();
-    let mut cpu: CPU = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     // test for some memory addresses and values:
     for (address, value) in get_random_u8_and_u16_pairs() {
         set_inc_test(&mut cpu, address, value);
@@ -169,8 +165,7 @@ fn set_dex_test(cpu: &mut CPU, register_x_value: u8) {
 #[test]
 #[allow(non_snake_case)]
 fn DEX() {
-    let mut bus: Bus = Bus::new();
-    let mut cpu: CPU = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     // test for some  values:
     for value in get_random_u8_values() {
         set_dex_test(&mut cpu, value);
@@ -200,8 +195,7 @@ fn set_dey_test(cpu: &mut CPU, register_y_value: u8) {
 #[test]
 #[allow(non_snake_case)]
 fn DEY() {
-    let mut bus: Bus = Bus::new();
-    let mut cpu: CPU = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     // test for some  values:
     for value in get_random_u8_values() {
         set_dey_test(&mut cpu, value);
@@ -231,8 +225,7 @@ fn set_inx_test(cpu: &mut CPU, register_x_value: u8) {
 #[test]
 #[allow(non_snake_case)]
 fn INX() {
-    let mut bus: Bus = Bus::new();
-    let mut cpu: CPU = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     // test for some  values:
     for value in get_random_u8_values() {
         set_inx_test(&mut cpu, value);
@@ -266,8 +259,7 @@ fn set_iny_test(cpu: &mut CPU, register_y_value: u8) {
 #[test]
 #[allow(non_snake_case)]
 fn INY() {
-    let mut bus: Bus = Bus::new();
-    let mut cpu: CPU = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     // test for some  values:
     for value in get_random_u8_values() {
         set_iny_test(&mut cpu, value);
@@ -317,8 +309,7 @@ fn test_load(cpu: &mut CPU, register_name: &str, register_value: u8) {
 #[allow(non_snake_case)]
 #[test]
 fn LDA() {
-    let mut bus = Bus::new();
-    let mut cpu = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     for value in get_random_u8_values() {
         test_load(&mut cpu, "A", value)
     }
@@ -327,8 +318,7 @@ fn LDA() {
 #[allow(non_snake_case)]
 #[test]
 fn LDX() {
-    let mut bus = Bus::new();
-    let mut cpu = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     for value in get_random_u8_values() {
         test_load(&mut cpu, "X", value)
     }
@@ -337,8 +327,7 @@ fn LDX() {
 #[allow(non_snake_case)]
 #[test]
 fn LDY() {
-    let mut bus = Bus::new();
-    let mut cpu = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     for value in get_random_u8_values() {
         test_load(&mut cpu, "Y", value)
     }
@@ -347,8 +336,7 @@ fn LDY() {
 #[allow(non_snake_case)]
 #[test]
 fn STA() {
-    let mut bus = Bus::new();
-    let mut cpu = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     for (address, value) in get_random_u8_and_u16_pairs() {
         cpu.register_a = value;
         cpu.STA(address);
@@ -359,8 +347,7 @@ fn STA() {
 #[allow(non_snake_case)]
 #[test]
 fn STX() {
-    let mut bus = Bus::new();
-    let mut cpu = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     for (address, value) in get_random_u8_and_u16_pairs() {
         cpu.register_x = value;
         cpu.STX(address);
@@ -371,8 +358,7 @@ fn STX() {
 #[allow(non_snake_case)]
 #[test]
 fn STY() {
-    let mut bus = Bus::new();
-    let mut cpu = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     for (address, value) in get_random_u8_and_u16_pairs() {
         cpu.register_y = value;
         cpu.STY(address);
@@ -443,8 +429,7 @@ fn prepare_transfer_tests(cpu: &mut CPU, source_name: &str, destination_name: &s
 
 #[test]
 fn test_transfer() {
-    let mut bus = Bus::new();
-    let mut cpu = CPU::new(&mut bus);
+    generate_cpu!(cpu);
     for value in get_random_u8_values() {
         prepare_transfer_tests(&mut cpu, "A", "X", value)
     }
