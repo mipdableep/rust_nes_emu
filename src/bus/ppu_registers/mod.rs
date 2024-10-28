@@ -25,7 +25,7 @@ impl PPURegisters {
     //noinspection RsNonExhaustiveMatch
     pub fn write(&mut self, address: u16, value: u8) {
         match address {
-            0x00..0x02000 => panic!("Error: address {address} is not in range of ppu registers"),
+            0x00..=0x01fff => panic!("Error: address {address} is not in range of ppu registers"),
             0x2000 => self.control_register.write_byte(value), // PPUCTRL
             0x2001 => todo!(), //PPUMASK
             0x2002 => todo!(), //PPUSTATUS

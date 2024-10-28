@@ -21,7 +21,7 @@ impl Bus {
     //noinspection RsNonExhaustiveMatch
     pub fn read_ppu_memory(&mut self, canonical_address: u16) -> u8 {
         match canonical_address {
-            0x00..0x02000 => panic!("Error: address {canonical_address} is not in range of ppu registers"),
+            0x00..=0x01fff => panic!("Error: address {canonical_address} is not in range of ppu registers"),
             0x2000 => self.ppu_registers.control_register.read(), // PPUCTRL
             0x2001 => todo!(), //PPUMASK
             0x2002 => todo!(), //PPUSTATUS
