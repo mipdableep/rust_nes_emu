@@ -124,4 +124,26 @@ impl Bus {
             0x4000..=0xFFFF =>panic!("Error: address {canonical_address} is not in range of ppu registers"),
         }
     }
+
+    //noinspection RsNonExhaustiveMatch
+    pub fn write_ppu_memory(&mut self, address: u16, value: u8) {
+        match address {
+            0x00..=0x01fff => panic!("Error: address {address} is not in range of ppu registers"),
+            0x2000 => self.ppu_registers.control_register.write_byte(value), // PPUCTRL
+            0x2001 => todo!(), //PPUMASK
+            0x2002 => todo!(), //PPUSTATUS
+            0x2003 => todo!(), //OAMADDR
+            0x2004 => todo!(), //OAMDATA
+            0x2005 => todo!(), // PPUSCRL
+            0x2006 => self.ppu_registers.address_register.write_byte(value), //PPUADDR
+            0x2007 => {
+                let address_in_ppu = self.ppu_registers.address_register.get_address_as_u16();
+                self.ppu_registers.address_register.increment(self.ppu_registers.control_register.get_vram_address_inc());
+                let pointer_to_address = self.convert_ppu_address_to_actual_address(address_in_ppu);
+                *pointer_to_address = value;
+            }, //PPUDATA
+            0x2008..=0x3FFF => panic!("Address {address} is ppu register but mirrored - the mirror logic should have been in the caller"),
+            0x4000..=0xFFFF =>panic!("Error: address {address} is not in range of ppu registers"),
+        }
+    }
 }
