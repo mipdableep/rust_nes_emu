@@ -1,1 +1,2 @@
-../cargo_config.toml
+[alias] # command aliases
+clean_nes = "clean -p nes_emulator"
