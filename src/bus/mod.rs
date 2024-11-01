@@ -3,6 +3,8 @@ mod cartridge;
 pub mod mem_tests;
 pub(crate) mod memory;
 mod ppu_memory;
+#[cfg(test)]
+mod ppu_memory_tests;
 pub mod ppu_registers;
 #[cfg(test)]
 mod ppu_registers_tests;
