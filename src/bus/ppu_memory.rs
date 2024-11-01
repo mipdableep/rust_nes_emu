@@ -68,33 +68,39 @@ impl Bus {
         }
     }
 
-    fn read_ppu_data_register_from_address(&mut self, address: u16) -> u8 {
-        // we need to return the value of the current buffer, and then update the buffer
-        let result = self.ppu_registers.data_register.read_current_value();
-
+    fn convert_ppu_address_to_actual_address(&mut self, address: u16) -> &mut u8 {
         match address {
-            PPU_CHR_ROM_START..=PPU_CHR_ROM_END => {
-                // chr ROM
-                let data_register = &mut self.ppu_registers.data_register;
-                data_register.update_current_value(self.cartridge.chr_rom[address as usize]);
-                result
-            }
+            PPU_CHR_ROM_START..=PPU_CHR_ROM_END => &mut self.cartridge.chr_rom[address as usize],
             PPU_NAMETABLE_START..=PPU_NAMETABLE_END => {
                 let canonical_address = self.mirror_vram_address(address) as usize;
-                let data_register = &mut self.ppu_registers.data_register;
-                let new_value =
-                    self.ppu_memory.vram[canonical_address - PPU_NAMETABLE_START as usize];
-                data_register.update_current_value(new_value);
-                result
+                &mut self.ppu_memory.vram[canonical_address - PPU_NAMETABLE_START as usize]
             }
             PPU_UNUSED_SEG_START..=PPU_UNUSED_SEG_END => panic!(
                 "addr space 0x3000..0x3eff is not expected to be used, requested = {} ",
                 address
             ),
             PPU_PALETTE_START..=PPU_PALETTE_END => {
-                self.ppu_memory.palette_table[(address - PPU_PALETTE_START) as usize]
+                &mut self.ppu_memory.palette_table[(address - PPU_PALETTE_START) as usize]
             }
             _ => panic!("unexpected access to mirrored space {}", address),
+        }
+    }
+
+    fn read_ppu_data_register_from_address(&mut self, address: u16) -> u8 {
+        // we need to return the value of the current buffer, and then update the buffer
+        let result = self.ppu_registers.data_register.read_current_value();
+
+        let new_result_pointer = self.convert_ppu_address_to_actual_address(address);
+        let new_result_value = *new_result_pointer;
+        let data_register = &mut self.ppu_registers.data_register;
+        data_register.update_current_value(new_result_value);
+
+        // only when reading from the palette we get the result imminently.
+        // I think the result is also inserted to the buffer as normal
+        if PPU_PALETTE_START <= address && address <= PPU_PALETTE_END {
+            self.ppu_registers.data_register.read_current_value()
+        } else {
+            result
         }
     }
 
@@ -116,7 +122,6 @@ impl Bus {
             },
             0x2008..=0x3FFF => panic!("Address {canonical_address} is ppu register but mirrored - the mirror logic should have been in the caller"),
             0x4000..=0xFFFF =>panic!("Error: address {canonical_address} is not in range of ppu registers"),
-
         }
     }
 }
