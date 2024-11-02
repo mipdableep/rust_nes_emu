@@ -8,6 +8,7 @@ macro_rules! generate_cpu_and_vram {
     ($cpu: ident, $vram: ident) => {
         let mut bus: Bus = Bus::new();
         let mut $cpu: CPU = CPU::new(&mut bus);
+        $cpu.bus.cartridge.screen_mirroring = Mirroring::Vertical;
         let $vram = &mut $cpu.bus.ppu_memory.vram;
     };
 }
@@ -15,7 +16,6 @@ macro_rules! generate_cpu_and_vram {
 #[test]
 pub fn test_access_ppu_memory_from_cpu() {
     generate_cpu_and_vram!(cpu, vram);
-    cpu.bus.cartridge.screen_mirroring = Mirroring::Vertical;
     // generate the memory
     vram[0xa0] = 0x01;
     vram[0xa1] = 0x02;
@@ -35,7 +35,6 @@ pub fn test_access_ppu_memory_from_cpu() {
 #[test]
 pub fn test_address_increment_on_ppu_data_read() {
     generate_cpu_and_vram!(cpu, vram);
-    cpu.bus.cartridge.screen_mirroring = Mirroring::Vertical;
     // set the increment to 32
     cpu.bus.ppu_registers.control_register.write_byte(0x04);
     // generate the memory
