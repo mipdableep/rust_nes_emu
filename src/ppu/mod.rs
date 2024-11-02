@@ -8,7 +8,7 @@ pub struct PPU<'a> {
 }
 
 impl<'a> PPU<'a> {
-    fn new(bus: &'a mut Bus) -> Self {
+    pub fn new(bus: &'a mut Bus) -> Self {
         PPU {
             palette_table: [0; 32],
             vram: [0; 2048],
