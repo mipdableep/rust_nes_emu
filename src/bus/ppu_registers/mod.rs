@@ -5,6 +5,7 @@ use crate::bus::ppu_registers::data_register::PPUDataReg;
 pub mod address_register;
 pub mod control_register;
 mod data_register;
+mod status_register;
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct PPURegisters {
