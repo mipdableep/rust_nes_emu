@@ -39,12 +39,20 @@ impl<'a> PPU<'a> {
 
         if self.scanlines_in_current_frame == NMI_SCANLINE {
             if self.bus.ppu_registers.control_register.get_nmi_enabled() {
+                self.bus
+                    .ppu_registers
+                    .status_register
+                    .set_vblank_status(true);
                 // todo - actually generate nmi
             }
         }
 
         if self.scanlines_in_current_frame >= SCANLINES_PER_FRAME {
             self.scanlines_in_current_frame -= SCANLINES_PER_FRAME;
+            self.bus
+                .ppu_registers
+                .status_register
+                .set_vblank_status(false);
             // todo - disable nmi
         }
     }
