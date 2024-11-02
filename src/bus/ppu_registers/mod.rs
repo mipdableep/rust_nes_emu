@@ -1,6 +1,7 @@
 use crate::bus::ppu_registers::address_register::PPUAddressReg;
 use crate::bus::ppu_registers::control_register::PPUControlRegister;
 use crate::bus::ppu_registers::data_register::PPUDataReg;
+use crate::bus::ppu_registers::status_register::PPUStatusRegister;
 
 pub mod address_register;
 pub mod control_register;
@@ -9,16 +10,18 @@ mod status_register;
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct PPURegisters {
-    pub address_register: PPUAddressReg,
     pub control_register: PPUControlRegister,
+    pub status_register: PPUStatusRegister,
+    pub address_register: PPUAddressReg,
     pub data_register: PPUDataReg,
 }
 
 impl PPURegisters {
     pub fn new() -> Self {
         Self {
-            address_register: PPUAddressReg::new(),
             control_register: PPUControlRegister::new(),
+            status_register: PPUStatusRegister::new(),
+            address_register: PPUAddressReg::new(),
             data_register: PPUDataReg::new(),
         }
     }

@@ -76,3 +76,18 @@ pub fn test_write_to_ppu_memory() {
     assert_eq!(cpu.read_memory(0x2007), 0x02);
     assert_eq!(cpu.read_memory(0x2007), 0x03);
 }
+
+#[test]
+fn test_read_from_status_resets_latch() {
+    generate_cpu!(cpu);
+    cpu.bus.cartridge.screen_mirroring = Mirroring::Vertical;
+
+    // since we read the ppu status register, we should have the address at 0x20a0 and not 0xa020
+    cpu.write_memory(0x2006, 0x00);
+    cpu.read_memory(0x2002);
+    cpu.write_memory(0x2006, 0x20);
+    cpu.write_memory(0x2006, 0xa0);
+
+    cpu.write_memory(0x2007, 0xab);
+    assert_eq!(cpu.bus.ppu_memory.vram[0xa0], 0xab)
+}
