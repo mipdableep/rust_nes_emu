@@ -36,7 +36,7 @@ pub struct Bus {
     // cpu stuff
     pub cpu_idle_cycles: u8,
     cpu_ram: [u8; CPU_RAM_MEM_UNIQUE_SIZE as usize],
-    ppu_registers: PPURegisters,
+    pub ppu_registers: PPURegisters,
     io_and_audio_registers:
         [u8; (IO_AND_AUDIO_REGISTERS_END - IO_AND_AUDIO_REGISTERS_START + 1) as usize],
     unmapped_seg: [u8; (UNMAPPED_SEG_END - UNMAPPED_SEG_START + 1) as usize],
