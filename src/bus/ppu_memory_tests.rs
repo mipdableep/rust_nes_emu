@@ -13,6 +13,19 @@ macro_rules! generate_cpu_and_vram {
     };
 }
 
+fn prepare_for_ppu_memory_read(cpu: &mut CPU, address: u16) {
+    // a helper function to prepare for read from a specific ppu memory
+    // needed because reading from the ppu memory is hard
+    // this sets the address register in the ppu for future usage, and does a dummy read
+
+    // prepare reading the memory
+    cpu.write_memory(0x2006, (address >> 8) as u8);
+    cpu.write_memory(0x2006, (address & 0xFF) as u8);
+
+    // dummy read
+    cpu.read_memory(0x2007);
+}
+
 #[test]
 pub fn test_access_ppu_memory_from_cpu() {
     generate_cpu_and_vram!(cpu, vram);
@@ -20,12 +33,8 @@ pub fn test_access_ppu_memory_from_cpu() {
     vram[0xa0] = 0x01;
     vram[0xa1] = 0x02;
     vram[0xa2] = 0x03;
-    // prepare reading the memory
-    cpu.write_memory(0x2006, 0x20);
-    cpu.write_memory(0x2006, 0xa0);
 
-    // dummy read
-    cpu.read_memory(0x2007);
+    prepare_for_ppu_memory_read(&mut cpu, 0x20a0);
 
     assert_eq!(cpu.read_memory(0x2007), 0x01);
     assert_eq!(cpu.read_memory(0x2007), 0x02);
@@ -41,12 +50,8 @@ pub fn test_address_increment_on_ppu_data_read() {
     vram[0xa0 + 32 * 0] = 0x01;
     vram[0xa0 + 32 * 1] = 0x02;
     vram[0xa0 + 32 * 2] = 0x03;
-    // prepare reading the memory
-    cpu.write_memory(0x2006, 0x20);
-    cpu.write_memory(0x2006, 0xa0);
 
-    // dummy read
-    cpu.read_memory(0x2007);
+    prepare_for_ppu_memory_read(&mut cpu, 0x20a0);
 
     assert_eq!(cpu.read_memory(0x2007), 0x01);
     assert_eq!(cpu.read_memory(0x2007), 0x02);
@@ -65,12 +70,7 @@ pub fn test_write_to_ppu_memory() {
     cpu.write_memory(0x2007, 0x02);
     cpu.write_memory(0x2007, 0x03);
 
-    // reading the memory from the same roots
-    cpu.write_memory(0x2006, 0x20);
-    cpu.write_memory(0x2006, 0xa0);
-
-    // dummy read
-    cpu.read_memory(0x2007);
+    prepare_for_ppu_memory_read(&mut cpu, 0x20a0);
 
     assert_eq!(cpu.read_memory(0x2007), 0x01);
     assert_eq!(cpu.read_memory(0x2007), 0x02);
