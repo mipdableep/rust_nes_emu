@@ -36,7 +36,7 @@ impl Bus {
         let address_offset = vram_address - PPU_NAMETABLE_START;
         let table_number = address_offset / PPU_NAMETABLE_SIZE;
         match self.cartridge.screen_mirroring {
-            Mirroring::Vertical => {
+            Mirroring::Horizontal => {
                 // [A] [A]
                 // [B] [B]
                 match table_number {
@@ -47,14 +47,14 @@ impl Bus {
                     _ => panic!("Somehow messed up vram mirroring. Asked for address {vram_address} which resolved in table {table_number}")
                 }
             }
-            Mirroring::Horizontal => {
+            Mirroring::Vertical => {
                 // [A] [B]
                 // [A] [B]
                 match table_number {
                     0 => vram_address,
                     1 => vram_address,
-                    2 => vram_address - PPU_NAMETABLE_SIZE,
-                    3 => vram_address - PPU_NAMETABLE_SIZE,
+                    2 => vram_address - 2 * PPU_NAMETABLE_SIZE,
+                    3 => vram_address - 2 * PPU_NAMETABLE_SIZE,
                     _ => panic!("Somehow messed up vram mirroring. Asked for address {vram_address} which resolved in table {table_number}")
                 }
             }

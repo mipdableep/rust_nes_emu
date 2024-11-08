@@ -91,3 +91,63 @@ fn test_read_from_status_resets_latch() {
     cpu.write_memory(0x2007, 0xab);
     assert_eq!(cpu.bus.ppu_memory.vram[0xa0], 0xab)
 }
+
+#[test]
+fn test_vertical_mirroring() {
+    generate_cpu_and_vram!(cpu, vram);
+    cpu.bus.cartridge.screen_mirroring = Mirroring::Vertical;
+
+    vram[0x00] = 0x12;
+    vram[0x123] = 0x34;
+    vram[0x3FF] = 0x56;
+    vram[0x400] = 0x78;
+    vram[0x7FF] = 0x9A;
+
+    prepare_for_ppu_memory_read(&mut cpu, 0x2800); // mirror of 0x2000
+    assert_eq!(cpu.read_memory(0x2007), 0x12);
+    prepare_for_ppu_memory_read(&mut cpu, 0x2923); //mirror of 0x2123
+    assert_eq!(cpu.read_memory(0x2007), 0x34);
+    prepare_for_ppu_memory_read(&mut cpu, 0x2BFF); //mirror of 0x23FF
+    assert_eq!(cpu.read_memory(0x2007), 0x56);
+    prepare_for_ppu_memory_read(&mut cpu, 0x2C00); //mirror of 0x2400
+    assert_eq!(cpu.read_memory(0x2007), 0x78);
+
+    prepare_for_ppu_memory_read(&mut cpu, 0x2FFF); //mirror of 0x27FF
+
+    // we cannot read directly - it will read from 0x3000, which is outside the bounds
+    // so we will read from a random address and use the internal buffer
+    cpu.write_memory(0x2006, 0x20);
+    cpu.write_memory(0x2006, 0x20);
+
+    assert_eq!(cpu.read_memory(0x2007), 0x9a);
+}
+
+#[test]
+fn test_horizontal_mirroring() {
+    generate_cpu_and_vram!(cpu, vram);
+    cpu.bus.cartridge.screen_mirroring = Mirroring::Horizontal;
+
+    vram[0x00] = 0x12;
+    vram[0x123] = 0x34;
+    vram[0x3FF] = 0x56;
+    vram[0x800] = 0x78;
+    vram[0xBFF] = 0x9A;
+
+    prepare_for_ppu_memory_read(&mut cpu, 0x2400); // mirror of 0x2000
+    assert_eq!(cpu.read_memory(0x2007), 0x12);
+    prepare_for_ppu_memory_read(&mut cpu, 0x2523); //mirror of 0x2123
+    assert_eq!(cpu.read_memory(0x2007), 0x34);
+    prepare_for_ppu_memory_read(&mut cpu, 0x27FF); //mirror of 0x23FF
+    assert_eq!(cpu.read_memory(0x2007), 0x56);
+    prepare_for_ppu_memory_read(&mut cpu, 0x2C00); //mirror of 0x2800
+    assert_eq!(cpu.read_memory(0x2007), 0x78);
+
+    prepare_for_ppu_memory_read(&mut cpu, 0x2FFF); //mirror of 0x2BFF
+
+    // we cannot read directly - it will read from 0x3000, which is outside the bounds
+    // so we will read from a random address and use the internal buffer
+    cpu.write_memory(0x2006, 0x20);
+    cpu.write_memory(0x2006, 0x20);
+
+    assert_eq!(cpu.read_memory(0x2007), 0x9a);
+}
