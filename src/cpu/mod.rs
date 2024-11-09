@@ -11,6 +11,7 @@ use crate::bus::memory_mapping_constants::PRG_ROM_START;
 use crate::bus::Bus;
 
 const STACK_END: u16 = 0x100;
+const NMI_ADDRESS: u16 = 0xFFFA;
 
 #[derive(Debug)]
 pub struct CPU<'a> {
@@ -138,10 +139,33 @@ impl<'a> CPU<'a> {
         // this is because those are not actual flags - and created only when pushing status to stack (via brk, php or interrupt)
         self.stack_push(self.status | 0x30);
     }
+
+    pub fn stack_push_status_nmi(&mut self) {
+        // this function push the status register to the stack when triggered by NMI or IRQ
+        // it mostly regular push, but it resets the B flag when pushing it
+        // this also always set bit 6
+        // this is because those are not actual flags - and created only when pushing status to stack (via NMI/IRQ in this case)
+        self.stack_push((self.status | 0x20) & !0x10);
+    }
+
     pub fn stack_pull_status(&mut self) {
         // this function pulls the status register from the stack
         // it mostly regular pull, but it ignores the B flag and bit 6 (just use the old values)
         self.status = (self.stack_pull() & !0x30) | (self.status & 0x30);
+    }
+
+    fn attend_nmi_interrupt(&mut self) {
+        // attends to nmi interrupt
+        // this loads the address from 0xFFFA, and attends this interrupt
+
+        // push the pc and the status to the stack
+        self.stack_push_u16(self.program_counter);
+        self.stack_push_status_nmi();
+        self.set_interrupt(false);
+
+        // takes two(?) cycles
+        self.increase_cpu_idle_cycles(2);
+        self.program_counter = self.read_memory_2_bytes(NMI_ADDRESS);
     }
 
     pub fn increase_cpu_idle_cycles(&mut self, inc: u8) {
@@ -156,6 +180,13 @@ impl<'a> CPU<'a> {
 
     pub fn run_one_cycle(&mut self) -> bool {
         let mut return_value: bool = true;
+
+        if self.bus.nmi_generated {
+            // attend to nmi if needed
+            self.attend_nmi_interrupt();
+            self.bus.nmi_generated = false;
+        }
+
         if self.bus.cpu_idle_cycles == 0 {
             let opcode = self.read_memory(self.program_counter);
             return_value = self.massive_switch(opcode);

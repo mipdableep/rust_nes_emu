@@ -204,3 +204,49 @@ fn stack_u16() {
         assert_eq!(cpu.stack_pull_u16(), values[i]);
     }
 }
+
+#[test]
+fn nmi_attendance() {
+    generate_cpu!(cpu);
+    // this test flow is:
+    // prepare memory -> trigger nmi (the address will only have RTI) -> run cpu cycle
+    // -> check we jumped to the correct memory location -> check we returned just fine
+    cpu.status = 0x10;
+    cpu.program_counter = 0x13;
+
+    // write 0050 to 0xFFA
+    // we don't use the normal write function since this address is in the ROM
+    let mut rom = vec![0_u8; 0x8000];
+    rom[0x7FFA] = 0x50;
+    rom[0x7FFB] = 0x00;
+    cpu.bus.cartridge.prg_rom = rom;
+    cpu.write_memory(0x50, 0x40); // 0x40 is RTI
+    cpu.bus.nmi_generated = true;
+    cpu.run_one_cycle();
+
+    // check we did all nmi things correctly
+    assert_eq!(cpu.program_counter, 0x50); // jumped to the right location
+
+    // check that the two values in the stack are correct
+    // the top should be sp
+    let stack_top = cpu.stack_pull();
+    assert_eq!(stack_top, 0x20); // should set the non-existing bit (5), and write b flag as 0
+    let old_pc = cpu.stack_pull_u16();
+    assert_eq!(old_pc, 0x13);
+    //don't forget to return them to the stack!
+    cpu.stack_push_u16(old_pc);
+    cpu.stack_push(stack_top);
+
+    // set the status to check that we changed it correctly while pulling back from the stack
+    cpu.status = 0xFF;
+
+    while cpu.bus.cpu_idle_cycles > 0 {
+        cpu.run_one_cycle();
+    }
+
+    // now check the return with RTi
+    cpu.run_one_cycle();
+    assert_eq!(cpu.program_counter, 0x13);
+    assert_eq!(cpu.status, 0x30);
+    assert_eq!(cpu.stack_pointer, 0xFF);
+}
