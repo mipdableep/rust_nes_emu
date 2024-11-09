@@ -39,6 +39,7 @@ impl<'a> PPU<'a> {
 
         if self.scanlines_in_current_frame == NMI_SCANLINE {
             if self.bus.ppu_registers.control_register.get_nmi_enabled() {
+            if self.bus.ppu_registers.control_register.get_vblank_nmi() {
                 self.bus
                     .ppu_registers
                     .status_register

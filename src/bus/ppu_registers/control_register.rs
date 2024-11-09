@@ -48,8 +48,4 @@ impl PPUControlRegister {
             false => 1,
         }
     }
-
-    pub fn get_nmi_enabled(&self) -> bool {
-        self.get_bit(7)
-    }
 }
