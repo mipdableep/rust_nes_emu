@@ -1,3 +1,6 @@
+mod colors_palette;
+pub mod render_sdl;
+
 use crate::bus::Bus;
 
 const SCANLINE_LENGTH_PIXELS: usize = 341;
