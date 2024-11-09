@@ -35,6 +35,9 @@ pub(crate) mod memory_mapping_constants {
 pub struct Bus {
     // cpu stuff
     pub cpu_idle_cycles: u8,
+    // something to hold if cpu should attend nmi
+    pub nmi_generated: bool,
+
     cpu_ram: [u8; CPU_RAM_MEM_UNIQUE_SIZE as usize],
     pub ppu_registers: PPURegisters,
     io_and_audio_registers:
@@ -49,6 +52,7 @@ impl Bus {
     pub fn new() -> Bus {
         Bus {
             cpu_idle_cycles: 0,
+            nmi_generated: false,
             cpu_ram: [0; CPU_RAM_MEM_UNIQUE_SIZE as usize],
             ppu_registers: PPURegisters::new(),
             io_and_audio_registers: [0; (IO_AND_AUDIO_REGISTERS_END - IO_AND_AUDIO_REGISTERS_START

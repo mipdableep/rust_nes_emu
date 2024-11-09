@@ -37,14 +37,15 @@ impl<'a> PPU<'a> {
         // todo - actually draw something
         self.trigger_new_scanline_if_needed();
 
-        if self.scanlines_in_current_frame == NMI_SCANLINE {
-            if self.bus.ppu_registers.control_register.get_nmi_enabled() {
+        if self.scanlines_in_current_frame == NMI_SCANLINE
+            && self.ppu_cycles_in_current_scanline == 0
+        {
             if self.bus.ppu_registers.control_register.get_vblank_nmi() {
                 self.bus
                     .ppu_registers
                     .status_register
                     .set_vblank_status(true);
-                // todo - actually generate nmi
+                self.bus.nmi_generated = true;
             }
         }
 
