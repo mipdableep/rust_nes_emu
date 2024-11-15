@@ -1,4 +1,4 @@
-mod colors_palette;
+pub mod colors_palette;
 pub mod render_sdl;
 
 use crate::bus::Bus;
