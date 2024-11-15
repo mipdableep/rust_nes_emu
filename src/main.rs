@@ -28,7 +28,7 @@ fn main() {
 
         let event = match event_pump.poll_event() {
             Some(i) => i,
-            None => break,
+            None => continue,
         };
         match event {
             Event::Quit { .. }
