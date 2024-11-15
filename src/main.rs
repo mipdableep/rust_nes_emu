@@ -1,3 +1,5 @@
+use std::{thread::sleep, time};
+
 use crate::ppu::render_sdl::{update_texture_from_frame, Frame};
 
 pub mod bus;
@@ -6,7 +8,7 @@ pub mod ppu;
 pub mod prelude;
 
 fn main() {
-    generate_texture_and_canvas!(texture, canvas);
+    generate_texture_and_canvas!(texture, canvas, event_pump);
     let mut frame = Frame::new();
     for x in 0..SCREEN_WIDTH {
         for y in 0..SCREEN_HEIGHT {
@@ -21,5 +23,20 @@ fn main() {
     update_texture_from_frame(&mut texture, &mut frame, &mut canvas);
     loop {
         canvas.present();
+        let sleep_time = time::Duration::from_secs_f64(0.2);
+        sleep(sleep_time);
+
+        let event = match event_pump.poll_event() {
+            Some(i) => i,
+            None => break,
+        };
+        match event {
+            Event::Quit { .. }
+            | Event::KeyDown {
+                keycode: Some(Keycode::Escape),
+                ..
+            } => std::process::exit(0),
+            _ => {}
+        }
     }
 }

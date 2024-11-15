@@ -41,11 +41,11 @@ pub fn update_texture_from_frame(texture: &mut Texture, frame: &Frame, canvas: &
 
 #[macro_export]
 macro_rules! generate_texture_and_canvas {
-    ($texture: ident, $canvas: ident) => {
+    ($texture: ident, $canvas: ident, $event_pump: ident) => {
         use crate::ppu::render_sdl::screen_rendering_constants::*;
+        use sdl2::event::Event;
+        use sdl2::keyboard::Keycode;
         use sdl2::pixels::PixelFormatEnum;
-        use sdl2::render::{Texture, WindowCanvas};
-        use sdl2::Sdl;
 
         let sdl_context = sdl2::init().unwrap();
         let video_subsystem = sdl_context.video().unwrap();
@@ -58,6 +58,8 @@ macro_rules! generate_texture_and_canvas {
             .position_centered()
             .build()
             .unwrap();
+
+        let mut $event_pump = sdl_context.event_pump().unwrap();
 
         let mut $canvas = window.into_canvas().present_vsync().build().unwrap();
         $canvas
