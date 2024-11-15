@@ -2,11 +2,9 @@ use screen_rendering_constants::*;
 use sdl2::render::{Texture, WindowCanvas};
 
 pub(crate) mod screen_rendering_constants {
-    pub const SCREEN_WIDTH: usize = 240;
-    pub const SCREEN_HEIGHT: usize = 260;
-    pub const SCREEN_FACTOR: usize = 10;
     pub const SCREEN_WIDTH: usize = 256;
     pub const SCREEN_HEIGHT: usize = 240;
+    pub const SCREEN_FACTOR: usize = 2;
 }
 
 #[derive(Debug, Eq, PartialEq)]
