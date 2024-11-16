@@ -77,7 +77,3 @@ macro_rules! generate_texture_and_canvas {
             .unwrap();
     };
 }
-
-fn render_sdl() {
-    let current_frame = [0_u8; SCREEN_WIDTH * SCREEN_HEIGHT * 3];
-}
