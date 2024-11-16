@@ -1,18 +1,26 @@
+use std::ops::Deref;
+
 #[derive(Debug, Eq, PartialEq)]
-pub struct PPUDataReg {
-    pub data_reg: u8,
+pub struct PPUDataReg(u8);
+
+impl Deref for PPUDataReg {
+    type Target = u8;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
 impl PPUDataReg {
     pub fn new() -> Self {
-        Self { data_reg: 0 }
+        Self(0)
     }
 
     pub fn read_current_value(&self) -> u8 {
-        self.data_reg
+        self.0
     }
 
     pub fn update_current_value(&mut self, new_value: u8) {
-        self.data_reg = new_value
+        self.0 = new_value
     }
 }

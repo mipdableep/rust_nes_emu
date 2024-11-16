@@ -1,34 +1,43 @@
+use std::ops::Deref;
+
 #[derive(Debug, Eq, PartialEq)]
-pub struct PPUControlRegister {
-    misc_settings: u8,
-    // 7  bit  0
-    // ---- ----
-    // VPHB SINN
-    // |||| ||||
-    // |||| ||++- Base nametable address
-    // |||| ||    (0 = $2000; 1 = $2400; 2 = $2800; 3 = $2C00)
-    // |||| |+--- VRAM address increment per CPU read/write of PPUDATA
-    // |||| |     (0: add 1, going across; 1: add 32, going down)
-    // |||| +---- Sprite pattern table address for 8x8 sprites
-    // ||||       (0: $0000; 1: $1000; ignored in 8x16 mode)
-    // |||+------ Background pattern table address (0: $0000; 1: $1000)
-    // ||+------- Sprite size (0: 8x8 pixels; 1: 8x16 pixels – see PPU OAM#Byte 1)
-    // |+-------- PPU master/slave select
-    // |          (0: read backdrop from EXT pins; 1: output color on EXT pins)
-    // +--------- Vblank NMI enable (0: off, 1: on)
+pub struct PPUControlRegister(u8);
+
+// 7  bit  0
+// ---- ----
+// VPHB SINN
+// |||| ||||
+// |||| ||++- Base nametable address
+// |||| ||    (0 = $2000; 1 = $2400; 2 = $2800; 3 = $2C00)
+// |||| |+--- VRAM address increment per CPU read/write of PPUDATA
+// |||| |     (0: add 1, going across; 1: add 32, going down)
+// |||| +---- Sprite pattern table address for 8x8 sprites
+// ||||       (0: $0000; 1: $1000; ignored in 8x16 mode)
+// |||+------ Background pattern table address (0: $0000; 1: $1000)
+// ||+------- Sprite size (0: 8x8 pixels; 1: 8x16 pixels – see PPU OAM#Byte 1)
+// |+-------- PPU master/slave select
+// |          (0: read backdrop from EXT pins; 1: output color on EXT pins)
+// +--------- Vblank NMI enable (0: off, 1: on)
+
+impl Deref for PPUControlRegister {
+    type Target = u8;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
 impl PPUControlRegister {
     pub fn new() -> Self {
-        Self { misc_settings: 0 }
+        Self(0)
     }
 
     pub fn read(&self) -> u8 {
-        self.misc_settings
+        self.0
     }
 
     pub fn write_byte(&mut self, value: u8) {
-        self.misc_settings = value;
+        self.0 = value;
     }
 
     fn get_bit(&self, bit_location: u8) -> bool {
@@ -36,7 +45,7 @@ impl PPUControlRegister {
         if bit_location > 7 {
             panic!("Error: Trying to access bit in location {bit_location} in the PPU control register, which does not exists");
         }
-        (self.misc_settings >> bit_location) & 1 == 1
+        (self.0 >> bit_location) & 1 == 1
     }
 
     pub fn get_vblank_nmi(&self) -> bool {
