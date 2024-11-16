@@ -1,7 +1,10 @@
 pub mod colors_palette;
+mod full_screen_rendering;
 pub mod render_sdl;
 
 use crate::bus::Bus;
+use crate::ppu::render_sdl::Frame;
+use sdl2::render::{Texture, WindowCanvas};
 
 const SCANLINE_LENGTH_PIXELS: usize = 341;
 const SCANLINES_PER_FRAME: usize = 262;
@@ -35,7 +38,12 @@ impl<'a> PPU<'a> {
         }
     }
 
-    pub fn run_one_ppu_cycle(&mut self) {
+    pub fn run_one_ppu_cycle(
+        &mut self,
+        texture: &mut Texture,
+        frame: &mut Frame,
+        canvas: &mut WindowCanvas,
+    ) {
         self.ppu_cycles_in_current_scanline += 1;
         // todo - actually draw something
         self.trigger_new_scanline_if_needed();
@@ -43,6 +51,7 @@ impl<'a> PPU<'a> {
         if self.scanlines_in_current_frame == NMI_SCANLINE
             && self.ppu_cycles_in_current_scanline == 0
         {
+            self.render_full_screen_background(texture, frame, canvas);
             if self.bus.ppu_registers.control_register.get_vblank_nmi() {
                 self.bus
                     .ppu_registers
