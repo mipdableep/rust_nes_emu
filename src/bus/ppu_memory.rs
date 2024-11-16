@@ -109,7 +109,7 @@ impl Bus {
         match canonical_address {
             0x00..=0x01fff => panic!("Error: address {canonical_address} is not in range of ppu registers"),
             0x2000 => self.ppu_registers.control_register.read(), // PPUCTRL
-            0x2001 => todo!(), //PPUMASK
+            0x2001 => self.ppu_registers.mask_register.read(), //PPUMASK
             0x2002 => { //PPUSTATUS
                 // reading from status register has the strange attribute of resetting the latch w
                 self.ppu_registers.address_register.reset_latch();
@@ -142,7 +142,7 @@ impl Bus {
                     self.nmi_generated = true;
                 }
             },
-            0x2001 => todo!(), //PPUMASK
+            0x2001 => self.ppu_registers.mask_register.write_byte(value), //PPUMASK
             0x2002 => panic!("Should not write to read-only status register PPUSTATUS at 0x2002"), //PPUSTATUS
             0x2003 => todo!(), //OAMADDR
             0x2004 => todo!(), //OAMDATA
