@@ -1,13 +1,6 @@
 use super::CPU;
 use crate::bus::Bus;
-
-#[macro_export]
-macro_rules! generate_cpu {
-    ($var: ident) => {
-        let mut bus: Bus = Bus::new();
-        let mut $var = CPU::new(&mut bus);
-    };
-}
+use crate::generate_cpu;
 
 #[test]
 #[allow(unused_mut)]

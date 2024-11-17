@@ -1,7 +1,7 @@
-mod cartridge;
+pub mod cartridge;
 #[cfg(test)]
 pub mod mem_tests;
-pub(crate) mod memory;
+pub mod memory;
 mod ppu_memory;
 #[cfg(test)]
 mod ppu_memory_tests;

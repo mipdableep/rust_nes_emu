@@ -2,16 +2,7 @@ use crate::bus::cartridge::Mirroring;
 use crate::bus::Bus;
 use crate::cpu::CPU;
 use crate::generate_cpu;
-
-#[macro_export]
-macro_rules! generate_cpu_and_vram {
-    ($cpu: ident, $vram: ident) => {
-        let mut bus: Bus = Bus::new();
-        let mut $cpu: CPU = CPU::new(&mut bus);
-        $cpu.bus.cartridge.screen_mirroring = Mirroring::Vertical;
-        let $vram = &mut $cpu.bus.ppu_memory.vram;
-    };
-}
+use crate::generate_cpu_and_vram;
 
 fn prepare_for_ppu_memory_read(cpu: &mut CPU, address: u16) {
     // a helper function to prepare for read from a specific ppu memory
