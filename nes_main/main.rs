@@ -1,6 +1,6 @@
 use std::{thread::sleep, time};
 
-use nes_emulator::{generate_cpu, generate_cpu_and_vram, generate_texture_canvas_event_pump};
+use nes_emulator::{generate_cpu, generate_texture_canvas_event_pump};
 
 use nes_emulator::ppu::render_sdl::{
     screen_rendering_constants::{SCREEN_HEIGHT, SCREEN_WIDTH},

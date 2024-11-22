@@ -5,25 +5,30 @@ pub use crate::{
 };
 
 #[macro_export]
-macro_rules! generate_cpu_and_vram {
-    ($cpu: ident, $vram: ident) => {
-        use $crate::{
-            bus::{cartridge::Mirroring, Bus},
-            cpu::CPU,
-        };
-
-        let mut bus: Bus = Bus::new();
-        let mut $cpu: CPU = CPU::new(&mut bus);
-        $cpu.bus.as_mut().unwrap().cartridge.screen_mirroring = Mirroring::Vertical;
-        let $vram = &mut $cpu.bus.take().unwrap().ppu_memory.vram;
-    };
-}
-
-#[macro_export]
 macro_rules! generate_cpu {
     ($var: ident) => {
         use $crate::{bus::Bus, cpu::CPU};
         let mut bus: Bus = Bus::new();
+        let mut $var = CPU::new(&mut bus);
+    };
+}
+
+#[macro_export]
+macro_rules! generate_cpu_and_set_vertical_mirroring {
+    ($var: ident) => {
+        use $crate::{bus::Bus, cpu::CPU};
+        let mut bus: Bus = Bus::new();
+        bus.cartridge.screen_mirroring = Mirroring::Vertical;
+        let mut $var = CPU::new(&mut bus);
+    };
+}
+
+#[macro_export]
+macro_rules! generate_cpu_and_set_horizontal_mirroring {
+    ($var: ident) => {
+        use $crate::{bus::Bus, cpu::CPU};
+        let mut bus: Bus = Bus::new();
+        bus.cartridge.screen_mirroring = Mirroring::Horizontal;
         let mut $var = CPU::new(&mut bus);
     };
 }
