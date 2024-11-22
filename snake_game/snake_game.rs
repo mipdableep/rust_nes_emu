@@ -59,13 +59,23 @@ impl<'a, 'sdl> SnakeGame<'a, 'sdl> {
         let mut program_vector = vec![0_u8; 0x8000];
         program_vector[0xFFFC - 0x8000] = 0x00;
         program_vector[0xFFFD - 0x8000] = 0x06;
-        self.cpu.bus.cartridge.raw_load(program_vector); // mem[0xFFFC] = 0x0600, little endian
+        self.cpu
+            .bus
+            .as_mut()
+            .unwrap()
+            .cartridge
+            .raw_load(program_vector); // mem[0xFFFC] = 0x0600, little endian
         self.cpu.program_counter = self.cpu.read_memory_2_bytes(0xFFFC); // set pc from 0xFFFC
     }
 
     fn load_from_dump(&mut self) {
         let bytes = std::fs::read("./snake_game/snake.nes").unwrap();
-        self.cpu.bus.cartridge.load_from_dump(&bytes);
+        self.cpu
+            .bus
+            .as_mut()
+            .unwrap()
+            .cartridge
+            .load_from_dump(&bytes);
         self.cpu.program_counter = self.cpu.read_memory_2_bytes(0xFFFC);
     }
 

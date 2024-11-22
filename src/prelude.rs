@@ -14,8 +14,8 @@ macro_rules! generate_cpu_and_vram {
 
         let mut bus: Bus = Bus::new();
         let mut $cpu: CPU = CPU::new(&mut bus);
-        $cpu.bus.cartridge.screen_mirroring = Mirroring::Vertical;
-        let $vram = &mut $cpu.bus.ppu_memory.vram;
+        $cpu.bus.as_mut().unwrap().cartridge.screen_mirroring = Mirroring::Vertical;
+        let $vram = &mut $cpu.bus.take().unwrap().ppu_memory.vram;
     };
 }
 

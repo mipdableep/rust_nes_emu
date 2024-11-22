@@ -57,7 +57,7 @@ fn PHP_and_PLP() {
 }
 
 fn check_cpu_not_changed(cpu: &CPU) {
-    assert_eq!(*cpu.bus, Bus::new());
+    assert_eq!(**cpu.bus.as_ref().expect("idono"), Bus::new());
     assert_eq!(cpu.register_a, 0);
     assert_eq!(cpu.register_x, 0);
     assert_eq!(cpu.register_y, 0);
@@ -97,7 +97,7 @@ fn BRK() {
     let mut program_vector = vec![0_u8; 0x8000];
     program_vector[BRK_ADDRESS as usize - 0x8000] = 0xaa;
     program_vector[BRK_ADDRESS as usize + 1 - 0x8000] = 0xbb;
-    cpu.bus.cartridge.raw_load(program_vector);
+    cpu.bus.as_mut().unwrap().cartridge.raw_load(program_vector);
 
     cpu.BRK();
 

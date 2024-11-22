@@ -212,9 +212,9 @@ fn nmi_attendance() {
     let mut rom = vec![0_u8; 0x8000];
     rom[0x7FFA] = 0x50;
     rom[0x7FFB] = 0x00;
-    cpu.bus.cartridge.prg_rom = rom;
+    cpu.bus.as_mut().unwrap().cartridge.prg_rom = rom;
     cpu.write_memory(0x50, 0x40); // 0x40 is RTI
-    cpu.bus.nmi_generated = true;
+    cpu.bus.as_mut().unwrap().nmi_generated = true;
     cpu.run_one_cycle();
 
     // check we did all nmi things correctly
@@ -233,7 +233,7 @@ fn nmi_attendance() {
     // set the status to check that we changed it correctly while pulling back from the stack
     cpu.status = 0xFF;
 
-    while cpu.bus.cpu_idle_cycles > 0 {
+    while cpu.bus.as_mut().unwrap().cpu_idle_cycles > 0 {
         cpu.run_one_cycle();
     }
 

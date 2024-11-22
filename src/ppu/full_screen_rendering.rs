@@ -7,10 +7,10 @@ impl<'bus> PPU<'bus> {
     fn copy_background_to_frame(&self, frame: &mut Frame) {
         for i in 0..0x03c0 {
             // just for now, lets use the first nametable
-            let tile = self.bus.ppu_memory.vram[i] as u16;
+            let tile = self.bus.as_ref().unwrap().ppu_memory.vram[i] as u16;
             let tile_x = i % 32;
             let tile_y = i / 32;
-            let tile = &self.bus.cartridge.chr_rom
+            let tile = &self.bus.as_ref().unwrap().cartridge.chr_rom
                 [(0x1000 + tile * 16) as usize..=(0x1000 + tile * 16 + 15) as usize];
 
             for y in 0..=7 {

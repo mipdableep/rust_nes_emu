@@ -25,6 +25,9 @@ pub fn test_access_ppu_memory_from_cpu() {
     vram[0xa1] = 0x02;
     vram[0xa2] = 0x03;
 
+    let bus = cpu.bus.take().unwrap();
+    cpu.bus = Some(bus);
+
     prepare_for_ppu_memory_read(&mut cpu, 0x20a0);
 
     assert_eq!(cpu.read_memory(0x2007), 0x01);
@@ -36,11 +39,17 @@ pub fn test_access_ppu_memory_from_cpu() {
 pub fn test_address_increment_on_ppu_data_read() {
     generate_cpu_and_vram!(cpu, vram);
     // set the increment to 32
-    cpu.bus.ppu_registers.control_register.write_byte(0x04);
     // generate the memory
     vram[0xa0 + 32 * 0] = 0x01;
     vram[0xa0 + 32 * 1] = 0x02;
     vram[0xa0 + 32 * 2] = 0x03;
+
+    cpu.bus
+        .as_mut()
+        .unwrap()
+        .ppu_registers
+        .control_register
+        .write_byte(0x04);
 
     prepare_for_ppu_memory_read(&mut cpu, 0x20a0);
 
@@ -52,7 +61,7 @@ pub fn test_address_increment_on_ppu_data_read() {
 #[test]
 pub fn test_write_to_ppu_memory() {
     generate_cpu!(cpu);
-    cpu.bus.cartridge.screen_mirroring = Mirroring::Vertical;
+    cpu.bus.as_mut().unwrap().cartridge.screen_mirroring = Mirroring::Vertical;
     // generate the memory
     cpu.write_memory(0x2006, 0x20);
     cpu.write_memory(0x2006, 0xa0);
@@ -71,7 +80,7 @@ pub fn test_write_to_ppu_memory() {
 #[test]
 fn test_read_from_status_resets_latch() {
     generate_cpu!(cpu);
-    cpu.bus.cartridge.screen_mirroring = Mirroring::Vertical;
+    cpu.bus.as_mut().unwrap().cartridge.screen_mirroring = Mirroring::Vertical;
 
     // since we read the ppu status register, we should have the address at 0x20a0 and not 0xa020
     cpu.write_memory(0x2006, 0x00);
@@ -80,13 +89,13 @@ fn test_read_from_status_resets_latch() {
     cpu.write_memory(0x2006, 0xa0);
 
     cpu.write_memory(0x2007, 0xab);
-    assert_eq!(cpu.bus.ppu_memory.vram[0xa0], 0xab)
+    assert_eq!(cpu.bus.as_mut().unwrap().ppu_memory.vram[0xa0], 0xab)
 }
 
 #[test]
 fn test_vertical_mirroring() {
     generate_cpu_and_vram!(cpu, vram);
-    cpu.bus.cartridge.screen_mirroring = Mirroring::Vertical;
+    cpu.bus.as_mut().unwrap().cartridge.screen_mirroring = Mirroring::Vertical;
 
     vram[0x00] = 0x12;
     vram[0x123] = 0x34;
@@ -116,13 +125,17 @@ fn test_vertical_mirroring() {
 #[test]
 fn test_horizontal_mirroring() {
     generate_cpu_and_vram!(cpu, vram);
-    cpu.bus.cartridge.screen_mirroring = Mirroring::Horizontal;
 
     vram[0x00] = 0x12;
     vram[0x123] = 0x34;
     vram[0x3FF] = 0x56;
     vram[0x800] = 0x78;
     vram[0xBFF] = 0x9A;
+
+    let bus = cpu.bus.take().unwrap();
+    cpu.bus = Some(bus);
+
+    cpu.bus.as_mut().unwrap().cartridge.screen_mirroring = Mirroring::Horizontal;
 
     prepare_for_ppu_memory_read(&mut cpu, 0x2400); // mirror of 0x2000
     assert_eq!(cpu.read_memory(0x2007), 0x12);

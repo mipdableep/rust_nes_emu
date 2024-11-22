@@ -32,11 +32,11 @@ pub fn check_if_on_different_pages(addr1: u16, addr2: u16) -> bool {
 
 impl<'a> CPU<'a> {
     pub fn read_memory(&mut self, addr: u16) -> u8 {
-        self.bus.read_memory(addr)
+        self.bus.as_mut().unwrap().read_memory(addr)
     }
 
     pub fn read_memory_2_bytes(&mut self, addr: u16) -> u16 {
-        self.bus.read_memory_2_bytes(addr)
+        self.bus.as_mut().unwrap().read_memory_2_bytes(addr)
     }
 
     pub fn read_memory_2_bytes_without_page_cross(&mut self, addr: u16) -> u16 {
@@ -47,13 +47,13 @@ impl<'a> CPU<'a> {
             0xff => addr - 0xff,
             _ => addr.wrapping_add(1),
         };
-        let low = self.bus.read_memory(low_byte_location) as u16;
-        let high = self.bus.read_memory(high_byte_location) as u16;
+        let low = self.bus.as_mut().unwrap().read_memory(low_byte_location) as u16;
+        let high = self.bus.as_mut().unwrap().read_memory(high_byte_location) as u16;
         (high << 8) | low
     }
 
     pub fn write_memory(&mut self, addr: u16, data: u8) {
-        self.bus.write_memory(addr, data);
+        self.bus.as_mut().unwrap().write_memory(addr, data);
     }
 
     pub fn convert_mode_to_val(&mut self, mode: AddressingMode) -> u8 {

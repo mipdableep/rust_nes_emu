@@ -16,7 +16,7 @@ pub struct PPU<'a> {
     pub palette_table: [u8; 32],
     pub vram: [u8; 2048],
     pub oam_data: [u8; 256],
-    pub bus: &'a mut Bus,
+    pub bus: Option<&'a mut Bus>,
 }
 
 impl<'a> PPU<'a> {
@@ -27,7 +27,7 @@ impl<'a> PPU<'a> {
             palette_table: [0; 32],
             vram: [0; 2048],
             oam_data: [0; 256],
-            bus: bus,
+            bus: Some(bus),
         }
     }
 
@@ -52,18 +52,29 @@ impl<'a> PPU<'a> {
             && self.ppu_cycles_in_current_scanline == 0
         {
             self.render_full_screen_background(texture, frame, canvas);
-            if self.bus.ppu_registers.control_register.get_vblank_nmi() {
+            if self
+                .bus
+                .as_mut()
+                .unwrap()
+                .ppu_registers
+                .control_register
+                .get_vblank_nmi()
+            {
                 self.bus
+                    .as_mut()
+                    .unwrap()
                     .ppu_registers
                     .status_register
                     .set_vblank_status(true);
-                self.bus.nmi_generated = true;
+                self.bus.as_mut().unwrap().nmi_generated = true;
             }
         }
 
         if self.scanlines_in_current_frame >= SCANLINES_PER_FRAME {
             self.scanlines_in_current_frame -= SCANLINES_PER_FRAME;
             self.bus
+                .as_mut()
+                .unwrap()
                 .ppu_registers
                 .status_register
                 .set_vblank_status(false);

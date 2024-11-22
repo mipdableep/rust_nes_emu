@@ -21,7 +21,7 @@ pub struct CPU<'a> {
     pub register_x: u8,
     pub register_y: u8,
     pub stack_pointer: u8,
-    pub bus: &'a mut Bus,
+    pub bus: Option<&'a mut Bus>,
 }
 
 impl<'a> CPU<'a> {
@@ -33,12 +33,12 @@ impl<'a> CPU<'a> {
             register_x: 0,
             register_y: 0,
             stack_pointer: 0xff,
-            bus: bus,
+            bus: Some(bus),
         }
     }
 
     pub fn load(&mut self, program: Vec<u8>) {
-        self.bus.cartridge.raw_load(program);
+        self.bus.as_mut().unwrap().cartridge.raw_load(program);
         self.program_counter = PRG_ROM_START;
     }
 
@@ -170,24 +170,24 @@ impl<'a> CPU<'a> {
 
     pub fn increase_cpu_idle_cycles(&mut self, inc: u8) {
         // if we want to say certain action took x cycles, we just tell the cpu to rest in the next x cycles
-        self.bus.cpu_idle_cycles += inc;
+        self.bus.as_mut().unwrap().cpu_idle_cycles += inc;
     }
 
     pub fn decrease_cpu_idle_cycles(&mut self, dec: u8) {
         // same thing, every cycle we decrease the number of cycles we need to wait
-        self.bus.cpu_idle_cycles -= dec;
+        self.bus.as_mut().unwrap().cpu_idle_cycles -= dec;
     }
 
     pub fn run_one_cycle(&mut self) -> bool {
         let mut return_value: bool = true;
 
-        if self.bus.nmi_generated {
+        if self.bus.as_mut().unwrap().nmi_generated {
             // attend to nmi if needed
             self.attend_nmi_interrupt();
-            self.bus.nmi_generated = false;
+            self.bus.as_mut().unwrap().nmi_generated = false;
         }
 
-        if self.bus.cpu_idle_cycles == 0 {
+        if self.bus.as_mut().unwrap().cpu_idle_cycles == 0 {
             let opcode = self.read_memory(self.program_counter);
             return_value = self.massive_switch(opcode);
         }
@@ -199,7 +199,7 @@ impl<'a> CPU<'a> {
         self.program_counter = 0;
 
         loop {
-            if self.bus.cpu_idle_cycles == 0 {
+            if self.bus.as_mut().unwrap().cpu_idle_cycles == 0 {
                 let opcode = program[self.program_counter as usize];
                 if !self.massive_switch(opcode) {
                     return;
