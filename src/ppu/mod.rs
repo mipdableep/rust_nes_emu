@@ -52,6 +52,12 @@ impl<'a> PPU<'a> {
             && self.ppu_cycles_in_current_scanline == 0
         {
             self.render_full_screen_background(texture, frame, canvas);
+            self.bus
+                .as_mut()
+                .unwrap()
+                .ppu_registers
+                .status_register
+                .set_vblank_status(true);
             if self
                 .bus
                 .as_mut()
@@ -60,12 +66,6 @@ impl<'a> PPU<'a> {
                 .control_register
                 .get_vblank_nmi()
             {
-                self.bus
-                    .as_mut()
-                    .unwrap()
-                    .ppu_registers
-                    .status_register
-                    .set_vblank_status(true);
                 self.bus.as_mut().unwrap().nmi_generated = true;
             }
         }
