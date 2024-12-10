@@ -117,7 +117,7 @@ impl Bus {
             },
             0x2003 => todo!(), //OAMADDR
             0x2004 => todo!(), //OAMDATA
-            0x2005 => todo!(), // PPUSCRL
+            0x2005 => 0, // PPUSCRL, should be write-only
             0x2006 => self.ppu_registers.address_register.read(), //PPUADDR
             0x2007 => { //PPUDATA
                 let address = self.ppu_registers.address_register.get_address_as_u16();
@@ -146,7 +146,7 @@ impl Bus {
             0x2002 => panic!("Should not write to read-only status register PPUSTATUS at 0x2002"), //PPUSTATUS
             0x2003 => todo!(), //OAMADDR
             0x2004 => todo!(), //OAMDATA
-            0x2005 => todo!(), // PPUSCRL
+            0x2005 => self.ppu_registers.scroll_register.write_byte(value), // PPUSCRL
             0x2006 => self.ppu_registers.address_register.write_byte(value), //PPUADDR
             0x2007 => {
                 let address_in_ppu = self.ppu_registers.address_register.get_address_as_u16();

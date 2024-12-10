@@ -2,12 +2,14 @@ use crate::bus::ppu_registers::address_register::PPUAddressReg;
 use crate::bus::ppu_registers::control_register::PPUControlRegister;
 use crate::bus::ppu_registers::data_register::PPUDataReg;
 use crate::bus::ppu_registers::mask_register::PPUMaskRegister;
+use crate::bus::ppu_registers::scroll_register::PPUScrollReg;
 use crate::bus::ppu_registers::status_register::PPUStatusRegister;
 
 pub mod address_register;
 pub mod control_register;
 mod data_register;
 mod mask_register;
+mod scroll_register;
 mod status_register;
 
 #[derive(Debug, Eq, PartialEq)]
@@ -17,6 +19,7 @@ pub struct PPURegisters {
     pub status_register: PPUStatusRegister,
     pub address_register: PPUAddressReg,
     pub data_register: PPUDataReg,
+    pub scroll_register: PPUScrollReg,
 }
 
 impl PPURegisters {
@@ -27,6 +30,7 @@ impl PPURegisters {
             status_register: PPUStatusRegister::new(),
             address_register: PPUAddressReg::new(),
             data_register: PPUDataReg::new(),
+            scroll_register: PPUScrollReg::new(),
         }
     }
 }
