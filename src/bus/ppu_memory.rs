@@ -115,7 +115,9 @@ impl Bus {
             0x2002 => { //PPUSTATUS
                 // reading from status register has the strange attribute of resetting the latch w
                 self.ppu_registers.address_register.reset_latch();
-                self.ppu_registers.status_register.read()
+                let status_register = self.ppu_registers.status_register.read();
+                self.ppu_registers.status_register.set_vblank_status(false); // clear vblank
+                status_register
             },
             0x2003 => todo!(), //OAMADDR
             0x2004 => todo!(), //OAMDATA
