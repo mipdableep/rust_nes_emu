@@ -76,10 +76,10 @@ impl Bus {
                 let canonical_address = self.mirror_vram_address(address) as usize;
                 &mut self.ppu_memory.vram[canonical_address - PPU_NAMETABLE_START as usize]
             }
-            PPU_UNUSED_SEG_START..=PPU_UNUSED_SEG_END => panic!(
-                "addr space 0x3000..0x3eff is not expected to be used, requested = {} ",
-                address
-            ),
+            PPU_UNUSED_SEG_START..=PPU_UNUSED_SEG_END => &mut self.ppu_memory.vram[0], // panic!(
+            //"addr space 0x3000..0x3eff is not expected to be used, requested = {} ",
+            //address
+            //),
             PPU_PALETTE_START..=PPU_PALETTE_END => {
                 let index_in_palette_table = (address - PPU_PALETTE_START) % PPU_PALETTE_SIZE;
                 &mut self.ppu_memory.palette_table[index_in_palette_table as usize]
