@@ -9,6 +9,7 @@ pub const PPU_NAMETABLE_END: u16 = 0x2FFF;
 pub const PPU_UNUSED_SEG_START: u16 = 0x3000;
 pub const PPU_UNUSED_SEG_END: u16 = 0x3EFF;
 pub const PPU_PALETTE_START: u16 = 0x3F00;
+pub const PPU_PALETTE_SIZE: u16 = 32;
 pub const PPU_PALETTE_END: u16 = 0x3FFF;
 
 #[derive(Debug, Eq, PartialEq)]
@@ -80,7 +81,8 @@ impl Bus {
                 address
             ),
             PPU_PALETTE_START..=PPU_PALETTE_END => {
-                &mut self.ppu_memory.palette_table[(address - PPU_PALETTE_START) as usize]
+                let index_in_palette_table = (address - PPU_PALETTE_START) % PPU_PALETTE_SIZE;
+                &mut self.ppu_memory.palette_table[index_in_palette_table as usize]
             }
             _ => panic!("unexpected access to mirrored space {}", address),
         }
