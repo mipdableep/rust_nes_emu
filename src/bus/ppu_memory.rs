@@ -119,7 +119,7 @@ impl Bus {
                 self.ppu_registers.status_register.set_vblank_status(false); // clear vblank
                 status_register
             },
-            0x2003 => todo!(), //OAMADDR
+            0x2003 => 1, //OAMADDR
             0x2004 => todo!(), //OAMDATA
             0x2005 => 0, // PPUSCRL, should be write-only
             0x2006 => self.ppu_registers.address_register.read(), //PPUADDR
@@ -142,7 +142,7 @@ impl Bus {
             },
             0x2001 => self.ppu_registers.mask_register.write_byte(value), //PPUMASK
             0x2002 => panic!("Should not write to read-only status register PPUSTATUS at 0x2002"), //PPUSTATUS
-            0x2003 => todo!(), //OAMADDR
+            0x2003 => return, //OAMADDR
             0x2004 => todo!(), //OAMDATA
             0x2005 => self.ppu_registers.scroll_register.write_byte(value), // PPUSCRL
             0x2006 => self.ppu_registers.address_register.write_byte(value), //PPUADDR

@@ -15,6 +15,7 @@ pub struct PPU<'a> {
     scanlines_in_current_frame: usize,     // each frame has 262 scanlines, with NMI in scanline 240
     pub palette_table: [u8; 32],
     pub bus: Option<&'a mut Bus>,
+    pub cycles_since_reset: u64,
 }
 
 impl<'a> PPU<'a> {
@@ -24,6 +25,7 @@ impl<'a> PPU<'a> {
             scanlines_in_current_frame: 0,
             palette_table: [0; 32],
             bus: Some(bus),
+            cycles_since_reset: 0,
         }
     }
 
@@ -40,6 +42,7 @@ impl<'a> PPU<'a> {
         frame: &mut Frame,
         canvas: &mut WindowCanvas,
     ) {
+        self.cycles_since_reset += 1;
         self.ppu_cycles_in_current_scanline += 1;
         // todo - actually draw something
         self.trigger_new_scanline_if_needed();

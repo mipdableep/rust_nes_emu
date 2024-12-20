@@ -17,6 +17,8 @@ fn main() {
 
     let mut cpu = CPU::new(bus_ref);
     cpu.program_counter = cpu.read_memory_2_bytes(0xFFFC); //TODO: create cpu.reset or something?
+                                                           // cpu.program_counter = 0xc004;
+                                                           // cpu.stack_pointer = 253;
     bus_ref = cpu.bus.take().unwrap();
 
     generate_texture_canvas_event_pump!(texture, canvas, event_pump);
@@ -29,6 +31,11 @@ fn main() {
         cpu.run_one_cycle();
 
         bus_ref = cpu.bus.take().unwrap();
+        if bus_ref.nmi_generated {
+            let cycle_number = ppu.cycles_since_reset;
+            let cycle_in_line = cycle_number + 1;
+        }
+
         ppu.bus = Some(bus_ref);
         ppu.run_one_ppu_cycle(&mut texture, &mut frame, &mut canvas);
         ppu.run_one_ppu_cycle(&mut texture, &mut frame, &mut canvas);

@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 pub struct PPUControlRegister(u8);
 
 // 7  bit  0
@@ -56,6 +56,13 @@ impl PPUControlRegister {
         match self.get_bit(2) {
             true => 32,
             false => 1,
+        }
+    }
+
+    pub fn get_sprite_pattern_address(self) -> u16 {
+        match self.get_bit(3) {
+            true => 0x1000,
+            false => 0x0000,
         }
     }
 }

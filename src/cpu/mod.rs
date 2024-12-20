@@ -9,6 +9,7 @@ mod opcodes;
 
 use crate::bus::memory_mapping_constants::PRG_ROM_START;
 use crate::bus::Bus;
+use std::io::Write;
 
 const STACK_END: u16 = 0x100;
 const NMI_ADDRESS: u16 = 0xFFFA;
@@ -22,6 +23,7 @@ pub struct CPU<'a> {
     pub register_y: u8,
     pub stack_pointer: u8,
     pub bus: Option<&'a mut Bus>,
+    cycles_since_restart: u64,
 }
 
 impl<'a> CPU<'a> {
@@ -34,6 +36,7 @@ impl<'a> CPU<'a> {
             register_y: 0,
             stack_pointer: 0xff,
             bus: Some(bus),
+            cycles_since_restart: 0,
         }
     }
 
@@ -155,6 +158,12 @@ impl<'a> CPU<'a> {
     }
 
     fn attend_nmi_interrupt(&mut self) {
+        // let mut file = std::fs::OpenOptions::new()
+        //     .append(true)
+        //     .open(r"C:\Users\Tomer Pelleg\RustroverProjects\nes_emulator\full_tests\pacman.txt")
+        //     .unwrap();
+        //
+        // write!(file, "NMI!",).unwrap();
         // attends to nmi interrupt
         // this loads the address from 0xFFFA, and attends this interrupt
 
@@ -179,6 +188,10 @@ impl<'a> CPU<'a> {
     }
 
     pub fn run_one_cycle(&mut self) -> bool {
+        // let mut file = std::fs::OpenOptions::new()
+        //     .append(true)
+        //     .open(r"C:\Users\Tomer Pelleg\RustroverProjects\nes_emulator\full_tests\pacman.txt")
+        //     .unwrap();
         let mut return_value: bool = true;
 
         if self.bus.as_mut().unwrap().nmi_generated {
@@ -189,9 +202,16 @@ impl<'a> CPU<'a> {
 
         if self.bus.as_mut().unwrap().cpu_idle_cycles == 0 {
             let opcode = self.read_memory(self.program_counter);
+            // writeln!(
+            //     file,
+            //     "{}",
+            //     self.get_status_string(opcode, self.cycles_since_restart)
+            // )
+            // .unwrap();
             return_value = self.massive_switch(opcode);
         }
         self.decrease_cpu_idle_cycles(1);
+        self.cycles_since_restart += 1;
         return_value
     }
 
@@ -208,5 +228,25 @@ impl<'a> CPU<'a> {
                 self.decrease_cpu_idle_cycles(1);
             }
         }
+    }
+
+    pub fn get_status_string(&mut self, opcode: u8, cycles: u64) -> String {
+        let pc_string = format!(" pc: {:#04x}", self.program_counter);
+        let opcode_string = format!(" opcode: {:#02x}", opcode);
+        let registers_string = format!(
+            " A: {:#02x}, X: {:#02x}, Y: {:#02x}, SP: {:#02x}, Status: {:#02x}, Cycles: {:}",
+            self.register_a,
+            self.register_x,
+            self.register_y,
+            self.stack_pointer,
+            self.status,
+            cycles
+        );
+        let mut final_string: String = "".to_owned();
+        final_string.push_str(&pc_string);
+        final_string.push_str(&opcode_string);
+        final_string.push_str(&registers_string);
+
+        final_string
     }
 }
