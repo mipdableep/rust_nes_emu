@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 pub struct PPUControlRegister(u8);
 
 // 7  bit  0
