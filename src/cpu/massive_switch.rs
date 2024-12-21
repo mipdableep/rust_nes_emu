@@ -11,7 +11,6 @@ impl<'a> CPU<'a> {
 
         let addressing_mode = opcode_metadata.addressing_mode;
         let address = self.convert_mode_to_operand_mem_address(addressing_mode);
-        let value = self.read_memory(address);
         let new_address = address;
 
         self.increase_cpu_idle_cycles(opcode_metadata.base_cycles);
@@ -30,23 +29,29 @@ impl<'a> CPU<'a> {
 
             // CPX : Compare X Register
             0xE0 => {
+                let value = self.read_memory(address);
                 self.CPX(value);
             }
             0xE4 => {
+                let value = self.read_memory(address);
                 self.CPX(value);
             }
             0xEC => {
+                let value = self.read_memory(address);
                 self.CPX(value);
             }
 
             // CPY : Compare Y Register
             0xC0 => {
+                let value = self.read_memory(address);
                 self.CPY(value);
             }
             0xC4 => {
+                let value = self.read_memory(address);
                 self.CPY(value);
             }
             0xCC => {
+                let value = self.read_memory(address);
                 self.CPY(value);
             }
 
@@ -86,61 +91,79 @@ impl<'a> CPU<'a> {
 
             // LDA : Load Accumulator
             0xA9 => {
+                let value = self.read_memory(address);
                 self.LDA(value);
             }
             0xA5 => {
+                let value = self.read_memory(address);
                 self.LDA(value);
             }
             0xB5 => {
+                let value = self.read_memory(address);
                 self.LDA(value);
             }
             0xAD => {
+                let value = self.read_memory(address);
                 self.LDA(value);
             }
             0xBD => {
+                let value = self.read_memory(address);
                 self.LDA(value);
             }
             0xB9 => {
+                let value = self.read_memory(address);
                 self.LDA(value);
             }
             0xA1 => {
+                let value = self.read_memory(address);
                 self.LDA(value);
             }
             0xB1 => {
+                let value = self.read_memory(address);
                 self.LDA(value);
             }
 
             // LDX : Load X Register
             0xA2 => {
+                let value = self.read_memory(address);
                 self.LDX(value);
             }
             0xA6 => {
+                let value = self.read_memory(address);
                 self.LDX(value);
             }
             0xB6 => {
+                let value = self.read_memory(address);
                 self.LDX(value);
             }
             0xAE => {
+                let value = self.read_memory(address);
                 self.LDX(value);
             }
             0xBE => {
+                let value = self.read_memory(address);
                 self.LDX(value);
             }
 
             // LDY : Load Y Register
             0xA0 => {
+                let value = self.read_memory(address);
                 self.LDY(value);
             }
             0xA4 => {
+                let value = self.read_memory(address);
                 self.LDY(value);
             }
             0xB4 => {
+                let value = self.read_memory(address);
                 self.LDY(value);
             }
             0xAC => {
+                let value = self.read_memory(address);
                 self.LDY(value);
             }
             0xBC => {
+                let value = self.read_memory(address);
                 self.LDY(value);
             }
 
@@ -249,53 +272,69 @@ impl<'a> CPU<'a> {
 
             // ADC : Add with Carry
             0x69 => {
+                let value = self.read_memory(address);
                 self.ADC(value);
             }
             0x65 => {
+                let value = self.read_memory(address);
                 self.ADC(value);
             }
             0x75 => {
+                let value = self.read_memory(address);
                 self.ADC(value);
             }
             0x6D => {
+                let value = self.read_memory(address);
                 self.ADC(value);
             }
             0x7D => {
+                let value = self.read_memory(address);
                 self.ADC(value);
             }
             0x79 => {
+                let value = self.read_memory(address);
                 self.ADC(value);
             }
             0x61 => {
+                let value = self.read_memory(address);
                 self.ADC(value);
             }
             0x71 => {
+                let value = self.read_memory(address);
                 self.ADC(value);
             }
 
             // AND : Logical AND
             0x29 => {
+                let value = self.read_memory(address);
                 self.AND(value);
             }
             0x25 => {
+                let value = self.read_memory(address);
                 self.AND(value);
             }
             0x35 => {
+                let value = self.read_memory(address);
                 self.AND(value);
             }
             0x2D => {
+                let value = self.read_memory(address);
                 self.AND(value);
             }
             0x3D => {
+                let value = self.read_memory(address);
                 self.AND(value);
             }
             0x39 => {
+                let value = self.read_memory(address);
                 self.AND(value);
             }
             0x21 => {
+                let value = self.read_memory(address);
                 self.AND(value);
             }
             0x31 => {
+                let value = self.read_memory(address);
                 self.AND(value);
             }
 
@@ -318,35 +357,45 @@ impl<'a> CPU<'a> {
 
             // BIT : Bit Test
             0x24 => {
+                let value = self.read_memory(address);
                 self.BIT(value);
             }
             0x2C => {
+                let value = self.read_memory(address);
                 self.BIT(value);
             }
 
             // CMP : Compare
             0xC9 => {
+                let value = self.read_memory(address);
                 self.CMP(value);
             }
             0xC5 => {
+                let value = self.read_memory(address);
                 self.CMP(value);
             }
             0xD5 => {
+                let value = self.read_memory(address);
                 self.CMP(value);
             }
             0xCD => {
+                let value = self.read_memory(address);
                 self.CMP(value);
             }
             0xDD => {
+                let value = self.read_memory(address);
                 self.CMP(value);
             }
             0xD9 => {
+                let value = self.read_memory(address);
                 self.CMP(value);
             }
             0xC1 => {
+                let value = self.read_memory(address);
                 self.CMP(value);
             }
             0xD1 => {
+                let value = self.read_memory(address);
                 self.CMP(value);
             }
 
@@ -366,27 +415,35 @@ impl<'a> CPU<'a> {
 
             // EOR : Exclusive OR
             0x49 => {
+                let value = self.read_memory(address);
                 self.EOR(value);
             }
             0x45 => {
+                let value = self.read_memory(address);
                 self.EOR(value);
             }
             0x55 => {
+                let value = self.read_memory(address);
                 self.EOR(value);
             }
             0x4D => {
+                let value = self.read_memory(address);
                 self.EOR(value);
             }
             0x5D => {
+                let value = self.read_memory(address);
                 self.EOR(value);
             }
             0x59 => {
+                let value = self.read_memory(address);
                 self.EOR(value);
             }
             0x41 => {
+                let value = self.read_memory(address);
                 self.EOR(value);
             }
             0x51 => {
+                let value = self.read_memory(address);
                 self.EOR(value);
             }
 
@@ -409,27 +466,35 @@ impl<'a> CPU<'a> {
 
             // ORA : Logical Inclusive OR
             0x09 => {
+                let value = self.read_memory(address);
                 self.ORA(value);
             }
             0x05 => {
+                let value = self.read_memory(address);
                 self.ORA(value);
             }
             0x15 => {
+                let value = self.read_memory(address);
                 self.ORA(value);
             }
             0x0D => {
+                let value = self.read_memory(address);
                 self.ORA(value);
             }
             0x1D => {
+                let value = self.read_memory(address);
                 self.ORA(value);
             }
             0x19 => {
+                let value = self.read_memory(address);
                 self.ORA(value);
             }
             0x01 => {
+                let value = self.read_memory(address);
                 self.ORA(value);
             }
             0x11 => {
+                let value = self.read_memory(address);
                 self.ORA(value);
             }
 
@@ -469,27 +534,35 @@ impl<'a> CPU<'a> {
 
             // SBC : Subtract with Carry
             0xE9 => {
+                let value = self.read_memory(address);
                 self.SBC(value);
             }
             0xE5 => {
+                let value = self.read_memory(address);
                 self.SBC(value);
             }
             0xF5 => {
+                let value = self.read_memory(address);
                 self.SBC(value);
             }
             0xED => {
+                let value = self.read_memory(address);
                 self.SBC(value);
             }
             0xFD => {
+                let value = self.read_memory(address);
                 self.SBC(value);
             }
             0xF9 => {
+                let value = self.read_memory(address);
                 self.SBC(value);
             }
             0xE1 => {
+                let value = self.read_memory(address);
                 self.SBC(value);
             }
             0xF1 => {
+                let value = self.read_memory(address);
                 self.SBC(value);
             }
 

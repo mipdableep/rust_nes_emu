@@ -119,7 +119,7 @@ impl Bus {
                 self.ppu_registers.status_register.set_vblank_status(false); // clear vblank
                 status_register
             },
-            0x2003 => 1, //OAMADDR
+            0x2003 => todo!(), //OAMADDR
             0x2004 => todo!(), //OAMDATA
             0x2005 => 0, // PPUSCRL, should be write-only
             0x2006 => self.ppu_registers.address_register.read(), //PPUADDR
