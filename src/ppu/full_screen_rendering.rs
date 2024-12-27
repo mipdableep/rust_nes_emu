@@ -41,14 +41,11 @@ impl<'bus> PPU<'bus> {
             let meta_tile_index_for_color = tile_x / 4 + tile_y / 4 * SCREEN_WIDTH_TILE / 4;
             let attribute_color_byte = bus!(self).ppu_memory.vram
                 [name_table_start + SCREEN_SIZE_TILE + meta_tile_index_for_color];
-            let palette_index_in_attribute_byte = match (tile_x % 2, tile_y % 2) {
-                (0, 0) => 0,
-                (0, 1) => 2,
-                (1, 0) => 4,
-                (1, 1) => 6,
-                (_, _) => {
-                    panic!("Can't be! something % 2 is not 0 or 1!")
-                }
+            let palette_index_in_attribute_byte = match (tile_x % 4 < 2, tile_y % 4 < 2) {
+                (true, true) => 0,
+                (false, true) => 2,
+                (true, false) => 4,
+                (false, false) => 6,
             };
             let palette_index =
                 (attribute_color_byte >> palette_index_in_attribute_byte) as usize & 0b11;
