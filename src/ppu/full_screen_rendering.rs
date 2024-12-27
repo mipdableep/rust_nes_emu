@@ -49,8 +49,6 @@ impl<'bus> PPU<'bus> {
             };
             let palette_index =
                 (attribute_color_byte >> palette_index_in_attribute_byte) as usize & 0b11;
-            let tile_palette =
-                &bus!(self).ppu_memory.palette_table[palette_index * 4..(palette_index + 1) * 4];
             macro_rules! palette {
                 () => {
                     bus!(self).ppu_memory.palette_table
