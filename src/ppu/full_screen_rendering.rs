@@ -38,7 +38,7 @@ impl<'bus> PPU<'bus> {
             let tile_start = (bank_start + tile_number * 16) as usize;
             let tile = &self.bus.as_ref().unwrap().cartridge.chr_rom[tile_start..=tile_start + 15];
 
-            let meta_tile_index_for_color = tile_x / 4 + tile_y / 4 * SCREEN_WIDTH_TILE;
+            let meta_tile_index_for_color = tile_x / 4 + tile_y / 4 * SCREEN_WIDTH_TILE / 4;
             let attribute_color_byte = bus!(self).ppu_memory.vram
                 [name_table_start + SCREEN_SIZE_TILE + meta_tile_index_for_color];
             let palette_index_in_attribute_byte = match (tile_x % 2, tile_y % 2) {
