@@ -14,6 +14,15 @@ macro_rules! generate_cpu {
 }
 
 #[macro_export]
+macro_rules! generate_ppu {
+    ($var: ident) => {
+        use $crate::{bus::Bus, ppu::PPU};
+        let mut bus: Bus = Bus::new();
+        let mut $var = PPU::new(&mut bus);
+    };
+}
+
+#[macro_export]
 macro_rules! generate_cpu_and_set_vertical_mirroring {
     ($var: ident) => {
         use $crate::{bus::Bus, cpu::CPU};
