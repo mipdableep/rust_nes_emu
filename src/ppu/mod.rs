@@ -24,6 +24,13 @@ macro_rules! bus {
 }
 
 #[macro_export]
+macro_rules! bus_mut {
+    ($ppu: ident) => {
+        $ppu.bus.as_mut().unwrap()
+    };
+}
+
+#[macro_export]
 macro_rules! ppu_mem {
     ($ppu: ident) => {
         bus!($ppu).ppu_memory
@@ -67,29 +74,18 @@ impl<'a> PPU<'a> {
             && self.ppu_cycles_in_current_scanline == 0
         {
             self.render_full_screen_background(texture, frame, canvas);
-            self.bus
-                .as_mut()
-                .unwrap()
+            bus_mut!(self)
                 .ppu_registers
                 .status_register
                 .set_vblank_status(true);
-            if self
-                .bus
-                .as_mut()
-                .unwrap()
-                .ppu_registers
-                .control_register
-                .get_vblank_nmi()
-            {
-                self.bus.as_mut().unwrap().nmi_generated = true;
+            if bus!(self).ppu_registers.control_register.get_vblank_nmi() {
+                bus_mut!(self).nmi_generated = true;
             }
         }
 
         if self.scanlines_in_current_frame >= SCANLINES_PER_FRAME {
             self.scanlines_in_current_frame -= SCANLINES_PER_FRAME;
-            self.bus
-                .as_mut()
-                .unwrap()
+            bus_mut!(self)
                 .ppu_registers
                 .status_register
                 .set_vblank_status(false);
