@@ -13,7 +13,6 @@ const NMI_SCANLINE: usize = 241;
 pub struct PPU<'a> {
     ppu_cycles_in_current_scanline: usize, // the scanline lasts for 341 ppu cycles
     scanlines_in_current_frame: usize,     // each frame has 262 scanlines, with NMI in scanline 240
-    pub palette_table: [u8; 32],
     pub bus: Option<&'a mut Bus>,
 }
 
@@ -22,7 +21,6 @@ impl<'a> PPU<'a> {
         PPU {
             ppu_cycles_in_current_scanline: 0,
             scanlines_in_current_frame: 0,
-            palette_table: [0; 32],
             bus: Some(bus),
         }
     }
