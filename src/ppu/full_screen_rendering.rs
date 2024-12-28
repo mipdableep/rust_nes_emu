@@ -5,14 +5,20 @@ use crate::ppu::render_sdl::{update_texture_from_frame, Frame};
 use sdl2::render::{Texture, WindowCanvas};
 
 macro_rules! bus {
-    ($self: ident) => {
-        $self.bus.as_ref().unwrap()
+    ($ppu: ident) => {
+        $ppu.bus.as_ref().unwrap()
     };
 }
 
 macro_rules! ppu_mem {
-    ($self: ident) => {
-        $self.bus.as_ref().unwrap().ppu_memory
+    ($ppu: ident) => {
+        $ppu.bus.as_ref().unwrap().ppu_memory
+    };
+}
+
+macro_rules! palette {
+    ($ppu: ident) => {
+        bus!($ppu).ppu_memory.palette_table
     };
 }
 
@@ -22,58 +28,64 @@ const SCREEN_SIZE_TILE: usize = SCREEN_WIDTH_TILE * SCREEN_HEIGHT_TILE;
 
 impl<'bus> PPU<'bus> {
     fn copy_background_to_frame(&self, frame: &mut Frame) {
-        for tile_index in 0..SCREEN_SIZE_TILE {
-            // for tile_index in (0..960) {
-            // just for now, lets use the first nametable
-            let name_table_start = 0;
-            let tile_number =
-                self.bus.as_ref().unwrap().ppu_memory.vram[name_table_start + tile_index] as u16;
-            let tile_x = tile_index % SCREEN_WIDTH_TILE;
-            let tile_y = tile_index / SCREEN_WIDTH_TILE;
-            let bank_start = bus!(self)
-                .ppu_registers
-                .control_register
-                .clone()
-                .get_background_sprite_address();
-            let tile_start = (bank_start + tile_number * 16) as usize;
-            let tile = &self.bus.as_ref().unwrap().cartridge.chr_rom[tile_start..=tile_start + 15];
+        let name_table_start = 0;
+        // just for now, lets use the first nametable
 
-            let meta_tile_index_for_color = tile_x / 4 + tile_y / 4 * SCREEN_WIDTH_TILE / 4;
-            let attribute_color_byte = bus!(self).ppu_memory.vram
-                [name_table_start + SCREEN_SIZE_TILE + meta_tile_index_for_color];
-            let palette_index_in_attribute_byte = match (tile_x % 4 < 2, tile_y % 4 < 2) {
-                (true, true) => 0,
-                (false, true) => 2,
-                (true, false) => 4,
-                (false, false) => 6,
-            };
-            let palette_index =
-                (attribute_color_byte >> palette_index_in_attribute_byte) as usize & 0b11;
-            macro_rules! palette {
-                () => {
-                    bus!(self).ppu_memory.palette_table
-                };
-            }
-            let tile_palette = [
-                palette!()[0],
-                palette!()[palette_index * 4 + 1],
-                palette!()[palette_index * 4 + 2],
-                palette!()[palette_index * 4 + 3],
-            ];
+        for tile_x in 0..SCREEN_WIDTH_TILE {
+            for tile_y in 0..SCREEN_HEIGHT_TILE {
+                let tile_index = tile_y * SCREEN_WIDTH_TILE + tile_x;
+                let tile_number = self.get_tile_number(tile_index, name_table_start);
 
-            for y in 0..=7 {
-                let mut upper = tile[y];
-                let mut lower = tile[y + 8];
+                let tile = self.get_actual_tile_data(tile_number);
 
-                for x in (0..=7).rev() {
-                    let value = (1 & upper) << 1 | (1 & lower);
-                    upper = upper >> 1;
-                    lower = lower >> 1;
-                    let rgb = SYSTEM_PALETTE[tile_palette[value as usize] as usize];
-                    frame.set_pixel(tile_x * 8 + x, tile_y * 8 + y, rgb)
-                }
+                let palette_index = self.get_palette_index(name_table_start, tile_x, tile_y);
+                let tile_palette = self.get_background_palette(palette_index);
+
+                frame.draw_tile_one_frame(tile_x, tile_y, tile, tile_palette);
             }
         }
+    }
+
+    fn get_background_palette(&self, palette_index: usize) -> [u8; 4] {
+        let tile_palette = [
+            palette!(self)[0],
+            palette!(self)[palette_index * 4 + 1],
+            palette!(self)[palette_index * 4 + 2],
+            palette!(self)[palette_index * 4 + 3],
+        ];
+        tile_palette
+    }
+
+    fn get_palette_index(&self, name_table_start: usize, tile_x: usize, tile_y: usize) -> usize {
+        let meta_tile_index_for_color = tile_x / 4 + tile_y / 4 * SCREEN_WIDTH_TILE / 4;
+        let attribute_color_byte = bus!(self).ppu_memory.vram
+            [name_table_start + SCREEN_SIZE_TILE + meta_tile_index_for_color];
+        let palette_index_in_attribute_byte = match (tile_x % 4 < 2, tile_y % 4 < 2) {
+            (true, true) => 0,
+            (false, true) => 2,
+            (true, false) => 4,
+            (false, false) => 6,
+        };
+        let palette_index =
+            (attribute_color_byte >> palette_index_in_attribute_byte) as usize & 0b11;
+        palette_index
+    }
+
+    fn get_actual_tile_data(&self, tile_number: u16) -> &[u8] {
+        let bank_start = bus!(self)
+            .ppu_registers
+            .control_register
+            .clone()
+            .get_background_sprite_address();
+        let tile_start = (bank_start + tile_number * 16) as usize;
+        let tile = &self.bus.as_ref().unwrap().cartridge.chr_rom[tile_start..=tile_start + 15];
+        tile
+    }
+
+    fn get_tile_number(&self, tile_index: usize, name_table_start: usize) -> u16 {
+        let tile_number =
+            self.bus.as_ref().unwrap().ppu_memory.vram[name_table_start + tile_index] as u16;
+        tile_number
     }
 
     fn copy_sprite_to_frame(&self, frame: &mut Frame) {
