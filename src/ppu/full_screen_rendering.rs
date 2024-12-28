@@ -12,7 +12,7 @@ macro_rules! bus {
 
 macro_rules! ppu_mem {
     ($ppu: ident) => {
-        $ppu.bus.as_ref().unwrap().ppu_memory
+        bus!($ppu).ppu_memory
     };
 }
 
@@ -78,35 +78,32 @@ impl<'bus> PPU<'bus> {
             .clone()
             .get_background_sprite_address();
         let tile_start = (bank_start + tile_number * 16) as usize;
-        let tile = &self.bus.as_ref().unwrap().cartridge.chr_rom[tile_start..=tile_start + 15];
+        let tile = &bus!(self).cartridge.chr_rom[tile_start..=tile_start + 15];
         tile
     }
 
     fn get_tile_number(&self, tile_index: usize, name_table_start: usize) -> u16 {
-        let tile_number =
-            self.bus.as_ref().unwrap().ppu_memory.vram[name_table_start + tile_index] as u16;
+        let tile_number = bus!(self).ppu_memory.vram[name_table_start + tile_index] as u16;
         tile_number
     }
 
     fn copy_sprite_to_frame(&self, frame: &mut Frame) {
         for i in (0..256).step_by(4).rev() {
             let tile_idx = ppu_mem!(self).oam_data[i + 1] as u16;
-            let tile_x = self.bus.as_ref().unwrap().ppu_memory.oam_data[i + 3] as usize;
-            let tile_y = self.bus.as_ref().unwrap().ppu_memory.oam_data[i] as usize;
+            let tile_x = ppu_mem!(self).oam_data[i + 3] as usize;
+            let tile_y = ppu_mem!(self).oam_data[i] as usize;
 
-            let flip_vertical =
-                if self.bus.as_ref().unwrap().ppu_memory.oam_data[i + 2] >> 7 & 1 == 1 {
-                    true
-                } else {
-                    false
-                };
-            let flip_horizontal =
-                if self.bus.as_ref().unwrap().ppu_memory.oam_data[i + 2] >> 6 & 1 == 1 {
-                    true
-                } else {
-                    false
-                };
-            let palette_idx = self.bus.as_ref().unwrap().ppu_memory.oam_data[i + 2] & 0b11;
+            let flip_vertical = if ppu_mem!(self).oam_data[i + 2] >> 7 & 1 == 1 {
+                true
+            } else {
+                false
+            };
+            let flip_horizontal = if ppu_mem!(self).oam_data[i + 2] >> 6 & 1 == 1 {
+                true
+            } else {
+                false
+            };
+            let palette_idx = ppu_mem!(self).oam_data[i + 2] & 0b11;
 
             let start = 0x11 + (palette_idx * 4) as usize;
             let sprite_palette = [
