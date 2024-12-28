@@ -16,6 +16,27 @@ pub struct PPU<'a> {
     pub bus: Option<&'a mut Bus>,
 }
 
+#[macro_export]
+macro_rules! bus {
+    ($ppu: ident) => {
+        $ppu.bus.as_ref().unwrap()
+    };
+}
+
+#[macro_export]
+macro_rules! ppu_mem {
+    ($ppu: ident) => {
+        bus!($ppu).ppu_memory
+    };
+}
+
+#[macro_export]
+macro_rules! palette {
+    ($ppu: ident) => {
+        bus!($ppu).ppu_memory.palette_table
+    };
+}
+
 impl<'a> PPU<'a> {
     pub fn new(bus: &'a mut Bus) -> Self {
         PPU {

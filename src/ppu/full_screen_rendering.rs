@@ -2,25 +2,8 @@ use super::PPU;
 use crate::ppu::colors_palette::SYSTEM_PALETTE;
 use crate::ppu::render_sdl::screen_rendering_constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use crate::ppu::render_sdl::{update_texture_from_frame, Frame};
+use crate::{bus, palette, ppu_mem};
 use sdl2::render::{Texture, WindowCanvas};
-
-macro_rules! bus {
-    ($ppu: ident) => {
-        $ppu.bus.as_ref().unwrap()
-    };
-}
-
-macro_rules! ppu_mem {
-    ($ppu: ident) => {
-        bus!($ppu).ppu_memory
-    };
-}
-
-macro_rules! palette {
-    ($ppu: ident) => {
-        bus!($ppu).ppu_memory.palette_table
-    };
-}
 
 const SCREEN_WIDTH_TILE: usize = SCREEN_WIDTH / 8;
 const SCREEN_HEIGHT_TILE: usize = SCREEN_HEIGHT / 8;
@@ -58,8 +41,8 @@ impl<'bus> PPU<'bus> {
 
     fn get_palette_index(&self, name_table_start: usize, tile_x: usize, tile_y: usize) -> usize {
         let meta_tile_index_for_color = tile_x / 4 + tile_y / 4 * SCREEN_WIDTH_TILE / 4;
-        let attribute_color_byte = bus!(self).ppu_memory.vram
-            [name_table_start + SCREEN_SIZE_TILE + meta_tile_index_for_color];
+        let attribute_color_byte =
+            ppu_mem!(self).vram[name_table_start + SCREEN_SIZE_TILE + meta_tile_index_for_color];
         let palette_index_in_attribute_byte = match (tile_x % 4 < 2, tile_y % 4 < 2) {
             (true, true) => 0,
             (false, true) => 2,
