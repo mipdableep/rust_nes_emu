@@ -32,6 +32,14 @@ impl Frame {
         self.screen_state[3 * (x + y * SCREEN_WIDTH) + 2] = b;
     }
 
+    pub fn get_pixel(&self, x: usize, y: usize) -> (u8, u8, u8) {
+        (
+            self.screen_state[3 * (x + y * SCREEN_WIDTH)],
+            self.screen_state[3 * (x + y * SCREEN_WIDTH) + 1],
+            self.screen_state[3 * (x + y * SCREEN_WIDTH) + 2],
+        )
+    }
+
     pub fn draw_tile_one_frame(
         &mut self,
         tile_x: usize,

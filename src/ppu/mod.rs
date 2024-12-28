@@ -1,6 +1,8 @@
 pub mod colors_palette;
 mod full_screen_rendering;
 pub mod render_sdl;
+#[cfg(test)]
+mod test_frame_rendering;
 
 use crate::bus::Bus;
 use crate::ppu::render_sdl::Frame;

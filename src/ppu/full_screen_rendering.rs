@@ -5,12 +5,12 @@ use crate::ppu::render_sdl::{update_texture_from_frame, Frame};
 use crate::{bus, palette, ppu_mem};
 use sdl2::render::{Texture, WindowCanvas};
 
-const SCREEN_WIDTH_TILE: usize = SCREEN_WIDTH / 8;
+pub const SCREEN_WIDTH_TILE: usize = SCREEN_WIDTH / 8;
 const SCREEN_HEIGHT_TILE: usize = SCREEN_HEIGHT / 8;
 const SCREEN_SIZE_TILE: usize = SCREEN_WIDTH_TILE * SCREEN_HEIGHT_TILE;
 
 impl<'bus> PPU<'bus> {
-    fn copy_background_to_frame(&self, frame: &mut Frame) {
+    pub fn copy_background_to_frame(&self, frame: &mut Frame) {
         let name_table_start = 0;
         // just for now, lets use the first nametable
 
