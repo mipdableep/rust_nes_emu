@@ -1,12 +1,9 @@
-use std::{thread::sleep, time};
+// use std::{thread::sleep, time};
 
-use nes_emulator::ppu::render_sdl::{
-    screen_rendering_constants::{SCREEN_HEIGHT, SCREEN_WIDTH},
-    update_texture_from_frame, Frame,
-};
+use nes_emulator::generate_texture_canvas_event_pump;
+use nes_emulator::ppu::render_sdl::Frame;
 use nes_emulator::ppu::PPU;
 use nes_emulator::prelude::{Bus, CPU};
-use nes_emulator::{generate_cpu, generate_texture_canvas_event_pump};
 
 fn main() {
     let mut bus: Bus = Bus::new();
@@ -34,7 +31,7 @@ fn main() {
         ppu.run_one_ppu_cycle(&mut texture, &mut frame, &mut canvas);
         ppu.run_one_ppu_cycle(&mut texture, &mut frame, &mut canvas);
 
-        let sleep_time = time::Duration::from_secs_f64(0.001);
+        // let sleep_time = time::Duration::from_secs_f64(0.001);
         // sleep(sleep_time);
 
         let event = match event_pump.poll_event() {
