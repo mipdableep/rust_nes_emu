@@ -45,20 +45,20 @@ fn test_cpu_ram_mirroring() {
 }
 
 // #[test]
-fn test_ppu_reg_mirroring() {
-    todo!(); // should either fix or move to the ppu section
-             // let mut bus = Bus::new();
-             // let ppu_registers = get_random_vector_from_seed(42, PPU_REGISTERS_END - PPU_REGISTERS_START);
-             // for i in 0..=PPU_REGISTERS_END - PPU_REGISTERS_START {
-             //     bus.write_memory(PPU_REGISTERS_START + i, ppu_registers[i as usize]);
-             // }
-             // for i in PPU_REGISTERS_START..=PPU_REGISTERS_END {
-             //     let real_address = i % PPU_REGISTERS_UNIQUE_SIZE + 1 + PPU_REGISTERS_END
-             //         - PPU_REGISTERS_START
-             //         - PPU_REGISTERS_UNIQUE_SIZE;
-             //     assert_eq!(bus.read_memory(i), ppu_registers[real_address as usize]);
-             // }
-}
+// fn test_ppu_reg_mirroring() {
+//     // should either fix or move to the ppu section
+//     let mut bus = Bus::new();
+//     let ppu_registers = get_random_vector_from_seed(42, PPU_REGISTERS_END - PPU_REGISTERS_START);
+//     for i in 0..=PPU_REGISTERS_END - PPU_REGISTERS_START {
+//         bus.write_memory(PPU_REGISTERS_START + i, ppu_registers[i as usize]);
+//     }
+//     for i in PPU_REGISTERS_START..=PPU_REGISTERS_END {
+//         let real_address = i % PPU_REGISTERS_UNIQUE_SIZE + 1 + PPU_REGISTERS_END
+//             - PPU_REGISTERS_START
+//             - PPU_REGISTERS_UNIQUE_SIZE;
+//         assert_eq!(bus.read_memory(i), ppu_registers[real_address as usize]);
+//     }
+// }
 
 #[test]
 fn test_memory_retrieval() {

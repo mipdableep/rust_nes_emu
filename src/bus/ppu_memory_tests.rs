@@ -1,4 +1,7 @@
 use crate::bus::cartridge::Mirroring;
+use crate::bus::memory::Mem;
+use crate::bus::memory_mapping_constants::{PPU_REGISTERS_END, PPU_REGISTERS_START};
+use crate::bus::Bus;
 use crate::cpu::CPU;
 use crate::{generate_cpu_and_set_horizontal_mirroring, generate_cpu_and_set_vertical_mirroring};
 
@@ -95,6 +98,18 @@ fn test_read_from_status_resets_latch() {
 
     cpu.write_memory(0x2007, 0xab);
     assert_eq!(cpu.bus.as_mut().unwrap().ppu_memory.vram[0xa0], 0xab)
+}
+
+#[test]
+fn test_ppu_mirroring() {
+    let mut bus = Bus::new();
+
+    bus.write_memory(PPU_REGISTERS_START + 8 * 5, 0xa4); //PPU control
+
+    // the 8 ppu register should be mirrored across a very large region
+    // we use a register which is both readable and writeable, and doesn't arbitrarily change its data
+    // (rare requirement for a ppu register)
+    assert_eq!(bus.read_memory(PPU_REGISTERS_END - 7), 0xa4);
 }
 
 #[test]
