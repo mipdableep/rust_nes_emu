@@ -1,7 +1,8 @@
 use crate::ppu::colors_palette::SYSTEM_PALETTE;
 use crate::ppu::full_screen_rendering::SCREEN_WIDTH_TILE;
+use crate::ppu::render_sdl::screen_rendering_constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use crate::ppu::render_sdl::Frame;
-use crate::{bus_mut, generate_ppu, generate_texture_canvas_event_pump};
+use crate::{bus_mut, generate_ppu};
 
 #[test]
 fn background_drawing() {
@@ -46,7 +47,6 @@ fn background_drawing() {
     bus_mut!(ppu).ppu_memory.palette_table[14] = 19;
     bus_mut!(ppu).ppu_memory.palette_table[15] = 24;
 
-    generate_texture_canvas_event_pump!(texture, canvas, event_pump);
     let mut frame = Frame::new();
     ppu.copy_background_to_frame(&mut frame);
     // $0xx5=$20  00100000         .1.....3
