@@ -1,5 +1,4 @@
 use crate::bus::cartridge::Mirroring;
-use crate::bus::Bus;
 use crate::cpu::CPU;
 use crate::{generate_cpu_and_set_horizontal_mirroring, generate_cpu_and_set_vertical_mirroring};
 

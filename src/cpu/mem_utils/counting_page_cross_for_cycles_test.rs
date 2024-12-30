@@ -1,6 +1,4 @@
 use super::super::mem_utils::check_if_on_different_pages;
-use super::super::CPU;
-use crate::bus::Bus;
 use crate::cpu::mem_utils::AddressingMode;
 use crate::generate_cpu;
 

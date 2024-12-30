@@ -1,5 +1,3 @@
-use crate::bus::Bus;
-use crate::cpu::CPU;
 use crate::generate_cpu;
 
 fn get_random_status_flag_values() -> Vec<u8> {

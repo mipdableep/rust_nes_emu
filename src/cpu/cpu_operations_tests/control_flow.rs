@@ -1,5 +1,3 @@
-use crate::bus::Bus;
-use crate::cpu::CPU;
 use crate::generate_cpu;
 
 #[test]

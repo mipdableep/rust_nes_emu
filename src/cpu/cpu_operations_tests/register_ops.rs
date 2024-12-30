@@ -1,4 +1,3 @@
-use crate::bus::Bus;
 use crate::cpu::cpu_operations_tests::arithmetic_logic::get_random_u8_and_u16_pairs;
 use crate::cpu::CPU;
 use crate::generate_cpu;
