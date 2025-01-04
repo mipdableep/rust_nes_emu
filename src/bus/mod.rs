@@ -22,6 +22,7 @@ pub(crate) mod memory_mapping_constants {
     pub const PPU_REGISTERS_UNIQUE_SIZE: u16 = 0x0008;
     pub const PPU_REGISTERS_END: u16 = 0x3FFF;
     pub const IO_AND_AUDIO_REGISTERS_START: u16 = 0x4000;
+    pub const OAM_DMA: u16 = 0x4014;
     pub const IO_AND_AUDIO_REGISTERS_END: u16 = 0x401F;
     pub const UNMAPPED_SEG_START: u16 = 0x4020;
     pub const UNMAPPED_SEG_END: u16 = 0x5FFF;
