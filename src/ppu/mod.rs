@@ -6,6 +6,7 @@ mod test_frame_rendering;
 
 use crate::bus::Bus;
 use crate::ppu::render_sdl::Frame;
+use crate::{bus, bus_mut};
 use sdl2::render::{Texture, WindowCanvas};
 
 const SCANLINE_LENGTH_PIXELS: usize = 341;
@@ -16,20 +17,6 @@ pub struct PPU<'a> {
     ppu_cycles_in_current_scanline: usize, // the scanline lasts for 341 ppu cycles
     scanlines_in_current_frame: usize,     // each frame has 262 scanlines, with NMI in scanline 240
     pub bus: Option<&'a mut Bus>,
-}
-
-#[macro_export]
-macro_rules! bus {
-    ($ppu: ident) => {
-        $ppu.bus.as_ref().unwrap()
-    };
-}
-
-#[macro_export]
-macro_rules! bus_mut {
-    ($ppu: ident) => {
-        $ppu.bus.as_mut().unwrap()
-    };
 }
 
 #[macro_export]

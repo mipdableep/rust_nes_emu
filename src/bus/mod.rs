@@ -14,6 +14,20 @@ use crate::bus::ppu_memory::PPUMemory;
 use memory_mapping_constants::*;
 use ppu_registers::PPURegisters;
 
+#[macro_export]
+macro_rules! bus {
+    ($self: ident) => {
+        $self.bus.as_ref().unwrap()
+    };
+}
+
+#[macro_export]
+macro_rules! bus_mut {
+    ($self: ident) => {
+        $self.bus.as_mut().unwrap()
+    };
+}
+
 pub(crate) mod memory_mapping_constants {
     pub const CPU_RAM_MEM_START: u16 = 0x0000;
     pub const CPU_RAM_MEM_UNIQUE_SIZE: u16 = 0x0800;
