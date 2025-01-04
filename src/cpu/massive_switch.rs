@@ -1,12 +1,12 @@
 use super::CPU;
-use crate::cpu::opcodes::OPCODES_METADATA;
+use crate::cpu::opcodes::{get_opcode_metadat_from_opcode, OpcodeMetadata};
 
 #[allow(unused_variables)]
 impl<'a> CPU<'a> {
     pub fn massive_switch(&mut self, op_code: u8) -> bool {
         self.program_counter += 1;
 
-        let opcode_metadata = &OPCODES_METADATA[&op_code];
+        let opcode_metadata: OpcodeMetadata = get_opcode_metadat_from_opcode(op_code);
         assert_eq!(opcode_metadata.opcode, op_code);
 
         let addressing_mode = opcode_metadata.addressing_mode;
