@@ -1,5 +1,5 @@
+use crate::bus_mut;
 use crate::ppu::PPU;
-use crate::{bus_mut};
 use sdl2::EventPump;
 
 impl<'bus> PPU<'bus> {
