@@ -201,7 +201,7 @@ impl<'a> CPU<'a> {
             return_value = self.do_one_operation();
         }
         self.decrease_cpu_idle_cycles(1);
-        true
+        return_value
     }
 
     pub fn interpret(&mut self, program: Vec<u8>) {
