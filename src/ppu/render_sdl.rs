@@ -22,12 +22,12 @@ impl Frame {
 
     pub fn set_pixel(&mut self, x: usize, y: usize, (r, g, b): (u8, u8, u8)) {
         if x >= SCREEN_WIDTH {
-            // return;
-            panic!("Trying to set pixel {x}, which is more than width {SCREEN_WIDTH}")
+            return;
+            // panic!("Trying to set pixel {x}, which is more than width {SCREEN_WIDTH}")
         }
         if y >= SCREEN_HEIGHT {
-            // return;
-            panic!("Trying to set pixel {y}, which is more than width {SCREEN_HEIGHT}")
+            return;
+            // panic!("Trying to set pixel {y}, which is more than width {SCREEN_HEIGHT}")
         }
         self.screen_state[3 * (x + y * SCREEN_WIDTH)] = r;
         self.screen_state[3 * (x + y * SCREEN_WIDTH) + 1] = g;
