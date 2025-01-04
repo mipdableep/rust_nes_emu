@@ -9,6 +9,7 @@ mod ppu_memory_tests;
 pub mod ppu_registers;
 #[cfg(test)]
 mod ppu_registers_tests;
+mod user_input;
 
 use crate::bus::cartridge::Cartridge;
 use crate::bus::ppu_memory::PPUMemory;
