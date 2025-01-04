@@ -49,7 +49,7 @@ pub(crate) mod memory_mapping_constants {
 #[derive(Debug, Eq, PartialEq)]
 pub struct Bus {
     // cpu stuff
-    pub cpu_idle_cycles: u16,
+    pub cpu_idle_cycles: u8,
     // something to hold if cpu should attend nmi
     pub nmi_generated: bool,
     // hold the values for oam dma
