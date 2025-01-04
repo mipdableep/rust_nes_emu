@@ -25,18 +25,18 @@ impl Mem for Bus {
                 let canonical_address = PPU_REGISTERS_START + canonical_offset_from_start;
                 self.write_ppu_memory(canonical_address, data);
             }
-            IO_AND_AUDIO_REGISTERS_START..=IO_AND_AUDIO_REGISTERS_END => {
-                if addr == OAM_DMA {
-                    // the oam dma copies a full page to the ppu
-                    // for starters, it will take 1 cycles (should take 1/2),
-                    // and will halt the cpu for 512 cycles - 256 (full page) of 2 cycle copy
+            OAM_DMA => {
+                // the oam dma copies a full page to the ppu
+                // for starters, it will take 1 cycles (should take 1/2),
+                // and will halt the cpu for 512 cycles - 256 (full page) of 2 cycle copy
 
-                    // cartridge.chr_rom[7 * 16..8 * 16].copy_from_slice(&our_tile);
-                    let page_start: usize = (data as usize) << 8;
-                    self.ppu_memory
-                        .oam_data
-                        .copy_from_slice(&self.cpu_ram[page_start..page_start + 256]);
-                }
+                // cartridge.chr_rom[7 * 16..8 * 16].copy_from_slice(&our_tile);
+                self.oam_dma_page = data;
+                self.number_of_copies_in_current_oam_dma = 0;
+                self.cpu_idle_cycles += 1;
+                self.copy_from_ram_to_oam();
+            }
+            IO_AND_AUDIO_REGISTERS_START..=IO_AND_AUDIO_REGISTERS_END => {
                 self.io_and_audio_registers[(addr - IO_AND_AUDIO_REGISTERS_START) as usize] = data;
             }
             UNMAPPED_SEG_START..=UNMAPPED_SEG_END => {

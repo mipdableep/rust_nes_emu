@@ -52,6 +52,9 @@ pub struct Bus {
     pub cpu_idle_cycles: u16,
     // something to hold if cpu should attend nmi
     pub nmi_generated: bool,
+    // hold the values for oam dma
+    pub oam_dma_page: u8,
+    pub number_of_copies_in_current_oam_dma: u8,
 
     cpu_ram: [u8; CPU_RAM_MEM_UNIQUE_SIZE as usize],
     pub ppu_registers: PPURegisters,
@@ -68,6 +71,8 @@ impl Bus {
         Bus {
             cpu_idle_cycles: 0,
             nmi_generated: false,
+            oam_dma_page: 0,
+            number_of_copies_in_current_oam_dma: 0,
             cpu_ram: [0; CPU_RAM_MEM_UNIQUE_SIZE as usize],
             ppu_registers: PPURegisters::new(),
             io_and_audio_registers: [0; (IO_AND_AUDIO_REGISTERS_END - IO_AND_AUDIO_REGISTERS_START

@@ -9,7 +9,7 @@ mod opcodes;
 
 use crate::bus::memory_mapping_constants::PRG_ROM_START;
 use crate::bus::Bus;
-use crate::bus_mut;
+use crate::{bus, bus_mut};
 
 const STACK_END: u16 = 0x100;
 const NMI_ADDRESS: u16 = 0xFFFA;
@@ -179,6 +179,15 @@ impl<'a> CPU<'a> {
         bus_mut!(self).cpu_idle_cycles -= dec;
     }
 
+    fn do_one_operation(&mut self) -> bool {
+        if bus!(self).number_of_copies_in_current_oam_dma != 0 {
+            bus_mut!(self).copy_from_ram_to_oam();
+            return true;
+        }
+        let opcode = self.read_memory(self.program_counter);
+        self.massive_switch(opcode)
+    }
+
     pub fn run_one_cycle(&mut self) -> bool {
         let mut return_value: bool = true;
 
@@ -189,11 +198,10 @@ impl<'a> CPU<'a> {
         }
 
         if bus_mut!(self).cpu_idle_cycles == 0 {
-            let opcode = self.read_memory(self.program_counter);
-            return_value = self.massive_switch(opcode);
+            return_value = self.do_one_operation();
         }
         self.decrease_cpu_idle_cycles(1);
-        return_value
+        true
     }
 
     pub fn interpret(&mut self, program: Vec<u8>) {

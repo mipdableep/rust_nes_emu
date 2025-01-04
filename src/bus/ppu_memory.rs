@@ -69,6 +69,18 @@ impl Bus {
         }
     }
 
+    pub fn copy_from_ram_to_oam(&mut self) {
+        // usize should mean u16, since this is the address space in the nes
+        let current_oam_addr: usize =
+            self.ppu_registers.oam_addr_register.read_current_value() as usize;
+        let ram_location: usize = ((self.oam_dma_page as usize) << 8) + current_oam_addr;
+        self.ppu_memory.oam_data[current_oam_addr] = self.cpu_ram[ram_location];
+        self.ppu_registers.oam_addr_register.increase(1);
+        self.cpu_idle_cycles += 2; // this action takes two cycles
+        self.number_of_copies_in_current_oam_dma =
+            self.number_of_copies_in_current_oam_dma.wrapping_add(1);
+    }
+
     fn convert_ppu_address_to_actual_address(&mut self, address: u16) -> &mut u8 {
         match address {
             PPU_CHR_ROM_START..=PPU_CHR_ROM_END => &mut self.cartridge.chr_rom[address as usize],

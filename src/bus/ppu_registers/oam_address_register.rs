@@ -23,4 +23,8 @@ impl OAMAdressRegister {
     pub fn update_current_value(&mut self, new_value: u8) {
         self.0 = new_value
     }
+
+    pub fn increase(&mut self, increment: u8) {
+        self.0 = self.0.wrapping_add(increment);
+    }
 }
