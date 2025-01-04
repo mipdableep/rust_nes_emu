@@ -1,6 +1,6 @@
 use crate::bus::cartridge::Mirroring;
 use crate::bus::memory::Mem;
-use crate::bus::memory_mapping_constants::{PPU_REGISTERS_END, PPU_REGISTERS_START};
+use crate::bus::memory_mapping_constants::{OAM_DMA, PPU_REGISTERS_END, PPU_REGISTERS_START};
 use crate::bus::Bus;
 use crate::cpu::CPU;
 use crate::{
@@ -179,4 +179,25 @@ fn test_horizontal_mirroring() {
     cpu.write_memory(0x2006, 0x20);
 
     assert_eq!(cpu.read_memory(0x2007), 0x9a);
+}
+
+#[test]
+fn test_dma() {
+    let mut bus = Bus::new();
+
+    // instantiate the cpu ram as page 3
+    for i in 0..256 {
+        bus.cpu_ram[0x03 * 256 + i] = i as u8;
+    }
+
+    bus.write_memory(OAM_DMA, 0x03);
+
+    for _ in 0..255 {
+        bus.copy_from_ram_to_oam();
+        bus.cpu_idle_cycles -= 2;
+    }
+
+    for i in 0..256 {
+        assert_eq!(bus.ppu_memory.oam_data[i], i as u8);
+    }
 }
