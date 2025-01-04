@@ -3,7 +3,9 @@ use crate::bus::memory::Mem;
 use crate::bus::memory_mapping_constants::{PPU_REGISTERS_END, PPU_REGISTERS_START};
 use crate::bus::Bus;
 use crate::cpu::CPU;
-use crate::{generate_cpu_and_set_horizontal_mirroring, generate_cpu_and_set_vertical_mirroring};
+use crate::{
+    bus_mut, generate_cpu_and_set_horizontal_mirroring, generate_cpu_and_set_vertical_mirroring,
+};
 
 fn prepare_for_ppu_memory_read(cpu: &mut CPU, address: u16) {
     // a helper function to prepare for read from a specific ppu memory
@@ -97,7 +99,7 @@ fn test_read_from_status_resets_latch() {
     cpu.write_memory(0x2006, 0xa0);
 
     cpu.write_memory(0x2007, 0xab);
-    assert_eq!(cpu.bus.as_mut().unwrap().ppu_memory.vram[0xa0], 0xab)
+    assert_eq!(bus_mut!(cpu).ppu_memory.vram[0xa0], 0xab)
 }
 
 #[test]

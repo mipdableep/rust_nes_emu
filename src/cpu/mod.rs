@@ -9,6 +9,7 @@ mod opcodes;
 
 use crate::bus::memory_mapping_constants::PRG_ROM_START;
 use crate::bus::Bus;
+use crate::bus_mut;
 
 const STACK_END: u16 = 0x100;
 const NMI_ADDRESS: u16 = 0xFFFA;
@@ -38,7 +39,7 @@ impl<'a> CPU<'a> {
     }
 
     pub fn load(&mut self, program: Vec<u8>) {
-        self.bus.as_mut().unwrap().cartridge.raw_load(program);
+        bus_mut!(self).cartridge.raw_load(program);
         self.program_counter = PRG_ROM_START;
     }
 
@@ -170,24 +171,24 @@ impl<'a> CPU<'a> {
 
     pub fn increase_cpu_idle_cycles(&mut self, inc: u16) {
         // if we want to say certain action took x cycles, we just tell the cpu to rest in the next x cycles
-        self.bus.as_mut().unwrap().cpu_idle_cycles += inc;
+        bus_mut!(self).cpu_idle_cycles += inc;
     }
 
     pub fn decrease_cpu_idle_cycles(&mut self, dec: u16) {
         // same thing, every cycle we decrease the number of cycles we need to wait
-        self.bus.as_mut().unwrap().cpu_idle_cycles -= dec;
+        bus_mut!(self).cpu_idle_cycles -= dec;
     }
 
     pub fn run_one_cycle(&mut self) -> bool {
         let mut return_value: bool = true;
 
-        if self.bus.as_mut().unwrap().nmi_generated {
+        if bus_mut!(self).nmi_generated {
             // attend to nmi if needed
             self.attend_nmi_interrupt();
-            self.bus.as_mut().unwrap().nmi_generated = false;
+            bus_mut!(self).nmi_generated = false;
         }
 
-        if self.bus.as_mut().unwrap().cpu_idle_cycles == 0 {
+        if bus_mut!(self).cpu_idle_cycles == 0 {
             let opcode = self.read_memory(self.program_counter);
             return_value = self.massive_switch(opcode);
         }
@@ -199,7 +200,7 @@ impl<'a> CPU<'a> {
         self.program_counter = 0;
 
         loop {
-            if self.bus.as_mut().unwrap().cpu_idle_cycles == 0 {
+            if bus_mut!(self).cpu_idle_cycles == 0 {
                 let opcode = program[self.program_counter as usize];
                 if !self.massive_switch(opcode) {
                     return;

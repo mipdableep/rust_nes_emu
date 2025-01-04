@@ -4,6 +4,7 @@ mod counting_page_cross_for_cycles_test;
 mod mem_tests;
 
 use crate::bus::memory::Mem;
+use crate::bus_mut;
 use crate::cpu::CPU;
 
 #[derive(Debug, Clone, Copy)]
@@ -32,11 +33,11 @@ pub fn check_if_on_different_pages(addr1: u16, addr2: u16) -> bool {
 
 impl<'a> CPU<'a> {
     pub fn read_memory(&mut self, addr: u16) -> u8 {
-        self.bus.as_mut().unwrap().read_memory(addr)
+        bus_mut!(self).read_memory(addr)
     }
 
     pub fn read_memory_2_bytes(&mut self, addr: u16) -> u16 {
-        self.bus.as_mut().unwrap().read_memory_2_bytes(addr)
+        bus_mut!(self).read_memory_2_bytes(addr)
     }
 
     pub fn read_memory_2_bytes_without_page_cross(&mut self, addr: u16) -> u16 {
@@ -47,13 +48,13 @@ impl<'a> CPU<'a> {
             0xff => addr - 0xff,
             _ => addr.wrapping_add(1),
         };
-        let low = self.bus.as_mut().unwrap().read_memory(low_byte_location) as u16;
-        let high = self.bus.as_mut().unwrap().read_memory(high_byte_location) as u16;
+        let low = bus_mut!(self).read_memory(low_byte_location) as u16;
+        let high = bus_mut!(self).read_memory(high_byte_location) as u16;
         (high << 8) | low
     }
 
     pub fn write_memory(&mut self, addr: u16, data: u8) {
-        self.bus.as_mut().unwrap().write_memory(addr, data);
+        bus_mut!(self).write_memory(addr, data);
     }
 
     pub fn convert_mode_to_val(&mut self, mode: AddressingMode) -> u8 {

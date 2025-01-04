@@ -2,6 +2,7 @@
 mod generate_cpu_logs {
 
     use nes_emulator::bus::Bus;
+    use nes_emulator::bus_mut;
     use nes_emulator::cpu::CPU;
     use std::fs::File;
     use std::io::Write;
@@ -43,7 +44,7 @@ mod generate_cpu_logs {
             let mut cycles = 7;
             loop {
                 let opcode = self.read_memory(self.program_counter);
-                if self.bus.as_mut().unwrap().cpu_idle_cycles == 0 {
+                if bus_mut!(self).cpu_idle_cycles == 0 {
                     writeln!(file, "{}", self.get_status_string(opcode, cycles)).unwrap();
                 }
 
@@ -59,7 +60,7 @@ mod generate_cpu_logs {
 
         fn load_test(&mut self, path: &Path) {
             let bytes = std::fs::read(path).unwrap();
-            self.bus.as_mut().unwrap().cartridge.load_from_dump(&bytes);
+            bus_mut!(self).cartridge.load_from_dump(&bytes);
             self.program_counter = 0xc000;
             // I don't know, but the tests start this way. Not sure if this is part of proper start up or not
             self.stack_pointer = 0xfd;

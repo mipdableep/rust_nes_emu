@@ -1,6 +1,6 @@
 use crate::bus::Bus;
 use crate::cpu::CPU;
-use crate::generate_cpu;
+use crate::{bus_mut, generate_cpu};
 
 const STACK_START: u16 = 0x1ff;
 const BRK_ADDRESS: u16 = 0xfffe;
@@ -97,7 +97,7 @@ fn BRK() {
     let mut program_vector = vec![0_u8; 0x8000];
     program_vector[BRK_ADDRESS as usize - 0x8000] = 0xaa;
     program_vector[BRK_ADDRESS as usize + 1 - 0x8000] = 0xbb;
-    cpu.bus.as_mut().unwrap().cartridge.raw_load(program_vector);
+    bus_mut!(cpu).cartridge.raw_load(program_vector);
 
     cpu.BRK();
 
