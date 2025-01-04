@@ -168,12 +168,12 @@ impl<'a> CPU<'a> {
         self.program_counter = self.read_memory_2_bytes(NMI_ADDRESS);
     }
 
-    pub fn increase_cpu_idle_cycles(&mut self, inc: u8) {
+    pub fn increase_cpu_idle_cycles(&mut self, inc: u16) {
         // if we want to say certain action took x cycles, we just tell the cpu to rest in the next x cycles
         self.bus.as_mut().unwrap().cpu_idle_cycles += inc;
     }
 
-    pub fn decrease_cpu_idle_cycles(&mut self, dec: u8) {
+    pub fn decrease_cpu_idle_cycles(&mut self, dec: u16) {
         // same thing, every cycle we decrease the number of cycles we need to wait
         self.bus.as_mut().unwrap().cpu_idle_cycles -= dec;
     }

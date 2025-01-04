@@ -4,7 +4,7 @@ use phf::phf_map;
 pub struct OpcodeMetadata {
     pub opcode: u8,                      // the opcodes
     pub bytes: u16,                      // the number of bytes the opcode read
-    pub base_cycles: u8,                 // number of cycle the opcode takes
+    pub base_cycles: u16,                // number of cycle the opcode takes
     pub addressing_mode: AddressingMode, // the addressing mod
     pub increase_on_page_cross: bool, // should the opcode take +1 cycle if the page boundary is crossed
 }
