@@ -36,6 +36,12 @@ impl Mem for Bus {
                 self.cpu_idle_cycles += 1;
                 self.copy_from_ram_to_oam();
             }
+            P1_CONTROLLER => {
+                self.p1_controller.write(data);
+            }
+            P2_CONTROLLER => {
+                self.p2_controller.write(data);
+            }
             IO_AND_AUDIO_REGISTERS_START..=IO_AND_AUDIO_REGISTERS_END => {
                 self.io_and_audio_registers[(addr - IO_AND_AUDIO_REGISTERS_START) as usize] = data;
             }
@@ -74,6 +80,8 @@ impl Mem for Bus {
                 let canonical_address = PPU_REGISTERS_START + canonical_offset_from_start;
                 self.read_ppu_memory(canonical_address)
             }
+            P1_CONTROLLER => self.p1_controller.read(),
+            P2_CONTROLLER => self.p2_controller.read(),
             IO_AND_AUDIO_REGISTERS_START..=IO_AND_AUDIO_REGISTERS_END => {
                 self.io_and_audio_registers[(addr - IO_AND_AUDIO_REGISTERS_START) as usize]
             }

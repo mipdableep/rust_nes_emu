@@ -1,4 +1,5 @@
 pub mod cartridge;
+mod controller;
 #[cfg(test)]
 pub mod mem_tests;
 pub mod memory;
@@ -11,6 +12,7 @@ mod ppu_registers_tests;
 
 use crate::bus::cartridge::Cartridge;
 use crate::bus::ppu_memory::PPUMemory;
+use controller::ControllerByte;
 use memory_mapping_constants::*;
 use ppu_registers::PPURegisters;
 
@@ -37,6 +39,8 @@ pub(crate) mod memory_mapping_constants {
     pub const PPU_REGISTERS_END: u16 = 0x3FFF;
     pub const IO_AND_AUDIO_REGISTERS_START: u16 = 0x4000;
     pub const OAM_DMA: u16 = 0x4014;
+    pub const P1_CONTROLLER: u16 = 0x4016;
+    pub const P2_CONTROLLER: u16 = 0x4017;
     pub const IO_AND_AUDIO_REGISTERS_END: u16 = 0x401F;
     pub const UNMAPPED_SEG_START: u16 = 0x4020;
     pub const UNMAPPED_SEG_END: u16 = 0x5FFF;
@@ -58,6 +62,8 @@ pub struct Bus {
 
     cpu_ram: [u8; CPU_RAM_MEM_UNIQUE_SIZE as usize],
     pub ppu_registers: PPURegisters,
+    pub p1_controller: ControllerByte,
+    pub p2_controller: ControllerByte,
     io_and_audio_registers:
         [u8; (IO_AND_AUDIO_REGISTERS_END - IO_AND_AUDIO_REGISTERS_START + 1) as usize],
     unmapped_seg: [u8; (UNMAPPED_SEG_END - UNMAPPED_SEG_START + 1) as usize],
@@ -75,6 +81,8 @@ impl Bus {
             number_of_copies_in_current_oam_dma: 0,
             cpu_ram: [0; CPU_RAM_MEM_UNIQUE_SIZE as usize],
             ppu_registers: PPURegisters::new(),
+            p1_controller: ControllerByte::new(),
+            p2_controller: ControllerByte::new(),
             io_and_audio_registers: [0; (IO_AND_AUDIO_REGISTERS_END - IO_AND_AUDIO_REGISTERS_START
                 + 1) as usize],
             unmapped_seg: [0; (UNMAPPED_SEG_END - UNMAPPED_SEG_START + 1) as usize],
