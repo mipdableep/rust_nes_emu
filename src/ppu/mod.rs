@@ -3,11 +3,13 @@ mod full_screen_rendering;
 pub mod render_sdl;
 #[cfg(test)]
 mod test_frame_rendering;
+mod user_input;
 
 use crate::bus::Bus;
 use crate::ppu::render_sdl::Frame;
 use crate::{bus, bus_mut};
 use sdl2::render::{Texture, WindowCanvas};
+use sdl2::EventPump;
 
 const SCANLINE_LENGTH_PIXELS: usize = 341;
 const SCANLINES_PER_FRAME: usize = 262;
@@ -54,6 +56,7 @@ impl<'a> PPU<'a> {
         texture: &mut Texture,
         frame: &mut Frame,
         canvas: &mut WindowCanvas,
+        event_pump: &mut EventPump,
     ) {
         self.ppu_cycles_in_current_scanline += 1;
         // todo - actually draw something
@@ -62,6 +65,7 @@ impl<'a> PPU<'a> {
         if self.scanlines_in_current_frame == NMI_SCANLINE
             && self.ppu_cycles_in_current_scanline == 0
         {
+            self.handle_user_input(event_pump);
             self.render_full_screen_background(texture, frame, canvas);
             bus_mut!(self)
                 .ppu_registers

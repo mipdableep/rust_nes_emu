@@ -27,24 +27,11 @@ fn main() {
 
         bus_ref = cpu.bus.take().unwrap();
         ppu.bus = Some(bus_ref);
-        ppu.run_one_ppu_cycle(&mut texture, &mut frame, &mut canvas);
-        ppu.run_one_ppu_cycle(&mut texture, &mut frame, &mut canvas);
-        ppu.run_one_ppu_cycle(&mut texture, &mut frame, &mut canvas);
+        ppu.run_one_ppu_cycle(&mut texture, &mut frame, &mut canvas, &mut event_pump);
+        ppu.run_one_ppu_cycle(&mut texture, &mut frame, &mut canvas, &mut event_pump);
+        ppu.run_one_ppu_cycle(&mut texture, &mut frame, &mut canvas, &mut event_pump);
 
         // let sleep_time = time::Duration::from_secs_f64(0.001);
         // sleep(sleep_time);
-
-        let event = match event_pump.poll_event() {
-            Some(i) => i,
-            None => continue,
-        };
-        match event {
-            Event::Quit { .. }
-            | Event::KeyDown {
-                keycode: Some(Keycode::Escape),
-                ..
-            } => std::process::exit(0),
-            _ => {}
-        }
     }
 }
