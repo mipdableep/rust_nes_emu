@@ -28,6 +28,17 @@ impl PPUStatusRegister {
             }
         }
     }
+
+    pub fn set_sprite_0_hit_status(&mut self, new_status: bool) {
+        match new_status {
+            true => {
+                self.0 |= 0x40;
+            }
+            false => {
+                self.0 &= !0x40;
+            }
+        }
+    }
 }
 
 #[test]
@@ -39,4 +50,15 @@ fn test_set_vblank_status() {
     status_register.0 = 0xFF;
     status_register.set_vblank_status(false);
     assert_eq!(status_register.read(), 0x7F);
+}
+
+#[test]
+fn test_set_sprite_0_status() {
+    let mut status_register = PPUStatusRegister::new();
+    status_register.0 = 0;
+    status_register.set_sprite_0_hit_status(true);
+    assert_eq!(status_register.read(), 0b01000000);
+    status_register.0 = 0xFF;
+    status_register.set_sprite_0_hit_status(false);
+    assert_eq!(status_register.read(), 0b10111111);
 }
