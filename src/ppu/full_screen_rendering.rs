@@ -11,17 +11,14 @@ const SCREEN_SIZE_TILE: usize = SCREEN_WIDTH_TILE * SCREEN_HEIGHT_TILE;
 
 impl<'bus> PPU<'bus> {
     pub fn copy_background_to_frame(&self, frame: &mut Frame) {
-        let name_table_start = 0;
-        // just for now, lets use the first nametable
-
         for tile_x in 0..SCREEN_WIDTH_TILE {
             for tile_y in 0..SCREEN_HEIGHT_TILE {
                 let tile_index = tile_y * SCREEN_WIDTH_TILE + tile_x;
-                let tile_number = self.get_tile_number(tile_index, name_table_start);
+                let tile_number = self.get_tile_number(tile_index);
 
                 let tile = self.get_actual_tile_data(tile_number);
 
-                let palette_index = self.get_palette_index(name_table_start, tile_x, tile_y);
+                let palette_index = self.get_palette_index(tile_x, tile_y);
                 let tile_palette = self.get_background_palette(palette_index);
 
                 frame.draw_tile_one_frame(tile_x, tile_y, tile, tile_palette);
@@ -39,10 +36,10 @@ impl<'bus> PPU<'bus> {
         tile_palette
     }
 
-    fn get_palette_index(&self, name_table_start: usize, tile_x: usize, tile_y: usize) -> usize {
+    fn get_palette_index(&self, tile_x: usize, tile_y: usize) -> usize {
         let meta_tile_index_for_color = tile_x / 4 + tile_y / 4 * SCREEN_WIDTH_TILE / 4;
         let attribute_color_byte =
-            ppu_mem!(self).vram[name_table_start + SCREEN_SIZE_TILE + meta_tile_index_for_color];
+            ppu_mem!(self).vram[SCREEN_SIZE_TILE + meta_tile_index_for_color];
         let palette_index_in_attribute_byte = match (tile_x % 4 < 2, tile_y % 4 < 2) {
             (true, true) => 0,
             (false, true) => 2,
@@ -65,8 +62,8 @@ impl<'bus> PPU<'bus> {
         tile
     }
 
-    fn get_tile_number(&self, tile_index: usize, name_table_start: usize) -> u16 {
-        let tile_number = bus!(self).ppu_memory.vram[name_table_start + tile_index] as u16;
+    fn get_tile_number(&self, tile_index: usize) -> u16 {
+        let tile_number = bus!(self).ppu_memory.vram[tile_index] as u16;
         tile_number
     }
 
