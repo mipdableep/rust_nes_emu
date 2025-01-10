@@ -7,7 +7,7 @@ use nes_emulator::prelude::{Bus, CPU};
 
 fn main() {
     let mut bus: Bus = Bus::new();
-    let bytes = std::fs::read("./roms/pacman.nes").unwrap();
+    let bytes = std::fs::read("./roms/mario.nes").unwrap();
     bus.cartridge.load_from_dump(&bytes);
 
     let mut bus_ref = &mut bus;
