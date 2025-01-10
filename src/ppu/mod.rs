@@ -35,6 +35,12 @@ macro_rules! palette {
     };
 }
 
+macro_rules! status_reg {
+    ($ppu: ident) => {
+        bus_mut!($ppu).ppu_registers.status_register
+    };
+}
+
 impl<'a> PPU<'a> {
     pub fn new(bus: &'a mut Bus) -> Self {
         PPU {
@@ -51,6 +57,12 @@ impl<'a> PPU<'a> {
         }
     }
 
+    fn is_sprite_0_hit(&self) -> bool {
+        let sprite_0_x = bus!(self).ppu_memory.oam_data[0] as usize;
+        let sprite_0_y = bus!(self).ppu_memory.oam_data[3] as usize;
+        sprite_0_y == self.scanlines_in_current_frame
+            && sprite_0_x == self.ppu_cycles_in_current_scanline
+    }
     pub fn run_one_ppu_cycle(
         &mut self,
         texture: &mut Texture,
@@ -61,12 +73,15 @@ impl<'a> PPU<'a> {
         self.ppu_cycles_in_current_scanline += 1;
         // todo - actually draw something
         self.trigger_new_scanline_if_needed();
-
+        if self.is_sprite_0_hit() {
+            status_reg!(self).set_sprite_0_hit_status(true);
+        }
         if self.scanlines_in_current_frame == NMI_SCANLINE
             && self.ppu_cycles_in_current_scanline == 0
         {
             self.handle_user_input(event_pump);
             self.render_full_screen_background(texture, frame, canvas);
+            status_reg!(self).set_sprite_0_hit_status(false);
             bus_mut!(self)
                 .ppu_registers
                 .status_register
@@ -78,6 +93,8 @@ impl<'a> PPU<'a> {
 
         if self.scanlines_in_current_frame >= SCANLINES_PER_FRAME {
             self.scanlines_in_current_frame -= SCANLINES_PER_FRAME;
+
+            status_reg!(self).set_sprite_0_hit_status(false);
             bus_mut!(self)
                 .ppu_registers
                 .status_register
