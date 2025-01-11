@@ -23,6 +23,7 @@ pub struct PPURegisters {
     pub address_register: PPUAddressReg,
     pub data_register: PPUDataReg,
     pub scroll_register: PPUScrollReg,
+    internal_latch: bool, // scroll and addr use the same latch
 }
 
 impl PPURegisters {
@@ -35,6 +36,16 @@ impl PPURegisters {
             address_register: PPUAddressReg::new(),
             data_register: PPUDataReg::new(),
             scroll_register: PPUScrollReg::new(),
+            internal_latch: true,
         }
+    }
+
+    pub fn reset_latch(&mut self) {
+        self.internal_latch = true;
+    }
+
+    pub fn write_to_addr_reg(&mut self, value: u8) {
+        self.address_register
+            .write_byte(value, &mut self.internal_latch);
     }
 }

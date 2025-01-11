@@ -126,7 +126,7 @@ impl Bus {
             0x2001 => self.ppu_registers.mask_register.read(), //PPUMASK
             0x2002 => { //PPUSTATUS
                 // reading from status register has the strange attribute of resetting the latch w
-                self.ppu_registers.address_register.reset_latch();
+                self.ppu_registers.reset_latch();
                 let status_register = self.ppu_registers.status_register.read();
                 self.ppu_registers.status_register.set_vblank_status(false); // clear vblank
                 status_register
@@ -157,7 +157,7 @@ impl Bus {
             0x2003 => self.ppu_registers.oam_addr_register.update_current_value(value), //OAMADDR
             0x2004 => todo!(), //OAMDATA
             0x2005 => self.ppu_registers.scroll_register.write_byte(value), // PPUSCRL
-            0x2006 => self.ppu_registers.address_register.write_byte(value), //PPUADDR
+            0x2006 => self.ppu_registers.write_to_addr_reg(value), //PPUADDR
             0x2007 => {
                 let address_in_ppu = self.ppu_registers.address_register.get_address_as_u16();
                 self.ppu_registers.address_register.increment(self.ppu_registers.control_register.get_vram_address_inc());
