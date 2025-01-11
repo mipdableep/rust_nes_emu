@@ -2,6 +2,7 @@ use crate::ppu::colors_palette::SYSTEM_PALETTE;
 use crate::ppu::full_screen_rendering::SCREEN_WIDTH_TILE;
 use crate::ppu::render_sdl::screen_rendering_constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use crate::ppu::render_sdl::Frame;
+use crate::prelude::Mirroring;
 use crate::{bus_mut, generate_ppu};
 
 #[test]
@@ -9,6 +10,7 @@ fn background_drawing() {
     // this tests the drawing of the background
     // the result frame should have one tile that kinda draws the symbol for 1/2
     generate_ppu!(ppu);
+    bus_mut!(ppu).cartridge.screen_mirroring = Mirroring::Horizontal;
 
     { // set tile 7 to be our tile
          // this has its own scope to be collapsable in the IDE
