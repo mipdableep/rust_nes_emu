@@ -75,15 +75,15 @@ impl PPUControlRegister {
 
     pub fn get_nametable_x(&self) -> usize {
         match self.get_bit(0) {
-            true => 0,
-            false => 1,
+            true => 1,
+            false => 0,
         }
     }
 
     pub fn get_nametable_y(&self) -> usize {
         match self.get_bit(1) {
-            true => 0,
-            false => 1,
+            true => 1,
+            false => 0,
         }
     }
 

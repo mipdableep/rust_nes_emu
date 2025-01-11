@@ -9,19 +9,50 @@ pub const SCREEN_WIDTH_TILE: usize = SCREEN_WIDTH / 8;
 const SCREEN_HEIGHT_TILE: usize = SCREEN_HEIGHT / 8;
 const SCREEN_SIZE_TILE: usize = SCREEN_WIDTH_TILE * SCREEN_HEIGHT_TILE;
 
+const SCREEN_WIDTH_NAMETABLE: isize = 2 * SCREEN_WIDTH as isize;
+const SCREEN_HEIGHT_NAMETABLE: isize = 2 * SCREEN_HEIGHT as isize;
+
 impl<'bus> PPU<'bus> {
     pub fn copy_background_to_frame(&self, frame: &mut Frame) {
-        for tile_x in 0..SCREEN_WIDTH_TILE {
-            for tile_y in 0..SCREEN_HEIGHT_TILE {
-                let tile_index = tile_y * SCREEN_WIDTH_TILE + tile_x;
-                let tile_number = self.get_tile_number(tile_index);
+        let x_offset = bus!(self).ppu_registers.scroll_register.get_x_scroll() as usize
+            + bus!(self).ppu_registers.control_register.get_nametable_x() * SCREEN_WIDTH;
+        let y_offset = bus!(self).ppu_registers.scroll_register.get_y_scroll() as usize
+            + bus!(self).ppu_registers.control_register.get_nametable_y() * SCREEN_HEIGHT;
 
-                let tile = self.get_actual_tile_data(tile_number);
+        for nametable_x in 0..=1 {
+            for nametable_y in 0..=1 {
+                let nametable_base = nametable_x * 0x400 + nametable_y * 0x800;
 
-                let palette_index = self.get_palette_index(tile_x, tile_y);
-                let tile_palette = self.get_background_palette(palette_index);
+                for tile_x in 0..SCREEN_WIDTH_TILE {
+                    let tile_left = tile_x * 8 + nametable_x * SCREEN_WIDTH;
 
-                self.draw_tile_one_frame(frame, tile_x, tile_y, tile, tile_palette);
+                    let true_tile_x_offset = (tile_left as isize + SCREEN_WIDTH_NAMETABLE
+                        - x_offset as isize)
+                        % SCREEN_WIDTH_NAMETABLE;
+
+                    for tile_y in 0..SCREEN_HEIGHT_TILE {
+                        let tile_top = tile_y * 8 + nametable_y * SCREEN_HEIGHT;
+                        let true_tile_y_offset = (tile_top as isize - y_offset as isize
+                            + SCREEN_HEIGHT_NAMETABLE)
+                            % SCREEN_HEIGHT_NAMETABLE;
+
+                        let tile_index = tile_y * SCREEN_WIDTH_TILE + tile_x;
+                        let tile_number = self.get_tile_number(tile_index, nametable_base);
+
+                        let tile = self.get_actual_tile_data(tile_number);
+
+                        let palette_index = self.get_palette_index(tile_x, tile_y, nametable_base);
+                        let tile_palette = self.get_background_palette(palette_index);
+
+                        self.draw_tile_one_frame(
+                            frame,
+                            true_tile_x_offset,
+                            true_tile_y_offset,
+                            tile,
+                            tile_palette,
+                        );
+                    }
+                }
             }
         }
     }
@@ -36,10 +67,10 @@ impl<'bus> PPU<'bus> {
         tile_palette
     }
 
-    fn get_palette_index(&self, tile_x: usize, tile_y: usize) -> usize {
+    fn get_palette_index(&self, tile_x: usize, tile_y: usize, nametable_base: usize) -> usize {
         let meta_tile_index_for_color = tile_x / 4 + tile_y / 4 * SCREEN_WIDTH_TILE / 4;
         let attribute_color_byte =
-            ppu_mem!(self).vram[SCREEN_SIZE_TILE + meta_tile_index_for_color];
+            bus!(self).read_vram(SCREEN_SIZE_TILE + meta_tile_index_for_color + nametable_base);
         let palette_index_in_attribute_byte = match (tile_x % 4 < 2, tile_y % 4 < 2) {
             (true, true) => 0,
             (false, true) => 2,
@@ -62,16 +93,16 @@ impl<'bus> PPU<'bus> {
         tile
     }
 
-    fn get_tile_number(&self, tile_index: usize) -> u16 {
-        let tile_number = bus!(self).ppu_memory.vram[tile_index] as u16;
+    fn get_tile_number(&self, tile_index: usize, nametable_base: usize) -> u16 {
+        let tile_number = bus!(self).read_vram(tile_index + nametable_base) as u16;
         tile_number
     }
 
     fn draw_tile_one_frame(
         &self,
         frame: &mut Frame,
-        tile_x: usize,
-        tile_y: usize,
+        tile_true_x_offset_pix: isize,
+        tile_true_y_offset_pix: isize,
         tile: &[u8],
         tile_palette: [u8; 4],
     ) {
@@ -79,12 +110,25 @@ impl<'bus> PPU<'bus> {
             let mut upper = tile[y];
             let mut lower = tile[y + 8];
 
+            if (tile_true_y_offset_pix + y as isize) < 0 {
+                continue;
+            }
+            let pixel_y =
+                ((tile_true_y_offset_pix + y as isize) % SCREEN_HEIGHT_NAMETABLE) as usize;
+
             for x in (0..=7).rev() {
                 let value = (1 & lower) << 1 | (1 & upper);
                 upper = upper >> 1;
                 lower = lower >> 1;
                 let rgb = SYSTEM_PALETTE[tile_palette[value as usize] as usize];
-                frame.set_pixel(tile_x * 8 + x, tile_y * 8 + y, rgb)
+
+                if (tile_true_x_offset_pix + x as isize) < 0 {
+                    continue;
+                }
+                let pixel_x =
+                    ((tile_true_x_offset_pix + x as isize) % SCREEN_WIDTH_NAMETABLE) as usize;
+
+                frame.set_pixel(pixel_x, pixel_y, rgb)
             }
         }
     }

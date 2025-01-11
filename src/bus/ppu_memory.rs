@@ -30,6 +30,15 @@ impl PPUMemory {
 }
 
 impl Bus {
+    pub fn read_vram(&self, addr_in_vram: usize) -> u8 {
+        // this function get addr in vram (0x0000 to 0x0fff)
+        // and returns the "true" value of the vram in this address, after mirroring
+        let addr_in_vram = addr_in_vram % (4 * PPU_NAMETABLE_SIZE as usize);
+        let addr_in_ppu_mem = addr_in_vram as u16 + PPU_NAMETABLE_START;
+        let mirrored_addr_in_ppu_mem = self.mirror_vram_address(addr_in_ppu_mem);
+        self.ppu_memory.vram[mirrored_addr_in_ppu_mem as usize - PPU_NAMETABLE_START as usize]
+    }
+
     fn mirror_vram_address(&self, vram_address: u16) -> u16 {
         // mirrors the vram address to the "canonical" address based on the mirroring mode
         // as I understand it: the possible addresses are from 0x2000 to 0x2fff, and are split to 4 "chunks" (name-tables)
