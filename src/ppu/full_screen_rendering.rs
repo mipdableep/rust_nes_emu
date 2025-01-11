@@ -26,15 +26,31 @@ impl<'bus> PPU<'bus> {
                 for tile_x in 0..SCREEN_WIDTH_TILE {
                     let tile_left = tile_x * 8 + nametable_x * SCREEN_WIDTH;
 
-                    let true_tile_x_offset = (tile_left as isize + SCREEN_WIDTH_NAMETABLE
-                        - x_offset as isize)
-                        % SCREEN_WIDTH_NAMETABLE;
+                    let true_tile_x_offset =
+                        SCREEN_WIDTH_NAMETABLE + tile_left as isize - x_offset as isize;
+                    if true_tile_x_offset % SCREEN_WIDTH_NAMETABLE > SCREEN_WIDTH as isize {
+                        if true_tile_x_offset % SCREEN_WIDTH_NAMETABLE < SCREEN_WIDTH_NAMETABLE - 8
+                        {
+                            // this tile has no way of being rendered
+                            // use less resources
+                            continue;
+                        }
+                    }
 
                     for tile_y in 0..SCREEN_HEIGHT_TILE {
                         let tile_top = tile_y * 8 + nametable_y * SCREEN_HEIGHT;
-                        let true_tile_y_offset = (tile_top as isize - y_offset as isize
-                            + SCREEN_HEIGHT_NAMETABLE)
-                            % SCREEN_HEIGHT_NAMETABLE;
+                        let true_tile_y_offset =
+                            SCREEN_HEIGHT_NAMETABLE + tile_top as isize - y_offset as isize;
+
+                        if true_tile_y_offset % SCREEN_HEIGHT_NAMETABLE > SCREEN_HEIGHT as isize {
+                            if true_tile_y_offset % SCREEN_HEIGHT_NAMETABLE
+                                < SCREEN_HEIGHT_NAMETABLE - 8
+                            {
+                                // this tile has no way of being rendered
+                                // use less resources
+                                continue;
+                            }
+                        }
 
                         let tile_index = tile_y * SCREEN_WIDTH_TILE + tile_x;
                         let tile_number = self.get_tile_number(tile_index, nametable_base);
