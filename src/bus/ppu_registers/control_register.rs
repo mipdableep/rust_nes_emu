@@ -73,6 +73,20 @@ impl PPUControlRegister {
         }
     }
 
+    pub fn get_nametable_x(&self) -> usize {
+        match self.get_bit(0) {
+            true => 0,
+            false => 1,
+        }
+    }
+
+    pub fn get_nametable_y(&self) -> usize {
+        match self.get_bit(1) {
+            true => 0,
+            false => 1,
+        }
+    }
+
     pub fn get_nametable_offset(&self) -> u16 {
         // read the last 2 bytes, and return the offset from nametable start
         // so 00, which means 0x2000, return 0, 01, which means 0x2400 return 0x0400 and so on
