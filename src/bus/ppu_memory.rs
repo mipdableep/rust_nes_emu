@@ -156,7 +156,7 @@ impl Bus {
             0x2002 => panic!("Should not write to read-only status register PPUSTATUS at 0x2002"), //PPUSTATUS
             0x2003 => self.ppu_registers.oam_addr_register.update_current_value(value), //OAMADDR
             0x2004 => todo!(), //OAMDATA
-            0x2005 => self.ppu_registers.scroll_register.write_byte(value), // PPUSCRL
+            0x2005 => self.ppu_registers.write_to_scroll(value), // PPUSCRL
             0x2006 => self.ppu_registers.write_to_addr_reg(value), //PPUADDR
             0x2007 => {
                 let address_in_ppu = self.ppu_registers.address_register.get_address_as_u16();

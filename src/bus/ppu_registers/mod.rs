@@ -48,4 +48,9 @@ impl PPURegisters {
         self.address_register
             .write_byte(value, &mut self.internal_latch);
     }
+
+    pub fn write_to_scroll(&mut self, value: u8) {
+        self.scroll_register
+            .write_byte(value, &mut self.internal_latch);
+    }
 }
