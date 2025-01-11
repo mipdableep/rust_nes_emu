@@ -31,3 +31,15 @@ fn test_get_vram_address_increment() {
     ppu_ctrl_reg.write_byte(0x12);
     assert_eq!(ppu_ctrl_reg.get_vram_address_inc(), 1);
 }
+
+#[test]
+fn test_get_nametable_offset() {
+    let mut ppu_ctrl_reg = PPUControlRegister::new();
+    assert_eq!(ppu_ctrl_reg.get_nametable_offset(), 0);
+    ppu_ctrl_reg.write_byte(0xf1);
+    assert_eq!(ppu_ctrl_reg.get_nametable_offset(), 0x400);
+    ppu_ctrl_reg.write_byte(0xba);
+    assert_eq!(ppu_ctrl_reg.get_nametable_offset(), 0x800);
+    ppu_ctrl_reg.write_byte(0x03);
+    assert_eq!(ppu_ctrl_reg.get_nametable_offset(), 0xc00);
+}
