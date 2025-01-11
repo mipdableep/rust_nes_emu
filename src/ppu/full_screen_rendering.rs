@@ -21,7 +21,7 @@ impl<'bus> PPU<'bus> {
                 let palette_index = self.get_palette_index(tile_x, tile_y);
                 let tile_palette = self.get_background_palette(palette_index);
 
-                frame.draw_tile_one_frame(tile_x, tile_y, tile, tile_palette);
+                self.draw_tile_one_frame(frame, tile_x, tile_y, tile, tile_palette);
             }
         }
     }
@@ -65,6 +65,28 @@ impl<'bus> PPU<'bus> {
     fn get_tile_number(&self, tile_index: usize) -> u16 {
         let tile_number = bus!(self).ppu_memory.vram[tile_index] as u16;
         tile_number
+    }
+
+    fn draw_tile_one_frame(
+        &self,
+        frame: &mut Frame,
+        tile_x: usize,
+        tile_y: usize,
+        tile: &[u8],
+        tile_palette: [u8; 4],
+    ) {
+        for y in 0..=7 {
+            let mut upper = tile[y];
+            let mut lower = tile[y + 8];
+
+            for x in (0..=7).rev() {
+                let value = (1 & lower) << 1 | (1 & upper);
+                upper = upper >> 1;
+                lower = lower >> 1;
+                let rgb = SYSTEM_PALETTE[tile_palette[value as usize] as usize];
+                frame.set_pixel(tile_x * 8 + x, tile_y * 8 + y, rgb)
+            }
+        }
     }
 
     fn copy_sprite_to_frame(&self, frame: &mut Frame) {
