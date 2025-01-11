@@ -35,3 +35,17 @@ impl PPUScrollReg {
         self.y_scroll
     }
 }
+
+#[test]
+fn test_scroll_setting() {
+    let mut scroll_reg = PPUScrollReg::new();
+    assert_eq!(scroll_reg.get_x_scroll(), 0);
+    assert_eq!(scroll_reg.get_y_scroll(), 0);
+
+    scroll_reg.write_byte(0x10);
+    scroll_reg.write_byte(0xab);
+    scroll_reg.write_byte(0x20);
+
+    assert_eq!(scroll_reg.get_x_scroll(), 0x20);
+    assert_eq!(scroll_reg.get_y_scroll(), 0xab);
+}
