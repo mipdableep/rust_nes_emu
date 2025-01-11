@@ -59,14 +59,14 @@ impl PPUControlRegister {
         }
     }
 
-    pub fn get_sprite_pattern_address(self) -> u16 {
+    pub fn get_sprite_pattern_address(&self) -> u16 {
         match self.get_bit(3) {
             true => 0x1000,
             false => 0x0000,
         }
     }
 
-    pub fn get_background_sprite_address(self) -> u16 {
+    pub fn get_background_sprite_address(&self) -> u16 {
         match self.get_bit(4) {
             true => 0x1000,
             false => 0x0000,
