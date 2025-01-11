@@ -3,7 +3,6 @@ pub struct PPUScrollReg {
     x_scroll: u8,
     y_scroll: u8,
     last_byte: u8, // only to be able to simulate read
-                   // todo: still need to make the latch the same as the address register(?)
 }
 
 impl PPUScrollReg {
