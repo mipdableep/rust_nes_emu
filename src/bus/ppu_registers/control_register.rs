@@ -36,7 +36,7 @@ impl PPUControlRegister {
         self.0
     }
 
-    pub fn write_byte(&mut self, value: u8) {
+    pub(crate) fn write_byte(&mut self, value: u8) {
         self.0 = value;
     }
 

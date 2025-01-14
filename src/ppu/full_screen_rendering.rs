@@ -14,9 +14,9 @@ const SCREEN_HEIGHT_NAMETABLE: isize = 2 * SCREEN_HEIGHT as isize;
 
 impl<'bus> PPU<'bus> {
     pub fn copy_background_to_frame(&self, frame: &mut Frame) {
-        let x_offset = bus!(self).ppu_registers.scroll_register.get_x_scroll() as usize
+        let x_offset = bus!(self).ppu_registers.get_x_scroll() as usize
             + bus!(self).ppu_registers.control_register.get_nametable_x() * SCREEN_WIDTH;
-        let y_offset = bus!(self).ppu_registers.scroll_register.get_y_scroll() as usize
+        let y_offset = bus!(self).ppu_registers.get_y_scroll() as usize
             + bus!(self).ppu_registers.control_register.get_nametable_y() * SCREEN_HEIGHT;
 
         for nametable_x in 0..=1 {
@@ -214,7 +214,7 @@ impl<'bus> PPU<'bus> {
         frame: &mut Frame,
         canvas: &mut WindowCanvas,
     ) {
-        frame.screen_state = [0; SCREEN_WIDTH * SCREEN_HEIGHT * 3];
+        // frame.screen_state = [0; SCREEN_WIDTH * SCREEN_HEIGHT * 3];
         self.copy_background_to_frame(frame);
         self.copy_sprite_to_frame(frame);
         update_texture_from_frame(texture, frame, canvas);

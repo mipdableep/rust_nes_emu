@@ -1,17 +1,16 @@
-use crate::bus::ppu_registers::address_register::PPUAddressReg;
 use crate::bus::ppu_registers::control_register::PPUControlRegister;
 use crate::bus::ppu_registers::data_register::PPUDataReg;
+use crate::bus::ppu_registers::internal_registers::InternalPPURegisters;
 use crate::bus::ppu_registers::mask_register::PPUMaskRegister;
 use crate::bus::ppu_registers::oam_address_register::OAMAdressRegister;
-use crate::bus::ppu_registers::scroll_register::PPUScrollReg;
 use crate::bus::ppu_registers::status_register::PPUStatusRegister;
 
 pub mod address_register;
 pub mod control_register;
 mod data_register;
+mod internal_registers;
 mod mask_register;
 mod oam_address_register;
-mod scroll_register;
 mod status_register;
 
 #[derive(Debug, Eq, PartialEq)]
@@ -20,10 +19,8 @@ pub struct PPURegisters {
     pub mask_register: PPUMaskRegister,
     pub status_register: PPUStatusRegister,
     pub oam_addr_register: OAMAdressRegister,
-    pub address_register: PPUAddressReg,
     pub data_register: PPUDataReg,
-    pub scroll_register: PPUScrollReg,
-    internal_latch: bool, // scroll and addr use the same latch
+    internal_registers: InternalPPURegisters, // combination of PPUSCROLL and PPUADDR
 }
 
 impl PPURegisters {
@@ -33,24 +30,49 @@ impl PPURegisters {
             mask_register: PPUMaskRegister::new(),
             status_register: PPUStatusRegister::new(),
             oam_addr_register: OAMAdressRegister::new(),
-            address_register: PPUAddressReg::new(),
             data_register: PPUDataReg::new(),
-            scroll_register: PPUScrollReg::new(),
-            internal_latch: true,
+            internal_registers: InternalPPURegisters::new(),
         }
     }
 
     pub fn reset_latch(&mut self) {
-        self.internal_latch = true;
+        self.internal_registers.reset_toggle()
+    }
+
+    pub fn set_latch(&mut self) {
+        self.internal_registers.set_toggle()
     }
 
     pub fn write_to_addr_reg(&mut self, value: u8) {
-        self.address_register
-            .write_byte(value, &mut self.internal_latch);
+        self.internal_registers.write_address(value);
     }
 
     pub fn write_to_scroll(&mut self, value: u8) {
-        self.scroll_register
-            .write_byte(value, &mut self.internal_latch);
+        self.internal_registers.write_scroll(value);
+    }
+
+    pub fn write_control(&mut self, value: u8) {
+        self.control_register.write_byte(value);
+        self.internal_registers.write_control(value);
+    }
+
+    pub fn get_address_u16(&self) -> u16 {
+        self.internal_registers.get_address_u16()
+    }
+
+    pub fn increase_address(&mut self, incr: u8) {
+        self.internal_registers.increment_v(incr);
+    }
+
+    pub fn get_x_scroll(&self) -> u8 {
+        self.internal_registers.get_x_scroll()
+    }
+
+    pub fn get_y_scroll(&self) -> u8 {
+        self.internal_registers.get_y_scroll()
+    }
+
+    pub fn copy_t_to_v(&mut self) {
+        self.internal_registers.copy_t_to_v();
     }
 }

@@ -80,6 +80,7 @@ impl<'a> PPU<'a> {
             && self.ppu_cycles_in_current_scanline == 0
         {
             self.handle_user_input(event_pump);
+            bus_mut!(self).ppu_registers.copy_t_to_v();
             self.render_full_screen_background(texture, frame, canvas);
             status_reg!(self).set_sprite_0_hit_status(false);
             bus_mut!(self)

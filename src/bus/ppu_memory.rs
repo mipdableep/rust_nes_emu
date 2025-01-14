@@ -137,7 +137,7 @@ impl Bus {
     pub fn read_ppu_memory(&mut self, canonical_address: u16) -> u8 {
         match canonical_address {
             0x00..=0x01fff => panic!("Error: address {canonical_address} is not in range of ppu registers"),
-            0x2000 => self.ppu_registers.control_register.read(), // PPUCTRL
+            0x2000 => panic!("register CTRL is write only1"), // PPUCTRL
             0x2001 => self.ppu_registers.mask_register.read(), //PPUMASK
             0x2002 => { //PPUSTATUS
                 // reading from status register has the strange attribute of resetting the latch w
@@ -149,10 +149,10 @@ impl Bus {
             0x2003 => panic!("register OAM address is write only"), //OAMADDR, write only
             0x2004 => todo!(), //OAMDATA
             0x2005 => 0, // PPUSCRL, should be write-only
-            0x2006 => self.ppu_registers.address_register.read(), //PPUADDR
+            0x2006 => panic!("addr register is read only"), //PPUADDR
             0x2007 => { //PPUDATA
-                let address = self.ppu_registers.address_register.get_address_as_u16();
-                self.ppu_registers.address_register.increment(self.ppu_registers.control_register.get_vram_address_inc());
+                let address = self.ppu_registers.get_address_u16();
+                self.ppu_registers.increase_address(self.ppu_registers.control_register.get_vram_address_inc());
                 self.read_ppu_data_register_from_address(address)
             },
             0x2008..=0x3FFF => panic!("Address {canonical_address} is ppu register but mirrored - the mirror logic should have been in the caller"),
@@ -165,7 +165,7 @@ impl Bus {
         match address {
             0x00..=0x01fff => panic!("Error: address {address} is not in range of ppu registers"),
             0x2000 =>            {// PPUCTRL
-                self.ppu_registers.control_register.write_byte(value);
+                self.ppu_registers.write_control(value);
             },
             0x2001 => self.ppu_registers.mask_register.write_byte(value), //PPUMASK
             0x2002 => panic!("Should not write to read-only status register PPUSTATUS at 0x2002"), //PPUSTATUS
@@ -174,8 +174,8 @@ impl Bus {
             0x2005 => self.ppu_registers.write_to_scroll(value), // PPUSCRL
             0x2006 => self.ppu_registers.write_to_addr_reg(value), //PPUADDR
             0x2007 => {
-                let address_in_ppu = self.ppu_registers.address_register.get_address_as_u16();
-                self.ppu_registers.address_register.increment(self.ppu_registers.control_register.get_vram_address_inc());
+                let address_in_ppu = self.ppu_registers.get_address_u16();
+                self.ppu_registers.increase_address(self.ppu_registers.control_register.get_vram_address_inc());
                 let pointer_to_address = self.convert_ppu_address_to_actual_address(address_in_ppu);
                 *pointer_to_address = value;
             }, //PPUDATA
