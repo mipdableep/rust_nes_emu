@@ -93,6 +93,14 @@ impl PPURegisters {
         (self.internal_registers.get_nametable_index() as u16 * PPU_NAMETABLE_SIZE) as usize
     }
 
+    pub fn increase_coarse_x(&mut self) {
+        self.internal_registers.increase_coarse_x()
+    }
+
+    pub fn increase_y(&mut self) {
+        self.internal_registers.increase_y()
+    }
+
     pub fn copy_t_to_v(&mut self) {
         self.internal_registers.copy_t_to_v();
     }
