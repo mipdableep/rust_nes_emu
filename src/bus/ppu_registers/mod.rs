@@ -1,3 +1,4 @@
+use crate::bus::ppu_memory::PPU_NAMETABLE_SIZE;
 use crate::bus::ppu_registers::control_register::PPUControlRegister;
 use crate::bus::ppu_registers::data_register::PPUDataReg;
 use crate::bus::ppu_registers::internal_registers::InternalPPURegisters;
@@ -70,6 +71,10 @@ impl PPURegisters {
 
     pub fn get_y_scroll(&self) -> u8 {
         self.internal_registers.get_y_scroll()
+    }
+
+    pub fn get_nametable_base_index(&self) -> u16 {
+        self.internal_registers.get_nametable_index() as u16 * PPU_NAMETABLE_SIZE
     }
 
     pub fn copy_t_to_v(&mut self) {

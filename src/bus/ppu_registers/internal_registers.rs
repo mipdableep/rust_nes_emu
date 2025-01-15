@@ -189,6 +189,10 @@ impl InternalPPURegisters {
         }
     }
 
+    pub fn get_nametable_index(&self) -> u8 {
+        get_nametable(self.current_vram)
+    }
+
     pub fn copy_t_to_v(&mut self) {
         self.current_vram = self.temporary_vram
     }
