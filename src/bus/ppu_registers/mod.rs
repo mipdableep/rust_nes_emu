@@ -65,32 +65,32 @@ impl PPURegisters {
         self.internal_registers.increment_v(incr);
     }
 
-    pub fn get_coarse_x(&self) -> u8 {
-        self.internal_registers.get_coarse_x()
+    pub fn get_coarse_x(&self) -> usize {
+        self.internal_registers.get_coarse_x() as usize
     }
 
-    pub fn get_fine_x(&self) -> u8 {
-        self.internal_registers.get_fine_x()
+    pub fn get_fine_x(&self) -> usize {
+        self.internal_registers.get_fine_x() as usize
     }
 
     pub fn get_x_scroll(&self) -> u8 {
         self.internal_registers.get_x_scroll()
     }
 
-    pub fn get_coarse_y(&self) -> u8 {
-        self.internal_registers.get_coarse_y()
+    pub fn get_coarse_y(&self) -> usize {
+        self.internal_registers.get_coarse_y() as usize
     }
 
-    pub fn get_fine_y(&self) -> u8 {
-        self.internal_registers.get_fine_y()
+    pub fn get_fine_y(&self) -> usize {
+        self.internal_registers.get_fine_y() as usize
     }
 
     pub fn get_y_scroll(&self) -> u8 {
         self.internal_registers.get_y_scroll()
     }
 
-    pub fn get_nametable_base_index(&self) -> u16 {
-        self.internal_registers.get_nametable_index() as u16 * PPU_NAMETABLE_SIZE
+    pub fn get_nametable_base_index(&self) -> usize {
+        (self.internal_registers.get_nametable_index() as u16 * PPU_NAMETABLE_SIZE) as usize
     }
 
     pub fn copy_t_to_v(&mut self) {
