@@ -65,8 +65,24 @@ impl PPURegisters {
         self.internal_registers.increment_v(incr);
     }
 
+    pub fn get_coarse_x(&self) -> u8 {
+        self.internal_registers.get_coarse_x()
+    }
+
+    pub fn get_fine_x(&self) -> u8 {
+        self.internal_registers.get_fine_x()
+    }
+
     pub fn get_x_scroll(&self) -> u8 {
         self.internal_registers.get_x_scroll()
+    }
+
+    pub fn get_coarse_y(&self) -> u8 {
+        self.internal_registers.get_coarse_y()
+    }
+
+    pub fn get_fine_y(&self) -> u8 {
+        self.internal_registers.get_fine_y()
     }
 
     pub fn get_y_scroll(&self) -> u8 {

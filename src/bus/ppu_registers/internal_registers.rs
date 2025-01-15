@@ -145,12 +145,28 @@ impl InternalPPURegisters {
         self.current_vram = self.current_vram.wrapping_add(incr as u16);
     }
 
+    pub fn get_coarse_x(&self) -> u8 {
+        get_coarse_x(self.current_vram)
+    }
+
+    pub fn get_fine_x(&self) -> u8 {
+        self.fine_x
+    }
+
     pub fn get_x_scroll(&self) -> u8 {
-        (get_coarse_x(self.current_vram) << 3) | self.fine_x
+        (self.get_coarse_x() << 3) | self.get_fine_x()
+    }
+
+    pub fn get_coarse_y(&self) -> u8 {
+        get_coarse_y(self.current_vram)
+    }
+
+    pub fn get_fine_y(&self) -> u8 {
+        get_fine_y(self.current_vram)
     }
 
     pub fn get_y_scroll(&self) -> u8 {
-        (get_coarse_y(self.current_vram) << 3) | get_fine_y(self.current_vram)
+        (self.get_coarse_y() << 3) | self.get_fine_y()
     }
 
     pub fn increase_coarse_x(&mut self) {
