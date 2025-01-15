@@ -27,10 +27,12 @@ pub struct InternalPPURegisters {
 /// We ignore rustfmt to allow nice alignment
 #[cfg_attr(rustfmt, rustfmt_skip)]
 mod ppu_masks{
-    pub const FINE_Y_MASK: u16 =    0b0_111_00_00000_00000;
-    pub const NAMETABLE_MASK: u16 = 0b0_000_11_00000_00000;
-    pub const COARSE_Y_MASK: u16 =  0b0_000_00_11111_00000;
-    pub const COARSE_X_MASK: u16 =  0b0_000_00_00000_11111;
+    pub const FINE_Y_MASK: u16 =      0b0_111_00_00000_00000;
+    pub const NAMETABLE_MASK_X: u16 = 0b0_000_01_00000_00000;
+    pub const NAMETABLE_MASK_Y: u16 = 0b0_000_10_00000_00000;
+    pub const NAMETABLE_MASK: u16 =   0b0_000_11_00000_00000;
+    pub const COARSE_Y_MASK: u16 =    0b0_000_00_11111_00000;
+    pub const COARSE_X_MASK: u16 =    0b0_000_00_00000_11111;
 }
 
 fn get_fine_y(ppu_vram_addr: u16) -> u8 {
@@ -209,7 +211,20 @@ impl InternalPPURegisters {
         get_nametable(self.current_vram)
     }
 
+    pub fn copy_t_x_to_v(&mut self) {
+        let x_mask = NAMETABLE_MASK_X | COARSE_X_MASK;
+        self.current_vram &= !x_mask;
+        self.current_vram |= self.temporary_vram & x_mask;
+    }
+
+    pub fn copy_t_y_to_v(&mut self) {
+        let y_mask = FINE_Y_MASK | NAMETABLE_MASK_Y | COARSE_Y_MASK;
+        self.current_vram &= !y_mask;
+        self.current_vram |= self.temporary_vram & y_mask;
+    }
+
     pub fn copy_t_to_v(&mut self) {
-        self.current_vram = self.temporary_vram
+        self.copy_t_x_to_v();
+        self.copy_t_y_to_v();
     }
 }

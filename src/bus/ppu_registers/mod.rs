@@ -101,6 +101,14 @@ impl PPURegisters {
         self.internal_registers.increase_y()
     }
 
+    pub fn copy_t_x_to_v(&mut self) {
+        self.internal_registers.copy_t_x_to_v()
+    }
+
+    pub fn copy_t_y_to_v(&mut self) {
+        self.internal_registers.copy_t_y_to_v()
+    }
+
     pub fn copy_t_to_v(&mut self) {
         self.internal_registers.copy_t_to_v();
     }
