@@ -42,8 +42,8 @@ fn set_fine_y(ppu_vram_addr: &mut u16, fine_y_value: u8) {
     *ppu_vram_addr = (*ppu_vram_addr & !FINE_Y_MASK) | (cleaned_y_value & FINE_Y_MASK)
 }
 
-fn get_nametable(ppu_vram_addr: u16) -> usize {
-    ((ppu_vram_addr & NAMETABLE_MASK) >> 0xA) as usize
+fn get_nametable(ppu_vram_addr: u16) -> u8 {
+    ((ppu_vram_addr & NAMETABLE_MASK) >> 0xA) as u8
 }
 
 fn set_nametable(ppu_vram_addr: &mut u16, nametable_value: u8) {
@@ -151,6 +151,42 @@ impl InternalPPURegisters {
 
     pub fn get_y_scroll(&self) -> u8 {
         (get_coarse_y(self.current_vram) << 3) | get_fine_y(self.current_vram)
+    }
+
+    pub fn increase_coarse_x(&mut self) {
+        // increases the coarse x, and switched nametable x if needed
+        let coarse = get_coarse_x(self.current_vram);
+        if coarse == 31 {
+            // we need to switch horizontal nametable
+            let current_nametable = get_nametable(self.current_vram);
+            set_nametable(&mut self.current_vram, current_nametable ^ 1);
+            set_coarse_x(&mut self.current_vram, 0);
+        } else {
+            set_coarse_x(&mut self.current_vram, coarse + 1);
+        }
+    }
+
+    pub fn increase_y(&mut self) {
+        // increase y, with overflow to coarse y and wrapping around the nametable
+        let fine_y = get_fine_y(self.current_vram);
+        if fine_y < 7 {
+            set_fine_y(&mut self.current_vram, fine_y + 1);
+            return;
+        }
+        // else, we must increase coarse y
+        set_fine_y(&mut self.current_vram, 0);
+        let coarse_y = get_coarse_y(self.current_vram);
+        if coarse_y == 29 {
+            // last row, switch y nametable
+            let nametable = get_nametable(self.current_vram);
+            set_nametable(&mut self.current_vram, nametable ^ 2);
+            set_coarse_y(&mut self.current_vram, 0);
+        } else if coarse_y == 31 {
+            // edge case - reset coarse y but don't switch nametable
+            set_coarse_y(&mut self.current_vram, 0);
+        } else {
+            set_coarse_y(&mut self.current_vram, coarse_y + 1);
+        }
     }
 
     pub fn copy_t_to_v(&mut self) {
