@@ -96,4 +96,8 @@ impl PPURegisters {
     pub fn copy_t_to_v(&mut self) {
         self.internal_registers.copy_t_to_v();
     }
+
+    pub fn get_tile_background_tile_bank(&self) -> u16 {
+        self.control_register.get_background_sprite_address()
+    }
 }
