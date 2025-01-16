@@ -1,5 +1,6 @@
 pub mod colors_palette;
 mod full_screen_rendering;
+mod redner_pixel;
 pub mod render_sdl;
 #[cfg(test)]
 mod test_frame_rendering;
@@ -58,9 +59,9 @@ impl<'a> PPU<'a> {
     }
 
     fn is_sprite_0_hit(&self) -> bool {
-        let sprite_0_x = bus!(self).ppu_memory.oam_data[0] as usize;
-        let sprite_0_y = bus!(self).ppu_memory.oam_data[3] as usize;
-        sprite_0_y == self.scanlines_in_current_frame
+        let sprite_0_y = bus!(self).ppu_memory.oam_data[0] as usize;
+        let sprite_0_x = bus!(self).ppu_memory.oam_data[3] as usize;
+        sprite_0_y + 4 == self.scanlines_in_current_frame
             && sprite_0_x == self.ppu_cycles_in_current_scanline
     }
     pub fn run_one_ppu_cycle(
@@ -70,6 +71,12 @@ impl<'a> PPU<'a> {
         canvas: &mut WindowCanvas,
         event_pump: &mut EventPump,
     ) {
+        self.render_pixel(
+            self.ppu_cycles_in_current_scanline,
+            self.scanlines_in_current_frame,
+            frame,
+        );
+
         self.ppu_cycles_in_current_scanline += 1;
         // todo - actually draw something
         self.trigger_new_scanline_if_needed();

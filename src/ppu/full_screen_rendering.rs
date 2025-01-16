@@ -6,7 +6,7 @@ use crate::{bus, palette, ppu_mem};
 use sdl2::render::{Texture, WindowCanvas};
 
 pub const SCREEN_WIDTH_TILE: usize = SCREEN_WIDTH / 8;
-const SCREEN_HEIGHT_TILE: usize = SCREEN_HEIGHT / 8;
+pub const SCREEN_HEIGHT_TILE: usize = SCREEN_HEIGHT / 8;
 const SCREEN_SIZE_TILE: usize = SCREEN_WIDTH_TILE * SCREEN_HEIGHT_TILE;
 
 const SCREEN_WIDTH_NAMETABLE: isize = 2 * SCREEN_WIDTH as isize;
@@ -73,7 +73,7 @@ impl<'bus> PPU<'bus> {
         }
     }
 
-    fn get_background_palette(&self, palette_index: usize) -> [u8; 4] {
+    pub(crate) fn get_background_palette(&self, palette_index: usize) -> [u8; 4] {
         let tile_palette = [
             palette!(self)[0],
             palette!(self)[palette_index * 4 + 1],
@@ -83,7 +83,12 @@ impl<'bus> PPU<'bus> {
         tile_palette
     }
 
-    fn get_palette_index(&self, tile_x: usize, tile_y: usize, nametable_base: usize) -> usize {
+    pub(crate) fn get_palette_index(
+        &self,
+        tile_x: usize,
+        tile_y: usize,
+        nametable_base: usize,
+    ) -> usize {
         let meta_tile_index_for_color = tile_x / 4 + tile_y / 4 * SCREEN_WIDTH_TILE / 4;
         let attribute_color_byte =
             bus!(self).read_vram(SCREEN_SIZE_TILE + meta_tile_index_for_color + nametable_base);
@@ -98,7 +103,7 @@ impl<'bus> PPU<'bus> {
         palette_index
     }
 
-    fn get_actual_tile_data(&self, tile_number: u16) -> &[u8] {
+    pub(crate) fn get_actual_tile_data(&self, tile_number: u16) -> &[u8] {
         let bank_start = bus!(self)
             .ppu_registers
             .control_register
@@ -109,7 +114,7 @@ impl<'bus> PPU<'bus> {
         tile
     }
 
-    fn get_tile_number(&self, tile_index: usize, nametable_base: usize) -> u16 {
+    pub(crate) fn get_tile_number(&self, tile_index: usize, nametable_base: usize) -> u16 {
         let tile_number = bus!(self).read_vram(tile_index + nametable_base) as u16;
         tile_number
     }
@@ -220,8 +225,8 @@ impl<'bus> PPU<'bus> {
         frame: &mut Frame,
         canvas: &mut WindowCanvas,
     ) {
-        frame.screen_state = [0; SCREEN_WIDTH * SCREEN_HEIGHT * 3];
-        self.copy_background_to_frame(frame);
+        // frame.screen_state = [0; SCREEN_WIDTH * SCREEN_HEIGHT * 3];
+        // self.copy_background_to_frame(frame);
         self.copy_sprite_to_frame(frame);
         update_texture_from_frame(texture, frame, canvas);
         canvas.present();
