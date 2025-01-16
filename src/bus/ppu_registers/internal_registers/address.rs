@@ -31,7 +31,7 @@ fn write_while_resetting_latch() {
     ppu_registers.write_to_addr_reg(0x10);
     ppu_registers.write_to_addr_reg(0x12);
     ppu_registers.write_to_addr_reg(0x23);
-    assert_eq!(ppu_registers.get_address_u16(), 0x2312);
+    assert_eq!(ppu_registers.get_address_u16(), 0x1012); // we still did not copy from t to v!
 
     ppu_registers.reset_latch();
     ppu_registers.write_to_addr_reg(0x10);
