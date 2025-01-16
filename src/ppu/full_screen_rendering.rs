@@ -151,6 +151,12 @@ impl<'bus> PPU<'bus> {
 
     fn copy_sprite_to_frame(&self, frame: &mut Frame) {
         for i in (0..256).step_by(4).rev() {
+            // some sprites should not be rendered
+            if (ppu_mem!(self).oam_data[i + 2] >> 5) & 1 != 0 {
+                // sprite priority is 0 means we should skip it
+                continue;
+            }
+
             let tile_idx = ppu_mem!(self).oam_data[i + 1] as u16;
             let tile_x = ppu_mem!(self).oam_data[i + 3] as usize;
             let tile_y = ppu_mem!(self).oam_data[i] as usize;
