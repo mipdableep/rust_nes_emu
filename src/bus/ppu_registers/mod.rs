@@ -62,7 +62,7 @@ impl PPURegisters {
     }
 
     pub fn increase_address(&mut self, incr: u8) {
-        self.internal_registers.increment_t(incr);
+        self.internal_registers.increment_v(incr);
     }
 
     pub fn get_coarse_x(&self) -> usize {

@@ -140,7 +140,7 @@ impl InternalPPURegisters {
     }
 
     pub fn get_address_u16(&self) -> u16 {
-        self.temporary_vram
+        self.current_vram & 0x3FFF
     }
 
     pub fn increment_v(&mut self, incr: u8) {
