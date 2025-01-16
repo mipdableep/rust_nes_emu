@@ -29,6 +29,18 @@ impl PPUStatusRegister {
         }
     }
 
+    fn get_bit(&self, bit_location: u8) -> bool {
+        // a function to return the value of the bit in bit location
+        if bit_location > 7 {
+            panic!("Error: Trying to access bit in location {bit_location} in the PPU control register, which does not exists");
+        }
+        (self.0 >> bit_location) & 1 == 1
+    }
+
+    pub fn get_vblank_status(&self) -> bool {
+        self.get_bit(7)
+    }
+
     pub fn set_sprite_0_hit_status(&mut self, new_status: bool) {
         match new_status {
             true => {

@@ -165,7 +165,12 @@ impl Bus {
         match address {
             0x00..=0x01fff => panic!("Error: address {address} is not in range of ppu registers"),
             0x2000 =>            {// PPUCTRL
+                let old_vblank = self.ppu_registers.control_register.get_vblank_nmi();
                 self.ppu_registers.control_register.write_byte(value);
+                if !old_vblank && self.ppu_registers.control_register.get_vblank_nmi() && self.ppu_registers.status_register.get_vblank_status() {
+                    self.nmi_generated = true
+                }
+
             },
             0x2001 => self.ppu_registers.mask_register.write_byte(value), //PPUMASK
             0x2002 => panic!("Should not write to read-only status register PPUSTATUS at 0x2002"), //PPUSTATUS
