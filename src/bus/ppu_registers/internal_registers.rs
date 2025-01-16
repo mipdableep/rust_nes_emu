@@ -140,11 +140,15 @@ impl InternalPPURegisters {
     }
 
     pub fn get_address_u16(&self) -> u16 {
-        self.current_vram
+        self.temporary_vram
     }
 
     pub fn increment_v(&mut self, incr: u8) {
         self.current_vram = self.current_vram.wrapping_add(incr as u16);
+    }
+
+    pub fn increment_t(&mut self, incr: u8) {
+        self.temporary_vram = self.temporary_vram.wrapping_add(incr as u16);
     }
 
     pub fn get_coarse_x(&self) -> u8 {

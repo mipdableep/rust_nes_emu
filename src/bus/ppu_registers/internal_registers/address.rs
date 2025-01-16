@@ -12,11 +12,9 @@ fn test_writing_to_ppu_addr() {
 
     ppu_registers.write_to_addr_reg(0x10);
     ppu_registers.write_to_addr_reg(0xab);
-    ppu_registers.copy_t_to_v();
     assert_eq!(ppu_registers.get_address_u16(), 0x10ab);
     ppu_registers.write_to_addr_reg(0x23);
     ppu_registers.write_to_addr_reg(0x45);
-    ppu_registers.copy_t_to_v();
     assert_eq!(ppu_registers.get_address_u16(), 0x2345);
 
     // test increment
@@ -33,7 +31,6 @@ fn write_while_resetting_latch() {
     ppu_registers.write_to_addr_reg(0x10);
     ppu_registers.write_to_addr_reg(0x12);
     ppu_registers.write_to_addr_reg(0x23);
-    ppu_registers.copy_t_to_v();
     assert_eq!(ppu_registers.get_address_u16(), 0x2312);
 
     ppu_registers.reset_latch();
@@ -42,7 +39,6 @@ fn write_while_resetting_latch() {
     ppu_registers.reset_latch();
     ppu_registers.write_to_addr_reg(0x12);
     ppu_registers.write_to_addr_reg(0x23);
-    ppu_registers.copy_t_to_v();
     assert_eq!(ppu_registers.get_address_u16(), 0x1223);
 }
 
@@ -52,6 +48,5 @@ fn test_mirroring() {
 
     ppu_registers.write_to_addr_reg(0xab);
     ppu_registers.write_to_addr_reg(0x12);
-    ppu_registers.copy_t_to_v();
     assert_eq!(ppu_registers.get_address_u16(), 0xab12 & 0x3fff);
 }
