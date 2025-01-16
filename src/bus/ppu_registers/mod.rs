@@ -47,6 +47,12 @@ impl PPURegisters {
     pub fn write_to_addr_reg(&mut self, value: u8) {
         self.address_register
             .write_byte(value, &mut self.internal_latch);
+
+        // Writes here overwrite the current nametable bits in ppu_ctrl (or at least overwrite bits in an
+        // internal latch that is equivalent to this); see [7].  Some games, e.g. SMB, rely on this behaviour
+        let new_control_value =
+            self.control_register.read() & 0b11111100 | (value & 0b00001100 >> 2);
+        self.control_register.write_byte(new_control_value);
     }
 
     pub fn write_to_scroll(&mut self, value: u8) {
