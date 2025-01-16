@@ -139,12 +139,6 @@ impl<'bus> PPU<'bus> {
                 if x_pos_in_frame % TILE_WIDTH == 0 {
                     let row_number = self.scanlines_in_current_frame;
 
-                    if row_number == 33 {
-                        if x_pos_in_frame + TILE_WIDTH == 72 {
-                            println!("Here!");
-                        }
-                    }
-
                     let row_tile_pixels = self.get_current_tile_row_pixels();
 
                     let fine_x_shift = bus!(self).ppu_registers.get_fine_x();
