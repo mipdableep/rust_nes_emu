@@ -137,8 +137,8 @@ impl Bus {
     pub fn read_ppu_memory(&mut self, canonical_address: u16) -> u8 {
         match canonical_address {
             0x00..=0x01fff => panic!("Error: address {canonical_address} is not in range of ppu registers"),
-            0x2000 => panic!("register CTRL is write only1"), // PPUCTRL
-            0x2001 => self.ppu_registers.mask_register.read(), //PPUMASK
+            0x2000 => panic!("register CTRL is write only!"), // PPUCTRL
+            0x2001 => panic!("register MASK is write only!"), //PPUMASK
             0x2002 => { //PPUSTATUS
                 // reading from status register has the strange attribute of resetting the latch w
                 self.ppu_registers.reset_latch();
