@@ -1,6 +1,6 @@
 pub mod colors_palette;
 mod full_screen_rendering;
-mod redner_pixel;
+mod render_background;
 pub mod render_sdl;
 #[cfg(test)]
 mod test_frame_rendering;
