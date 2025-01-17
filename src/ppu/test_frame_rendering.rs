@@ -1,15 +1,18 @@
 use crate::ppu::colors_palette::SYSTEM_PALETTE;
-use crate::ppu::full_screen_rendering::SCREEN_WIDTH_TILE;
+use crate::ppu::render_nes::SCREEN_WIDTH_TILE;
 use crate::ppu::render_sdl::screen_rendering_constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use crate::ppu::render_sdl::Frame;
+use crate::ppu::{SCANLINES_PER_FRAME, SCANLINE_LENGTH_PIXELS};
 use crate::prelude::Mirroring;
-use crate::{bus_mut, generate_ppu};
+use crate::{bus_mut, generate_ppu, generate_texture_canvas_event_pump};
 
 #[test]
 fn background_drawing() {
     // this tests the drawing of the background
     // the result frame should have one tile that kinda draws the symbol for 1/2
     generate_ppu!(ppu);
+    generate_texture_canvas_event_pump!(texture, canvas, event_pump);
+
     bus_mut!(ppu).cartridge.screen_mirroring = Mirroring::Horizontal;
 
     { // set tile 7 to be our tile
@@ -50,7 +53,11 @@ fn background_drawing() {
     bus_mut!(ppu).ppu_memory.palette_table[15] = 24;
 
     let mut frame = Frame::new();
-    ppu.copy_background_to_frame(&mut frame);
+    for _ in 0..SCANLINE_LENGTH_PIXELS {
+        for _ in 0..SCANLINES_PER_FRAME {
+            ppu.run_one_ppu_cycle(&mut texture, &mut frame, &mut canvas, &mut event_pump);
+        }
+    }
     // $0xx5=$20  00100000         .1.....3
     // $0xx6=$40  01000000         11....3.
     // $0xx7=$80  10000000  =====  .1...3..
@@ -62,6 +69,7 @@ fn background_drawing() {
     for x in 0..SCREEN_WIDTH as i32 {
         for y in 0..SCREEN_HEIGHT as i32 {
             let color = frame.get_pixel(x as usize, y as usize);
+            println!("{x} {y}");
             assert_eq!(
                 color,
                 match (x - 9 * 8, y - 4 * 8) {
