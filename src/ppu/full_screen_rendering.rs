@@ -7,7 +7,7 @@ use sdl2::render::{Texture, WindowCanvas};
 
 pub const SCREEN_WIDTH_TILE: usize = SCREEN_WIDTH / 8;
 pub const SCREEN_HEIGHT_TILE: usize = SCREEN_HEIGHT / 8;
-const SCREEN_SIZE_TILE: usize = SCREEN_WIDTH_TILE * SCREEN_HEIGHT_TILE;
+pub(crate) const SCREEN_SIZE_TILE: usize = SCREEN_WIDTH_TILE * SCREEN_HEIGHT_TILE;
 
 const SCREEN_WIDTH_NAMETABLE: isize = 2 * SCREEN_WIDTH as isize;
 const SCREEN_HEIGHT_NAMETABLE: isize = 2 * SCREEN_HEIGHT as isize;
@@ -154,7 +154,7 @@ impl<'bus> PPU<'bus> {
         }
     }
 
-    fn copy_sprite_to_frame(&self, frame: &mut Frame) {
+    pub(crate) fn copy_sprite_to_frame(&self, frame: &mut Frame) {
         for i in (0..256).step_by(4).rev() {
             // some sprites should not be rendered
             if (ppu_mem!(self).oam_data[i + 2] >> 5) & 1 != 0 {
