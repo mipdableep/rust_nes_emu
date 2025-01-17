@@ -1,6 +1,5 @@
 pub mod colors_palette;
-mod full_screen_rendering;
-mod render_background;
+mod render_nes;
 pub mod render_sdl;
 #[cfg(test)]
 mod test_frame_rendering;
