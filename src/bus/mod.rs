@@ -15,6 +15,7 @@ use crate::bus::cartridge::Cartridge;
 use crate::bus::ppu_memory::PPUMemory;
 use controller::ControllerByte;
 use memory_mapping_constants::*;
+pub use ppu_memory::{PPU_NAMETABLE_SIZE, PPU_NAMETABLE_START};
 use ppu_registers::PPURegisters;
 
 #[macro_export]
