@@ -1,22 +1,11 @@
-use super::render_sprites::{SCREEN_HEIGHT_TILE, SCREEN_WIDTH_TILE};
+use crate::ppu::render_nes::ppu_render_constants::*;
 
-use super::render_sprites::SCREEN_SIZE_TILE;
 use crate::bus::{PPU_NAMETABLE_SIZE, PPU_NAMETABLE_START};
 use crate::ppu::colors_palette::SYSTEM_PALETTE;
-use crate::ppu::frame::screen_rendering_constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
+
 use crate::ppu::frame::Frame;
-use crate::ppu::{NMI_SCANLINE, PPU, SCANLINE_LENGTH_PIXELS};
+use crate::ppu::PPU;
 use crate::{bus, bus_mut, palette};
-
-const TILE_WIDTH: usize = 8;
-const TILE_HEIGHT: usize = 8;
-
-const PRE_RENDER_SCANLINE: usize = 261;
-
-const COPY_VERT_V_DOT_START: usize = 280;
-const COPY_VERT_V_DOT_END: usize = 304;
-const DOT_TO_START_FETCH_NEXT_LINE_TILES: usize = 321;
-const FIRST_TILE_FETCH_DOT: usize = 328;
 
 macro_rules! status_reg {
     ($ppu: ident) => {
@@ -290,8 +279,8 @@ impl<'bus> PPU<'bus> {
             }
             SCREEN_HEIGHT => {}
             NMI_SCANLINE => self.handle_post_render_scanline(),
-            const { NMI_SCANLINE + 1 }..PRE_RENDER_SCANLINE => {}
-            PRE_RENDER_SCANLINE => self.handle_pre_render_scanline(frame),
+            const { NMI_SCANLINE + 1 }..const { SCANLINES_PER_FRAME - 1 } => {}
+            const { SCANLINES_PER_FRAME - 1 } => self.handle_pre_render_scanline(frame),
             _ => panic!("Shouldn't be here!"),
         }
     }

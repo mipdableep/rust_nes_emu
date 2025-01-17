@@ -48,7 +48,9 @@ macro_rules! generate_texture_canvas_event_pump {
         use sdl2::event::Event;
         use sdl2::keyboard::Keycode;
         use sdl2::pixels::PixelFormatEnum;
-        use $crate::ppu::frame::screen_rendering_constants::*;
+        use $crate::ppu::{SCREEN_HEIGHT, SCREEN_WIDTH};
+
+        const SCREEN_FACTOR: usize = 2;
 
         let sdl_context = sdl2::init().unwrap();
         let video_subsystem = sdl_context.video().unwrap();

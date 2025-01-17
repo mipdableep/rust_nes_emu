@@ -1,3 +1,6 @@
+use render_nes::ppu_render_constants::*;
+pub use render_nes::ppu_render_constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
+
 pub mod colors_palette;
 pub mod frame;
 mod render_nes;
@@ -6,14 +9,9 @@ mod test_frame_rendering;
 mod user_input;
 
 use crate::bus::Bus;
-use crate::ppu::frame::screen_rendering_constants::SCREEN_WIDTH;
 use crate::ppu::frame::Frame;
 use sdl2::render::{Texture, WindowCanvas};
 use sdl2::EventPump;
-
-const SCANLINE_LENGTH_PIXELS: usize = 341;
-const SCANLINES_PER_FRAME: usize = 262;
-const NMI_SCANLINE: usize = 241;
 
 pub struct PPU<'a> {
     ppu_cycles_in_current_scanline: usize, // the scanline lasts for 341 ppu cycles

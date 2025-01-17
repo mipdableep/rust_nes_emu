@@ -1,13 +1,8 @@
 use super::PPU;
 use crate::ppu::colors_palette::SYSTEM_PALETTE;
-use crate::ppu::frame::screen_rendering_constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use crate::ppu::frame::{update_texture_from_frame, Frame};
 use crate::{bus, ppu_mem};
 use sdl2::render::{Texture, WindowCanvas};
-
-pub const SCREEN_WIDTH_TILE: usize = SCREEN_WIDTH / 8;
-pub const SCREEN_HEIGHT_TILE: usize = SCREEN_HEIGHT / 8;
-pub(crate) const SCREEN_SIZE_TILE: usize = SCREEN_WIDTH_TILE * SCREEN_HEIGHT_TILE;
 
 impl<'bus> PPU<'bus> {
     pub(crate) fn copy_sprite_to_frame(&self, frame: &mut Frame) {
