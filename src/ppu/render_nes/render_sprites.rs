@@ -1,7 +1,7 @@
 use super::PPU;
 use crate::ppu::colors_palette::SYSTEM_PALETTE;
-use crate::ppu::render_sdl::screen_rendering_constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
-use crate::ppu::render_sdl::{update_texture_from_frame, Frame};
+use crate::ppu::frame::screen_rendering_constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
+use crate::ppu::frame::{update_texture_from_frame, Frame};
 use crate::{bus, ppu_mem};
 use sdl2::render::{Texture, WindowCanvas};
 

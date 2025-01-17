@@ -5,7 +5,7 @@ use crate::bus::ppu_registers::mask_register::PPUMaskRegister;
 use crate::bus::ppu_registers::oam_address_register::OAMAdressRegister;
 use crate::bus::ppu_registers::scroll_register::PPUScrollReg;
 use crate::bus::ppu_registers::status_register::PPUStatusRegister;
-use crate::ppu::render_sdl::screen_rendering_constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
+use crate::ppu::frame::screen_rendering_constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
 
 pub mod address_register;
 pub mod control_register;

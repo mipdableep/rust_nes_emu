@@ -1,7 +1,7 @@
 use crate::ppu::colors_palette::SYSTEM_PALETTE;
+use crate::ppu::frame::screen_rendering_constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
+use crate::ppu::frame::Frame;
 use crate::ppu::render_nes::SCREEN_WIDTH_TILE;
-use crate::ppu::render_sdl::screen_rendering_constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
-use crate::ppu::render_sdl::Frame;
 use crate::ppu::{SCANLINES_PER_FRAME, SCANLINE_LENGTH_PIXELS};
 use crate::prelude::Mirroring;
 use crate::{bus_mut, generate_ppu, generate_texture_canvas_event_pump};

@@ -1,7 +1,7 @@
 // use std::{thread::sleep, time};
 
 use nes_emulator::generate_texture_canvas_event_pump;
-use nes_emulator::ppu::render_sdl::Frame;
+use nes_emulator::ppu::frame::Frame;
 use nes_emulator::ppu::PPU;
 use nes_emulator::prelude::{Bus, CPU};
 

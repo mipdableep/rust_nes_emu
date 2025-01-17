@@ -1,13 +1,13 @@
 pub mod colors_palette;
+pub mod frame;
 mod render_nes;
-pub mod render_sdl;
 #[cfg(test)]
 mod test_frame_rendering;
 mod user_input;
 
 use crate::bus::Bus;
-use crate::ppu::render_sdl::screen_rendering_constants::SCREEN_WIDTH;
-use crate::ppu::render_sdl::Frame;
+use crate::ppu::frame::screen_rendering_constants::SCREEN_WIDTH;
+use crate::ppu::frame::Frame;
 use sdl2::render::{Texture, WindowCanvas};
 use sdl2::EventPump;
 

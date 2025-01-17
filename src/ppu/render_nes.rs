@@ -2,7 +2,7 @@ mod render_background;
 mod render_sprites;
 
 use super::PPU;
-use crate::ppu::render_sdl::screen_rendering_constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
+use crate::ppu::frame::screen_rendering_constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use crate::{bus, palette};
 
 pub const SCREEN_WIDTH_TILE: usize = SCREEN_WIDTH / 8;

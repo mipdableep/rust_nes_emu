@@ -3,8 +3,8 @@ use super::render_sprites::{SCREEN_HEIGHT_TILE, SCREEN_WIDTH_TILE};
 use super::render_sprites::SCREEN_SIZE_TILE;
 use crate::bus::{PPU_NAMETABLE_SIZE, PPU_NAMETABLE_START};
 use crate::ppu::colors_palette::SYSTEM_PALETTE;
-use crate::ppu::render_sdl::screen_rendering_constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
-use crate::ppu::render_sdl::Frame;
+use crate::ppu::frame::screen_rendering_constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
+use crate::ppu::frame::Frame;
 use crate::ppu::{NMI_SCANLINE, PPU, SCANLINE_LENGTH_PIXELS};
 use crate::{bus, bus_mut, palette};
 
