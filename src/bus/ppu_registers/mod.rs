@@ -5,6 +5,7 @@ use crate::bus::ppu_registers::mask_register::PPUMaskRegister;
 use crate::bus::ppu_registers::oam_address_register::OAMAdressRegister;
 use crate::bus::ppu_registers::scroll_register::PPUScrollReg;
 use crate::bus::ppu_registers::status_register::PPUStatusRegister;
+use crate::ppu::render_sdl::screen_rendering_constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
 
 pub mod address_register;
 pub mod control_register;
@@ -58,5 +59,19 @@ impl PPURegisters {
     pub fn write_to_scroll(&mut self, value: u8) {
         self.scroll_register
             .write_byte(value, &mut self.internal_latch);
+    }
+
+    pub fn get_abs_x_offset(&self) -> usize {
+        self.scroll_register.get_x_scroll() as usize
+            + self.control_register.get_nametable_x() * SCREEN_WIDTH
+    }
+
+    pub fn get_abs_y_offset(&self) -> usize {
+        self.scroll_register.get_y_scroll() as usize
+            + self.control_register.get_nametable_y() * SCREEN_HEIGHT
+    }
+
+    pub fn get_tile_background_tile_bank(&self) -> u16 {
+        self.control_register.get_background_sprite_address()
     }
 }
