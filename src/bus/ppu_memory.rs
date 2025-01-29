@@ -148,7 +148,7 @@ impl Bus {
             },
             0x2003 => panic!("register OAM address is write only"), //OAMADDR, write only
             0x2004 => todo!(), //OAMDATA
-            0x2005 => 0, // PPUSCRL, should be write-only
+            0x2005 => panic!("register SCRL address is write only"), // PPUSCRL, should be write-only
             0x2006 => self.ppu_registers.address_register.read(), //PPUADDR
             0x2007 => { //PPUDATA
                 let address = self.ppu_registers.address_register.get_address_as_u16();
