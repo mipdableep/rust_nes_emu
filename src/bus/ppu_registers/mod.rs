@@ -74,4 +74,8 @@ impl PPURegisters {
     pub fn get_tile_background_tile_bank(&self) -> u16 {
         self.control_register.get_background_sprite_address()
     }
+
+    pub fn get_sprite_tile_bank(&self) -> u16 {
+        self.control_register.get_sprite_pattern_address()
+    }
 }
