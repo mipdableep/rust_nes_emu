@@ -51,6 +51,17 @@ impl PPUStatusRegister {
             }
         }
     }
+
+    pub fn set_sprite_overload(&mut self, sprite_overload: bool) {
+        match sprite_overload {
+            true => {
+                self.0 |= 0x20;
+            }
+            false => {
+                self.0 &= !0x20;
+            }
+        }
+    }
 }
 
 #[test]
