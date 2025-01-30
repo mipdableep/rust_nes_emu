@@ -270,9 +270,6 @@ impl<'bus> PPU<'bus> {
     }
 
     pub fn handle_background_one_cycle(&mut self, frame: &mut Frame) {
-        if self.is_sprite_0_hit() {
-            status_reg!(self).set_sprite_0_hit_status(true);
-        }
         match self.scanlines_in_current_frame {
             0..SCREEN_HEIGHT => {
                 self.handle_visible_scanline(frame);
