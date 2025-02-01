@@ -25,7 +25,7 @@ impl<'bus> PPU<'bus> {
         // happens in cycles 65 - 256
         // we will first implement it happening at once (simultaneously do the actions of all the cycles)
         let mut number_of_sprites_in_scanline = 0;
-        for n in 0..64 {
+        for n in (0..64).rev() {
             // n is the sprite number
             let sprite_y = bus!(self).ppu_memory.oam_data[4 * n] as usize;
             if !(sprite_y <= self.scanlines_in_current_frame
