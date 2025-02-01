@@ -119,11 +119,30 @@ impl<'bus> PPU<'bus> {
             false => self.scanlines_in_current_frame - sprite_y,
         };
 
-        let (mut nametable_byte_low, mut nametable_byte_high) =
+        let (nametable_byte_low, nametable_byte_high) =
             self.fetch_sprite_nametable_bytes(tile_number, y_offset_in_tile);
 
         let sprite_palette = self.get_sprite_palette(attribute_byte);
 
+        self.draw_sprite_row(
+            frame,
+            sprite_x,
+            flip_horizontal,
+            nametable_byte_low,
+            nametable_byte_high,
+            sprite_palette,
+        );
+    }
+
+    fn draw_sprite_row(
+        &mut self,
+        frame: &mut Frame,
+        sprite_x: usize,
+        flip_horizontal: bool,
+        mut nametable_byte_low: u8,
+        mut nametable_byte_high: u8,
+        sprite_palette: [u8; 4],
+    ) {
         'painting: for x in (0..=7).rev() {
             let value = (1 & nametable_byte_low) << 1 | (1 & nametable_byte_high);
             nametable_byte_high = nametable_byte_high >> 1;
