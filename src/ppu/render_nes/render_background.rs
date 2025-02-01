@@ -13,28 +13,25 @@ macro_rules! status_reg {
     };
 }
 
+fn get_pixel_palette_index(nametable_high: u8, nametable_low: u8, location_in_raw: u8) -> usize {
+    ((2 * ((nametable_high >> location_in_raw) & 1)) | ((nametable_low >> location_in_raw) & 1))
+        as usize
+}
+
 fn fetch_background_8_pixels(
     nametable_high: u8,
     nametable_low: u8,
     palette: [usize; 4],
 ) -> [(u8, u8, u8); TILE_WIDTH] {
     [
-        SYSTEM_PALETTE
-            [palette[((2 * ((nametable_high >> 7) & 1)) | ((nametable_low >> 7) & 1)) as usize]],
-        SYSTEM_PALETTE
-            [palette[((2 * ((nametable_high >> 6) & 1)) | ((nametable_low >> 6) & 1)) as usize]],
-        SYSTEM_PALETTE
-            [palette[((2 * ((nametable_high >> 5) & 1)) | ((nametable_low >> 5) & 1)) as usize]],
-        SYSTEM_PALETTE
-            [palette[((2 * ((nametable_high >> 4) & 1)) | ((nametable_low >> 4) & 1)) as usize]],
-        SYSTEM_PALETTE
-            [palette[((2 * ((nametable_high >> 3) & 1)) | ((nametable_low >> 3) & 1)) as usize]],
-        SYSTEM_PALETTE
-            [palette[((2 * ((nametable_high >> 2) & 1)) | ((nametable_low >> 2) & 1)) as usize]],
-        SYSTEM_PALETTE
-            [palette[((2 * ((nametable_high >> 1) & 1)) | ((nametable_low >> 1) & 1)) as usize]],
-        SYSTEM_PALETTE
-            [palette[((2 * ((nametable_high >> 0) & 1)) | ((nametable_low >> 0) & 1)) as usize]],
+        SYSTEM_PALETTE[palette[get_pixel_palette_index(nametable_high, nametable_low, 7)]],
+        SYSTEM_PALETTE[palette[get_pixel_palette_index(nametable_high, nametable_low, 6)]],
+        SYSTEM_PALETTE[palette[get_pixel_palette_index(nametable_high, nametable_low, 5)]],
+        SYSTEM_PALETTE[palette[get_pixel_palette_index(nametable_high, nametable_low, 4)]],
+        SYSTEM_PALETTE[palette[get_pixel_palette_index(nametable_high, nametable_low, 3)]],
+        SYSTEM_PALETTE[palette[get_pixel_palette_index(nametable_high, nametable_low, 2)]],
+        SYSTEM_PALETTE[palette[get_pixel_palette_index(nametable_high, nametable_low, 1)]],
+        SYSTEM_PALETTE[palette[get_pixel_palette_index(nametable_high, nametable_low, 0)]],
     ]
 }
 
