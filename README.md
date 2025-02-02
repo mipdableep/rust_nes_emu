@@ -99,8 +99,7 @@ So without further ado, let's see some images and gifs from the developing proce
 ### Cool images
 
 <figure>
-  <img
-  src="readme_images%2Fpacman_sprites_wrong_colors.jpeg"
+  <img style="max-width: 50%; max-height: 50%"  src="readme_images%2Fpacman_sprites_wrong_colors.jpeg"
   alt="All the pacman sprites with wrong colors">
   <figcaption><p style="text-align: center;">We started by trying to emulate packman. We started by drawing the background tiles, with pre-determined palette.</p></figcaption>
 </figure>
@@ -154,8 +153,7 @@ And now for a quick build montage:
 After we started to tackle the sprites, we got this funny video. However, we quickly fixed it
 
 <figure>
-  <img
-  src="readme_images%2Fpacman_board_with_sprites.jpeg"
+  <img style="max-width: 50%; max-height: 50%" src="readme_images%2Fpacman_board_with_sprites.jpeg"
   alt="PacMan with sprites">
   <figcaption><p style="text-align: center;">And now we added character sprites!</p></figcaption>
 </figure>
