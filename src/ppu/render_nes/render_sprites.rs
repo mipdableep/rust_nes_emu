@@ -128,7 +128,7 @@ impl<'bus> PPU<'bus> {
         mut nametable_byte_high: u8,
         sprite_palette: [u8; 4],
     ) {
-        let flip_horizontal = attribute_byte >> 6 & 1 != 1;
+        let flip_horizontal = attribute_byte >> 6 & 1 == 1;
         let is_background = attribute_byte >> 5 & 1 == 1;
 
         for x in (0..=7).rev() {
@@ -143,8 +143,8 @@ impl<'bus> PPU<'bus> {
                 _ => panic!("can't be"),
             };
             let x_pos_in_screen = match flip_horizontal {
-                true => sprite_x + x,
-                false => sprite_x + 7 - x,
+                false => sprite_x + x,
+                true => sprite_x + 7 - x,
             };
 
             if x_pos_in_screen >= SCREEN_WIDTH - 1 {
