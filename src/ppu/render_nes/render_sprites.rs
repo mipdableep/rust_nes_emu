@@ -95,10 +95,6 @@ impl<'bus> PPU<'bus> {
             }
         }
 
-        if sprite_y == 0xFF {
-            return;
-        }
-
         let flip_vertical = attribute_byte >> 7 & 1 == 1;
 
         let y_offset_in_tile = match flip_vertical {
@@ -186,11 +182,15 @@ impl<'bus> PPU<'bus> {
                 // reset the sprite pixels "buffers"
                 self.next_line_sprite_pixels = [None; SCREEN_WIDTH];
             }
-            const { SCREEN_WIDTH + 1 }..DOT_TO_START_FETCH_NEXT_LINE_TILES => {
-                if x_dot % 8 == (SCREEN_WIDTH + 1) % 8 {
-                    let sprite_number = (x_dot - (SCREEN_WIDTH + 1)) / 8;
-                    self.prefetch_sprite(sprite_number);
+            const { SCREEN_WIDTH + 1 }..DOT_TO_START_FETCH_NEXT_LINE_TILES => 'sprite_fetch: {
+                if x_dot % 8 != (SCREEN_WIDTH + 1) % 8 {
+                    break 'sprite_fetch;
                 }
+                let sprite_number = (x_dot - (SCREEN_WIDTH + 1)) / 8;
+                if sprite_number >= self.number_of_sprites_in_scanline {
+                    break 'sprite_fetch;
+                }
+                self.prefetch_sprite(sprite_number);
             }
             DOT_TO_START_FETCH_NEXT_LINE_TILES..SCANLINE_LENGTH_PIXELS => {}
             _ => panic!("Shouldn't be! {}", x_dot),
