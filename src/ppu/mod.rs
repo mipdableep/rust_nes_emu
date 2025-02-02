@@ -76,8 +76,8 @@ impl<'a> PPU<'a> {
         canvas: &mut WindowCanvas,
         event_pump: &mut EventPump,
     ) {
+        self.handle_sprites_one_cycle();
         self.handle_background_one_cycle(frame);
-        self.handle_sprites_one_cycle(frame);
         self.ppu_cycles_in_current_scanline += 1;
         // todo - actually draw something
         self.trigger_new_scanline_if_needed();
