@@ -1,7 +1,6 @@
 use super::PPU;
 use crate::bus::NUMBER_OF_SPRITE;
 use crate::ppu::colors_palette::SYSTEM_PALETTE;
-use crate::ppu::frame::Frame;
 use crate::ppu::render_nes::ppu_render_constants::{
     DOT_TO_START_FETCH_NEXT_LINE_TILES, SCANLINE_LENGTH_PIXELS, SPRITES_FETCH_START_DOT,
     TILE_HEIGHT,
@@ -67,14 +66,6 @@ impl<'bus> PPU<'bus> {
             ppu_mem!(self).palette_table[start + 1],
             ppu_mem!(self).palette_table[start + 2],
         ]
-    }
-
-    fn get_sprite_bank_start(&self) -> u16 {
-        bus!(self)
-            .ppu_registers
-            .control_register
-            .clone()
-            .get_sprite_pattern_address()
     }
 
     fn fetch_sprite_nametable_bytes(
@@ -204,7 +195,7 @@ impl<'bus> PPU<'bus> {
         }
     }
 
-    pub fn handle_sprites_one_cycle(&mut self, frame: &mut Frame) {
+    pub fn handle_sprites_one_cycle(&mut self) {
         if self.scanlines_in_current_frame < SCREEN_HEIGHT {
             self.handle_sprites_one_cycle_visible_scanline();
         }

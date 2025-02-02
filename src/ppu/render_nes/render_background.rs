@@ -285,13 +285,6 @@ impl<'bus> PPU<'bus> {
         }
     }
 
-    fn is_sprite_0_hit(&self) -> bool {
-        let sprite_0_y = bus!(self).ppu_memory.oam_data[0] as usize;
-        let sprite_0_x = bus!(self).ppu_memory.oam_data[3] as usize;
-        sprite_0_y == self.scanlines_in_current_frame
-            && sprite_0_x == self.ppu_cycles_in_current_scanline
-    }
-
     pub fn handle_background_one_cycle(&mut self, frame: &mut Frame) {
         match self.scanlines_in_current_frame {
             0..SCREEN_HEIGHT => {
