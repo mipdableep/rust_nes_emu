@@ -8,12 +8,6 @@ use crate::ppu::render_nes::ppu_render_constants::{
 use crate::ppu::{SpritePixel, MAX_SPRITES_PER_LINE, SCREEN_HEIGHT, SCREEN_WIDTH};
 use crate::{bus, bus_mut, ppu_mem};
 
-macro_rules! status_reg {
-    ($ppu: ident) => {
-        bus_mut!($ppu).ppu_registers.status_register
-    };
-}
-
 impl<'bus> PPU<'bus> {
     fn clear_secondary_oam(&mut self) {
         // happens in cycles 1 - 64
