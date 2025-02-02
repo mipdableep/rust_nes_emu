@@ -1,7 +1,10 @@
 use super::PPU;
 use crate::ppu::colors_palette::SYSTEM_PALETTE;
 use crate::ppu::frame::Frame;
-use crate::ppu::render_nes::ppu_render_constants::{SCANLINE_LENGTH_PIXELS, TILE_HEIGHT};
+use crate::ppu::render_nes::ppu_render_constants::{
+    DOT_TO_START_FETCH_NEXT_LINE_TILES, SCANLINE_LENGTH_PIXELS, SPRITES_FETCH_START_DOT,
+    TILE_HEIGHT,
+};
 use crate::ppu::{SpritePixel, MAX_SPRITES_PER_LINE, SCREEN_HEIGHT, SCREEN_WIDTH};
 use crate::{bus, bus_mut, ppu_mem};
 
@@ -170,19 +173,19 @@ impl<'bus> PPU<'bus> {
     fn handle_sprites_one_cycle_visible_scanline(&mut self) {
         match self.ppu_cycles_in_current_scanline {
             0 => {}
-            1..=64 => self.clear_secondary_oam(),
-            65..256 => {}
-            256 => {
+            1..SPRITES_FETCH_START_DOT => self.clear_secondary_oam(),
+            SPRITES_FETCH_START_DOT..SCREEN_WIDTH => {}
+            SCREEN_WIDTH => {
                 self.next_line_sprite_pixels = [None; SCREEN_WIDTH];
                 self.sprite_evaluation()
             }
-            257..=320 => {
+            const { SCREEN_WIDTH + 1 }..DOT_TO_START_FETCH_NEXT_LINE_TILES => {
                 if self.ppu_cycles_in_current_scanline % 8 == 1 {
                     let sprite_number = (self.ppu_cycles_in_current_scanline - 257) / 8;
                     self.prefetch_sprite(sprite_number);
                 }
             }
-            321..SCANLINE_LENGTH_PIXELS => {}
+            DOT_TO_START_FETCH_NEXT_LINE_TILES..SCANLINE_LENGTH_PIXELS => {}
             _ => panic!("Shouldn't be! {}", self.ppu_cycles_in_current_scanline),
         }
     }

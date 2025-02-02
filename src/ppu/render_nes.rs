@@ -15,6 +15,7 @@ pub mod ppu_render_constants {
 
     pub const SCREEN_SIZE_TILE: usize = SCREEN_WIDTH_TILE * SCREEN_HEIGHT_TILE;
 
+    pub const SPRITES_FETCH_START_DOT: usize = 65;
     pub const COPY_VERT_V_DOT_START: usize = 280;
     pub const COPY_VERT_V_DOT_END: usize = 304;
     pub const DOT_TO_START_FETCH_NEXT_LINE_TILES: usize = 321;
