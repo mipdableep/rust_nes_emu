@@ -160,7 +160,10 @@ impl<'bus> PPU<'bus> {
     fn handle_sprites_one_cycle_visible_scanline(&mut self) {
         let x_dot = self.ppu_cycles_in_current_scanline;
         match x_dot {
-            0 => {}
+            0 => {
+                // we reset the number of sprites after we finished prefetching the pixels
+                self.number_of_sprites_in_scanline = 0;
+            }
             1..SPRITES_FETCH_START_DOT => self.clear_secondary_oam(),
             SPRITES_FETCH_START_DOT..SCREEN_WIDTH => 'sprite_evaluation: {
                 // we have cycles 65-256, and need to fetch 64 sprites
@@ -179,9 +182,8 @@ impl<'bus> PPU<'bus> {
                 self.evaluate_sprite(next_sprite_to_evaluate);
             }
             SCREEN_WIDTH => {
-                // we abuse the fact that 256 % 3 != 0, to
-                // reset all the "buffers"
-                self.number_of_sprites_in_scanline = 0;
+                // we abuse the fact that 256 % 3 != 65 % 3, to be able to do this on a separate match block
+                // reset the sprite pixels "buffers"
                 self.next_line_sprite_pixels = [None; SCREEN_WIDTH];
             }
             const { SCREEN_WIDTH + 1 }..DOT_TO_START_FETCH_NEXT_LINE_TILES => {
