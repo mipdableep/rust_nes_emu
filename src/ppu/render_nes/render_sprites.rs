@@ -1,4 +1,5 @@
 use super::PPU;
+use crate::bus::NUMBER_OF_SPRITE;
 use crate::ppu::colors_palette::SYSTEM_PALETTE;
 use crate::ppu::frame::Frame;
 use crate::ppu::render_nes::ppu_render_constants::{
@@ -23,42 +24,37 @@ impl<'bus> PPU<'bus> {
         }
     }
 
-    fn sprite_evaluation(&mut self) {
-        // happens in cycles 65 - 256
-        // we will first implement it happening at once (simultaneously do the actions of all the cycles)
-        let mut number_of_sprites_in_scanline = 0;
-        for n in (0..64).rev() {
-            // n is the sprite number
-            let sprite_y = bus!(self).ppu_memory.oam_data[4 * n] as usize;
-            if !(sprite_y <= self.scanlines_in_current_frame
-                && self.scanlines_in_current_frame < sprite_y + TILE_HEIGHT)
-            {
-                // sprite is not relevant to this scanline
-                continue;
-            }
-            if number_of_sprites_in_scanline >= MAX_SPRITES_PER_LINE {
-                // we will implement the buggy behaviour of the hardware
-                // instead, we will implement it correctly
-                bus_mut!(self)
-                    .ppu_registers
-                    .status_register
-                    .set_sprite_overload(true);
-                continue;
-            }
-            // copy the sprite
-            self.secondary_oam[4 * number_of_sprites_in_scanline] =
-                bus!(self).ppu_memory.oam_data[4 * n];
-            self.secondary_oam[4 * number_of_sprites_in_scanline + 1] =
-                bus!(self).ppu_memory.oam_data[4 * n + 1];
-            self.secondary_oam[4 * number_of_sprites_in_scanline + 2] =
-                bus!(self).ppu_memory.oam_data[4 * n + 2];
-            self.secondary_oam[4 * number_of_sprites_in_scanline + 3] =
-                bus!(self).ppu_memory.oam_data[4 * n + 3];
+    fn evaluate_sprite(&mut self, sprite_number: usize) {
+        // n is the sprite number
+        let sprite_y = bus!(self).ppu_memory.oam_data[4 * sprite_number] as usize;
+        if !(sprite_y <= self.scanlines_in_current_frame
+            && self.scanlines_in_current_frame < sprite_y + TILE_HEIGHT)
+        {
+            // sprite is not relevant to this scanline
+            return;
+        }
+        if self.number_of_sprites_in_scanline >= MAX_SPRITES_PER_LINE {
+            // we will not implement the buggy behaviour of the hardware
+            // instead, we will implement it correctly
+            bus_mut!(self)
+                .ppu_registers
+                .status_register
+                .set_sprite_overload(true);
+            return;
+        }
+        // copy the sprite
+        self.secondary_oam[4 * self.number_of_sprites_in_scanline] =
+            bus!(self).ppu_memory.oam_data[4 * sprite_number];
+        self.secondary_oam[4 * self.number_of_sprites_in_scanline + 1] =
+            bus!(self).ppu_memory.oam_data[4 * sprite_number + 1];
+        self.secondary_oam[4 * self.number_of_sprites_in_scanline + 2] =
+            bus!(self).ppu_memory.oam_data[4 * sprite_number + 2];
+        self.secondary_oam[4 * self.number_of_sprites_in_scanline + 3] =
+            bus!(self).ppu_memory.oam_data[4 * sprite_number + 3];
 
-            number_of_sprites_in_scanline += 1;
-            if n == 0 {
-                self.sprite_0_hit_this_scanline = true;
-            }
+        self.number_of_sprites_in_scanline += 1;
+        if sprite_number == 0 {
+            self.sprite_0_hit_this_scanline = true;
         }
     }
 
@@ -171,22 +167,40 @@ impl<'bus> PPU<'bus> {
     }
 
     fn handle_sprites_one_cycle_visible_scanline(&mut self) {
-        match self.ppu_cycles_in_current_scanline {
+        let x_dot = self.ppu_cycles_in_current_scanline;
+        match x_dot {
             0 => {}
             1..SPRITES_FETCH_START_DOT => self.clear_secondary_oam(),
-            SPRITES_FETCH_START_DOT..SCREEN_WIDTH => {}
+            SPRITES_FETCH_START_DOT..SCREEN_WIDTH => 'sprite_evaluation: {
+                // we have cycles 65-256, and need to fetch 64 sprites
+                // that gives about 3 cycles per sprite
+                // we will approximate it this way
+                // don't forget to render in reverse,
+                // due to making figuring each sprite is the front much easier (like the real hardware)
+                if x_dot % 3 != 0 {
+                    break 'sprite_evaluation;
+                }
+
+                // a very nice integer division property allows us to not use ciel
+                // else, would need x_dot / 3 - (SPRITES_FETCH_START_DOT/3.0).ceil()
+                let sprites_evaluated_in_scanline = (x_dot - SPRITES_FETCH_START_DOT) / 3;
+                let next_sprite_to_evaluate = NUMBER_OF_SPRITE - 1 - sprites_evaluated_in_scanline;
+                self.evaluate_sprite(next_sprite_to_evaluate);
+            }
             SCREEN_WIDTH => {
+                // we abuse the fact that 256 % 3 != 0, to
+                // reset all the "buffers"
+                self.number_of_sprites_in_scanline = 0;
                 self.next_line_sprite_pixels = [None; SCREEN_WIDTH];
-                self.sprite_evaluation()
             }
             const { SCREEN_WIDTH + 1 }..DOT_TO_START_FETCH_NEXT_LINE_TILES => {
-                if self.ppu_cycles_in_current_scanline % 8 == 1 {
-                    let sprite_number = (self.ppu_cycles_in_current_scanline - 257) / 8;
+                if x_dot % 8 == (SCREEN_WIDTH + 1) % 8 {
+                    let sprite_number = (x_dot - (SCREEN_WIDTH + 1)) / 8;
                     self.prefetch_sprite(sprite_number);
                 }
             }
             DOT_TO_START_FETCH_NEXT_LINE_TILES..SCANLINE_LENGTH_PIXELS => {}
-            _ => panic!("Shouldn't be! {}", self.ppu_cycles_in_current_scanline),
+            _ => panic!("Shouldn't be! {}", x_dot),
         }
     }
 

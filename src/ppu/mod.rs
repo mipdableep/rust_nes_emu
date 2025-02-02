@@ -28,6 +28,7 @@ pub struct PPU<'a> {
     cur_scanline_y_offset: usize,
     secondary_oam: [u8; 4 * MAX_SPRITES_PER_LINE],
     next_line_sprite_pixels: [Option<SpritePixel>; SCREEN_WIDTH],
+    number_of_sprites_in_scanline: usize,
     sprite_0_hit_this_scanline: bool,
     pub bus: Option<&'a mut Bus>,
 }
@@ -55,6 +56,7 @@ impl<'a> PPU<'a> {
             cur_scanline_y_offset: 0,
             secondary_oam: [0; 4 * MAX_SPRITES_PER_LINE],
             next_line_sprite_pixels: [None; SCREEN_WIDTH],
+            number_of_sprites_in_scanline: 0,
             sprite_0_hit_this_scanline: false,
             bus: Some(bus),
         }
