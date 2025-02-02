@@ -12,19 +12,22 @@ pub const PPU_PALETTE_START: u16 = 0x3F00;
 pub const PPU_PALETTE_SIZE: u16 = 32;
 pub const PPU_PALETTE_END: u16 = 0x3FFF;
 
+pub const NUMBER_OF_SPRITE: usize = 64;
+pub const SIZE_OF_SPRITE: usize = 4;
+
 #[derive(Debug, Eq, PartialEq)]
 pub struct PPUMemory {
-    pub palette_table: [u8; 32],
+    pub palette_table: [u8; PPU_PALETTE_SIZE as usize],
     pub vram: [u8; (PPU_NAMETABLE_END - PPU_NAMETABLE_START + 1) as usize],
-    pub oam_data: [u8; 256],
+    pub oam_data: [u8; NUMBER_OF_SPRITE * SIZE_OF_SPRITE],
 }
 
 impl PPUMemory {
     pub fn new() -> Self {
         Self {
-            palette_table: [0; 32],
+            palette_table: [0; PPU_PALETTE_SIZE as usize],
             vram: [0; (PPU_NAMETABLE_END - PPU_NAMETABLE_START + 1) as usize],
-            oam_data: [0; 256],
+            oam_data: [0; NUMBER_OF_SPRITE * SIZE_OF_SPRITE],
         }
     }
 }
