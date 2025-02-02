@@ -12,6 +12,7 @@
         * [Our Snake Game](#our-snake-game)
     * [Full Emulator](#full-emulator)
         * [Cool images](#cool-images)
+        * [Full Gameplay Snippets](#full-gameplay-snippets)
     * [How to run...](#how-to-run)
         * [Tests](#tests)
             * [Unittests](#unittests)
@@ -149,11 +150,8 @@ And now for a quick build montage:
   <figcaption><p style="text-align: center;">These three images show the game without sprites</p></figcaption>
 </figure>
 
-
- <video width="320" height="240" controls>
-  <source src="readme_images%2Fpacman_wierd_sprites.mp4" type="video/mp4">
-</video> 
- After we started to tackle the sprites, we got this funny video. However, we quickly fixed it
+![pacman_wierd_sprites.gif](readme_images%2Fpacman_wierd_sprites.gif)
+After we started to tackle the sprites, we got this funny video. However, we quickly fixed it
 
 <figure>
   <img
@@ -162,16 +160,15 @@ And now for a quick build montage:
   <figcaption><p style="text-align: center;">And now we added character sprites!</p></figcaption>
 </figure>
 
- <video width="320" height="240" controls>
-  <source src="readme_images%2Fpacman_good.mp4" type="video/mp4">
-</video> 
+### Full Gameplay Snippets
 
+![pacman_good.gif](readme_images%2Fpacman_good.gif)
 A glorious pacman gameplay!
-
-
- <video width="320" height="240" controls>
-  <source src="readme_images%2Fmario_gameplay_no_scrolling.mp4" type="video/mp4">
-</video> 
+\
+\
+\
+\
+![mario_gameplay_no_scrolling.gif](readme_images%2Fmario_gameplay_no_scrolling.gif)
 
 Now we can play mario, without the scrolling part! In the future, we implemented the screen scrolling.
 
