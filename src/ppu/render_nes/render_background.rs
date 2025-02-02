@@ -148,6 +148,21 @@ impl<'bus> PPU<'bus> {
         self.get_tile_row_from_x_y(current_abs_x, current_abs_y)
     }
 
+    fn set_background_pixel(&self, frame: &mut Frame, x: usize, y: usize, bkg_color: (u8, u8, u8)) {
+        // this function compares the pixel with the sprites pixel
+        // and handles background/foreground correctly
+        match self.next_line_sprite_pixels[x] {
+            None => frame.set_pixel(x, y, bkg_color),
+            Some(sprite_pixel) => match sprite_pixel.is_background {
+                true => match bkg_color != SYSTEM_PALETTE[palette!(self)[0] as usize] {
+                    true => frame.set_pixel(x, y, bkg_color),
+                    false => frame.set_pixel(x, y, sprite_pixel.color),
+                },
+                false => frame.set_pixel(x, y, sprite_pixel.color),
+            },
+        }
+    }
+
     fn handle_visible_scanline(&mut self, frame: &mut Frame) {
         let x_pos_in_frame = self.ppu_cycles_in_current_scanline;
         match x_pos_in_frame {
@@ -170,7 +185,8 @@ impl<'bus> PPU<'bus> {
                             // we "overshoot"
                             break;
                         }
-                        frame.set_pixel(
+                        self.set_background_pixel(
+                            frame,
                             tile_left_position_in_frame + i,
                             row_number,
                             row_tile_pixels[i],
@@ -199,7 +215,12 @@ impl<'bus> PPU<'bus> {
 
                 let fine_x_shift = self.cur_scanline_x_offset % TILE_WIDTH;
                 for i in 0..TILE_WIDTH - fine_x_shift {
-                    frame.set_pixel(i, row_number, row_tile_pixels[i + fine_x_shift])
+                    self.set_background_pixel(
+                        frame,
+                        i,
+                        row_number,
+                        row_tile_pixels[i + fine_x_shift],
+                    )
                 }
             }
             const { FIRST_TILE_FETCH_DOT + 1 }..const { FIRST_TILE_FETCH_DOT + TILE_WIDTH } => {}
@@ -214,7 +235,12 @@ impl<'bus> PPU<'bus> {
 
                 let fine_x_shift = self.cur_scanline_x_offset % TILE_WIDTH;
                 for i in 0..TILE_WIDTH {
-                    frame.set_pixel(8 - fine_x_shift + i, row_number, row_tile_pixels[i])
+                    self.set_background_pixel(
+                        frame,
+                        8 - fine_x_shift + i,
+                        row_number,
+                        row_tile_pixels[i],
+                    )
                 }
             }
             const { FIRST_TILE_FETCH_DOT + TILE_WIDTH + 1 }..SCANLINE_LENGTH_PIXELS => {}

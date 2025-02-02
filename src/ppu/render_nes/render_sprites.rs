@@ -1,10 +1,9 @@
 use super::PPU;
 use crate::ppu::colors_palette::SYSTEM_PALETTE;
-use crate::ppu::frame::{update_texture_from_frame, Frame};
+use crate::ppu::frame::Frame;
 use crate::ppu::render_nes::ppu_render_constants::{SCANLINE_LENGTH_PIXELS, TILE_HEIGHT};
-use crate::ppu::{MAX_SPRITES_PER_LINE, SCREEN_HEIGHT};
+use crate::ppu::{SpritePixel, MAX_SPRITES_PER_LINE, SCREEN_HEIGHT, SCREEN_WIDTH};
 use crate::{bus, bus_mut, ppu_mem};
-use sdl2::render::{Texture, WindowCanvas};
 
 macro_rules! status_reg {
     ($ppu: ident) => {
@@ -94,7 +93,7 @@ impl<'bus> PPU<'bus> {
         )
     }
 
-    fn draw_sprites(&mut self, frame: &mut Frame, sprite_number: usize) {
+    fn prefetch_sprite(&mut self, sprite_number: usize) {
         let sprite_y = self.secondary_oam[4 * sprite_number] as usize;
         let tile_number = self.secondary_oam[4 * sprite_number + 1] as usize;
         let attribute_byte = self.secondary_oam[4 * sprite_number + 2];
@@ -106,13 +105,11 @@ impl<'bus> PPU<'bus> {
             }
         }
 
-        if attribute_byte >> 5 & 1 != 0 {
-            // sprite priority is 0 means we should skip it
+        if sprite_y == 0xFF {
             return;
         }
 
         let flip_vertical = attribute_byte >> 7 & 1 == 1;
-        let flip_horizontal = attribute_byte >> 6 & 1 == 1;
 
         let y_offset_in_tile = match flip_vertical {
             true => 7 - (self.scanlines_in_current_frame - sprite_y),
@@ -124,53 +121,65 @@ impl<'bus> PPU<'bus> {
 
         let sprite_palette = self.get_sprite_palette(attribute_byte);
 
-        self.draw_sprite_row(
-            frame,
+        self.prefetch_sprite_row(
             sprite_x,
-            flip_horizontal,
+            attribute_byte,
             nametable_byte_low,
             nametable_byte_high,
             sprite_palette,
         );
     }
 
-    fn draw_sprite_row(
+    fn prefetch_sprite_row(
         &mut self,
-        frame: &mut Frame,
         sprite_x: usize,
-        flip_horizontal: bool,
+        attribute_byte: u8,
         mut nametable_byte_low: u8,
         mut nametable_byte_high: u8,
         sprite_palette: [u8; 4],
     ) {
-        'painting: for x in (0..=7).rev() {
+        let flip_horizontal = attribute_byte >> 6 & 1 != 1;
+        let is_background = attribute_byte >> 5 & 1 == 1;
+
+        for x in (0..=7).rev() {
             let value = (1 & nametable_byte_low) << 1 | (1 & nametable_byte_high);
             nametable_byte_high = nametable_byte_high >> 1;
             nametable_byte_low = nametable_byte_low >> 1;
             let rgb = match value {
-                0 => continue 'painting, // skip coloring the pixel
+                0 => continue, // skip coloring the pixel
                 1 => SYSTEM_PALETTE[sprite_palette[1] as usize],
                 2 => SYSTEM_PALETTE[sprite_palette[2] as usize],
                 3 => SYSTEM_PALETTE[sprite_palette[3] as usize],
                 _ => panic!("can't be"),
             };
-            match flip_horizontal {
-                false => frame.set_pixel(sprite_x + x, self.scanlines_in_current_frame, rgb),
-                true => frame.set_pixel(sprite_x + 7 - x, self.scanlines_in_current_frame, rgb),
+            let x_pos_in_screen = match flip_horizontal {
+                true => sprite_x + x,
+                false => sprite_x + 7 - x,
+            };
+
+            if x_pos_in_screen >= SCREEN_WIDTH - 1 {
+                continue;
             }
+            self.next_line_sprite_pixels[x_pos_in_screen] = Some(SpritePixel {
+                color: rgb,
+                is_background,
+            });
         }
     }
 
-    fn handle_sprites_one_cycle_visible_scanline(&mut self, frame: &mut Frame) {
+    fn handle_sprites_one_cycle_visible_scanline(&mut self) {
         match self.ppu_cycles_in_current_scanline {
             0 => {}
             1..=64 => self.clear_secondary_oam(),
             65..256 => {}
-            256 => self.sprite_evaluation(),
+            256 => {
+                self.next_line_sprite_pixels = [None; SCREEN_WIDTH];
+                self.sprite_evaluation()
+            }
             257..=320 => {
                 if self.ppu_cycles_in_current_scanline % 8 == 1 {
                     let sprite_number = (self.ppu_cycles_in_current_scanline - 257) / 8;
-                    self.draw_sprites(frame, sprite_number);
+                    self.prefetch_sprite(sprite_number);
                 }
             }
             321..SCANLINE_LENGTH_PIXELS => {}
@@ -180,7 +189,7 @@ impl<'bus> PPU<'bus> {
 
     pub fn handle_sprites_one_cycle(&mut self, frame: &mut Frame) {
         if self.scanlines_in_current_frame < SCREEN_HEIGHT {
-            self.handle_sprites_one_cycle_visible_scanline(frame);
+            self.handle_sprites_one_cycle_visible_scanline();
         }
     }
 }

@@ -15,12 +15,19 @@ use sdl2::EventPump;
 
 const MAX_SPRITES_PER_LINE: usize = 8;
 
+#[derive(Clone, Debug, Copy)]
+pub struct SpritePixel {
+    color: (u8, u8, u8),
+    is_background: bool,
+}
+
 pub struct PPU<'a> {
     ppu_cycles_in_current_scanline: usize, // the scanline lasts for 341 ppu cycles
     scanlines_in_current_frame: usize,     // each frame has 262 scanlines, with NMI in scanline 240
     cur_scanline_x_offset: usize, // we will compute the offset for the left pixel in the current scanline once per scanline
     cur_scanline_y_offset: usize,
     secondary_oam: [u8; 4 * MAX_SPRITES_PER_LINE],
+    next_line_sprite_pixels: [Option<SpritePixel>; SCREEN_WIDTH],
     sprite_0_hit_this_scanline: bool,
     pub bus: Option<&'a mut Bus>,
 }
@@ -47,6 +54,7 @@ impl<'a> PPU<'a> {
             cur_scanline_x_offset: 0,
             cur_scanline_y_offset: 0,
             secondary_oam: [0; 4 * MAX_SPRITES_PER_LINE],
+            next_line_sprite_pixels: [None; SCREEN_WIDTH],
             sprite_0_hit_this_scanline: false,
             bus: Some(bus),
         }
