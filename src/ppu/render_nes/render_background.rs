@@ -148,18 +148,33 @@ impl<'bus> PPU<'bus> {
         self.get_tile_row_from_x_y(current_abs_x, current_abs_y)
     }
 
-    fn set_background_pixel(&self, frame: &mut Frame, x: usize, y: usize, bkg_color: (u8, u8, u8)) {
+    fn set_background_pixel(
+        &mut self,
+        frame: &mut Frame,
+        x: usize,
+        y: usize,
+        bkg_color: (u8, u8, u8),
+    ) {
         // this function compares the pixel with the sprites pixel
         // and handles background/foreground correctly
         match self.next_line_sprite_pixels[x] {
             None => frame.set_pixel(x, y, bkg_color),
-            Some(sprite_pixel) => match sprite_pixel.is_background {
-                true => match bkg_color != SYSTEM_PALETTE[palette!(self)[0] as usize] {
-                    true => frame.set_pixel(x, y, bkg_color),
+            Some(sprite_pixel) => {
+                match sprite_pixel.is_background {
+                    true => match bkg_color != SYSTEM_PALETTE[palette!(self)[0] as usize] {
+                        true => frame.set_pixel(x, y, bkg_color),
+                        false => frame.set_pixel(x, y, sprite_pixel.color),
+                    },
                     false => frame.set_pixel(x, y, sprite_pixel.color),
-                },
-                false => frame.set_pixel(x, y, sprite_pixel.color),
-            },
+                }
+
+                match sprite_pixel.sprite_index == 0 {
+                    true => {
+                        status_reg!(self).set_sprite_0_hit_status(true);
+                    }
+                    false => {}
+                }
+            }
         }
     }
 

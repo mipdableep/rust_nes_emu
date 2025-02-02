@@ -50,11 +50,9 @@ impl<'bus> PPU<'bus> {
             bus!(self).ppu_memory.oam_data[4 * sprite_number + 2];
         self.secondary_oam[4 * self.number_of_sprites_in_scanline + 3] =
             bus!(self).ppu_memory.oam_data[4 * sprite_number + 3];
+        self.sprites_original_numbers[self.number_of_sprites_in_scanline] = sprite_number as u8;
 
         self.number_of_sprites_in_scanline += 1;
-        if sprite_number == 0 {
-            self.sprite_0_hit_this_scanline = true;
-        }
     }
 
     fn get_sprite_palette(&self, attribute_byte: u8) -> [u8; 4] {
@@ -89,11 +87,7 @@ impl<'bus> PPU<'bus> {
         let attribute_byte = self.secondary_oam[4 * sprite_number + 2];
         let sprite_x = self.secondary_oam[4 * sprite_number + 3] as usize;
 
-        if sprite_number == 0 && self.sprite_0_hit_this_scanline {
-            if self.scanlines_in_current_frame == sprite_y + 5 {
-                status_reg!(self).set_sprite_0_hit_status(true);
-            }
-        }
+        let sprite_index = self.sprites_original_numbers[sprite_number];
 
         let flip_vertical = attribute_byte >> 7 & 1 == 1;
 
@@ -112,6 +106,7 @@ impl<'bus> PPU<'bus> {
             attribute_byte,
             nametable_byte_low,
             nametable_byte_high,
+            sprite_index,
             sprite_palette,
         );
     }
@@ -122,6 +117,7 @@ impl<'bus> PPU<'bus> {
         attribute_byte: u8,
         mut nametable_byte_low: u8,
         mut nametable_byte_high: u8,
+        sprite_index: u8,
         sprite_palette: [u8; 4],
     ) {
         let flip_horizontal = attribute_byte >> 6 & 1 == 1;
@@ -149,6 +145,7 @@ impl<'bus> PPU<'bus> {
             self.next_line_sprite_pixels[x_pos_in_screen] = Some(SpritePixel {
                 color: rgb,
                 is_background,
+                sprite_index,
             });
         }
     }

@@ -19,6 +19,7 @@ const MAX_SPRITES_PER_LINE: usize = 8;
 pub struct SpritePixel {
     color: (u8, u8, u8),
     is_background: bool,
+    sprite_index: u8,
 }
 
 pub struct PPU<'a> {
@@ -27,9 +28,9 @@ pub struct PPU<'a> {
     cur_scanline_x_offset: usize, // we will compute the offset for the left pixel in the current scanline once per scanline
     cur_scanline_y_offset: usize,
     secondary_oam: [u8; 4 * MAX_SPRITES_PER_LINE],
+    sprites_original_numbers: [u8; MAX_SPRITES_PER_LINE], // to remember where each sprite in the secondary oam came from
     next_line_sprite_pixels: [Option<SpritePixel>; SCREEN_WIDTH],
     number_of_sprites_in_scanline: usize,
-    sprite_0_hit_this_scanline: bool,
     pub bus: Option<&'a mut Bus>,
 }
 
@@ -55,9 +56,9 @@ impl<'a> PPU<'a> {
             cur_scanline_x_offset: 0,
             cur_scanline_y_offset: 0,
             secondary_oam: [0; 4 * MAX_SPRITES_PER_LINE],
+            sprites_original_numbers: [0; MAX_SPRITES_PER_LINE],
             next_line_sprite_pixels: [None; SCREEN_WIDTH],
             number_of_sprites_in_scanline: 0,
-            sprite_0_hit_this_scanline: false,
             bus: Some(bus),
         }
     }
