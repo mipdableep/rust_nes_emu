@@ -167,12 +167,9 @@ impl<'bus> PPU<'bus> {
                 // we will approximate it this way
                 // don't forget to render in reverse,
                 // due to making figuring each sprite is the front much easier (like the real hardware)
-                if x_dot % 3 != 0 {
+                if x_dot % 3 != SPRITES_FETCH_START_DOT % 3 {
                     break 'sprite_evaluation;
                 }
-
-                // a very nice integer division property allows us to not use ciel
-                // else, would need x_dot / 3 - (SPRITES_FETCH_START_DOT/3.0).ceil()
                 let sprites_evaluated_in_scanline = (x_dot - SPRITES_FETCH_START_DOT) / 3;
                 let next_sprite_to_evaluate = NUMBER_OF_SPRITE - 1 - sprites_evaluated_in_scanline;
                 self.evaluate_sprite(next_sprite_to_evaluate);
