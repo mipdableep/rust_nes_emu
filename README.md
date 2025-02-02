@@ -95,8 +95,12 @@ So without further ado, let's see some images and gifs from the developing proce
 
 ### Cool images
 
-We started by trying to emulate packman. We started by drawing the background tiles, with pre-determined palette.
-![pacman_sprites_wrong_colors.jpeg](readme_images%2Fpacman_sprites_wrong_colors.jpeg)
+<figure>
+  <img
+  src="readme_images%2Fpacman_sprites_wrong_colors.jpeg"
+  alt="All the pacman sprites with wrong colors">
+  <figcaption><p style="text-align: center;">We started by trying to emulate packman. We started by drawing the background tiles, with pre-determined palette.</p></figcaption>
+</figure>
 
 Next, we got this wierd image instead of the home screen. That was, until we noticed the blinks were just in the place
 the home screen blinked (when showing all the characters, and afterward when the big orbs are in the game). So we
