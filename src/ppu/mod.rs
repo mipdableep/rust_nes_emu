@@ -79,16 +79,26 @@ impl<'a> PPU<'a> {
     ) {
         self.handle_sprites_one_cycle();
         self.handle_background_one_cycle(frame);
+
         self.ppu_cycles_in_current_scanline += 1;
-        // todo - actually draw something
         self.trigger_new_scanline_if_needed();
 
         if self.scanlines_in_current_frame >= SCANLINES_PER_FRAME {
-            self.scanlines_in_current_frame -= SCANLINES_PER_FRAME;
-            update_texture_from_frame(texture, frame, canvas);
-            canvas.present();
-            self.handle_user_input(event_pump);
+            self.trigger_new_frame(texture, frame, canvas, event_pump);
         }
+    }
+
+    fn trigger_new_frame(
+        &mut self,
+        texture: &mut Texture,
+        frame: &mut Frame,
+        canvas: &mut WindowCanvas,
+        event_pump: &mut EventPump,
+    ) {
+        self.scanlines_in_current_frame -= SCANLINES_PER_FRAME;
+        update_texture_from_frame(texture, frame, canvas);
+        canvas.present();
+        self.handle_user_input(event_pump);
     }
 }
 
