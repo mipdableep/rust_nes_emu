@@ -10,6 +10,8 @@
     * [Technical](#technical)
     * [Snake Game!](#snake-game)
         * [Our Snake Game](#our-snake-game)
+    * [Full Emulator](#full-emulator)
+        * [Cool images](#cool-images)
     * [How to run...](#how-to-run)
         * [Tests](#tests)
             * [Unittests](#unittests)
