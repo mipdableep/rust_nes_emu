@@ -113,30 +113,33 @@ And now for a quick build montage:
 </figure>
 
 
+
+
 <figure>
-  <img
-  src="readme_images%2Fpacman_homescreen_about_colors.jpeg"
-  alt="PacMan home screen wrong colors">
-  <img
-  src="readme_images%2Fpacman_homescreen_wrong_colors.jpeg"
-  alt="PacMan home screen with wrong color palette">
-  <img
-  src="readme_images%2Fpacman_good_homescreen.jpeg"
-  alt="PacMan good home screen">
+<p float="left">
+  <img src="readme_images%2Fpacman_homescreen_about_colors.jpeg"
+  alt="PacMan home screen wrong colors" width="33%" />
+  <img src="readme_images%2Fpacman_homescreen_wrong_colors.jpeg"
+  alt="PacMan home screen with wrong color palette" width="33%" /> 
+  <img src="readme_images%2Fpacman_good_homescreen.jpeg"
+  alt="PacMan good home screen" width="33%" />
+</p>
   <figcaption><p style="text-align: center;">We fixed the spaces, and gradually fixed the colors. In the first picture we still used a pre-determined palette. Then we  read from the game palette, but mixed the nametable high byte with the nametable low byte. Surely this won't happen again with the sprites, right?</p></figcaption>
 </figure>
 
 
 <figure>
+<p float="left">
   <img
   src="readme_images%2Fpacman_good_homescreen.jpeg"
-  alt="PacMan good home screen">
+  alt="PacMan good home screen" width="33%">
   <img
   src="readme_images%2Fpacman_characters_intro_no_sprites.jpeg"
-  alt="PacMan loading screen without sprites">
+  alt="PacMan loading screen without sprites" width="33%">
   <img
   src="readme_images%2Fpacman_board_no_sprites.jpeg"
-  alt="PacMan with just background, no sprites">
+  alt="PacMan with just background, no sprites" width="33%">
+</p>
   <figcaption><p style="text-align: center;">These three images show the game without sprites</p></figcaption>
 </figure>
 
