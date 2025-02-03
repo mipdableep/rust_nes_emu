@@ -1,5 +1,7 @@
 mod render_background;
 mod render_sprites;
+#[cfg(test)]
+mod test_frame_rendering;
 
 use super::PPU;
 

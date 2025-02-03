@@ -4,8 +4,6 @@ pub use render_nes::ppu_render_constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
 pub mod colors_palette;
 pub mod frame;
 mod render_nes;
-#[cfg(test)]
-mod test_frame_rendering;
 mod user_input;
 
 use crate::bus::Bus;
