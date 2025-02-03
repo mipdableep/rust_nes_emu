@@ -70,7 +70,6 @@ fn background_drawing() {
     for x in 0..SCREEN_WIDTH as i32 {
         for y in 0..SCREEN_HEIGHT as i32 {
             let color = frame.get_pixel(x as usize, y as usize);
-            println!("{x} {y}");
             assert_eq!(
                 color,
                 match (x - 9 * 8, y - 4 * 8) {
