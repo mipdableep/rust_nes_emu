@@ -45,8 +45,6 @@ macro_rules! generate_cpu_and_set_horizontal_mirroring {
 #[macro_export]
 macro_rules! generate_texture_canvas_event_pump {
     ($texture: ident, $canvas: ident, $event_pump: ident) => {
-        use sdl2::event::Event;
-        use sdl2::keyboard::Keycode;
         use sdl2::pixels::PixelFormatEnum;
         use $crate::ppu::{SCREEN_HEIGHT, SCREEN_WIDTH};
 
