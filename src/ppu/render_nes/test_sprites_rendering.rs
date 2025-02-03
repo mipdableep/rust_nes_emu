@@ -37,6 +37,20 @@ fn prepare_diamond_sprite(ppu: &mut PPU, tile_number: usize, bank_start: usize) 
         .copy_from_slice(&our_tile);
 }
 
+fn set_diamond_sprites(ppu: &mut PPU, center_x: u8, center_y: u8) {
+    let top_right_attr = prepare_attribute_byte(false, false, 1);
+    set_sprite(ppu, 12, 5, center_x, center_y - 8, top_right_attr);
+
+    let top_left_attr = prepare_attribute_byte(true, false, 1);
+    set_sprite(ppu, 17, 5, center_x - 8, center_y - 8, top_left_attr);
+
+    let bottom_left_attr = prepare_attribute_byte(true, true, 1);
+    set_sprite(ppu, 26, 5, center_x - 8, center_y, bottom_left_attr);
+
+    let bottom_right_attr = prepare_attribute_byte(false, true, 1);
+    set_sprite(ppu, 63, 5, center_x, center_y, bottom_right_attr);
+}
+
 fn prepare_attribute_byte(flip_h: bool, flip_v: bool, palette: u8) -> u8 {
     // 76543210
     // ||||||||
@@ -82,17 +96,7 @@ fn sprites_rendering() {
 
     // we will now create 4 sprites of this tile, rotated to make a diamond shape
     // the center will be at 121.5, 69.5
-    let top_right_attr = prepare_attribute_byte(false, false, 1);
-    set_sprite(&mut ppu, 12, 5, 122, 62, top_right_attr);
-
-    let top_left_attr = prepare_attribute_byte(true, false, 1);
-    set_sprite(&mut ppu, 17, 5, 114, 62, top_left_attr);
-
-    let bottom_left_attr = prepare_attribute_byte(true, true, 1);
-    set_sprite(&mut ppu, 26, 5, 114, 70, bottom_left_attr);
-
-    let bottom_right_attr = prepare_attribute_byte(false, true, 1);
-    set_sprite(&mut ppu, 63, 5, 122, 70, bottom_right_attr);
+    set_diamond_sprites(&mut ppu, 122, 70);
 
     let mut frame = Frame::new();
     for _ in 0..SCANLINE_LENGTH_PIXELS {
