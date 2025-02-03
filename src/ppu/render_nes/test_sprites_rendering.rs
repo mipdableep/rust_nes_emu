@@ -90,9 +90,9 @@ fn sprites_rendering() {
     prepare_diamond_sprite(&mut ppu, 5, 0x1000);
 
     // prepare the palette
-    bus_mut!(ppu).ppu_memory.palette_table[21] = 15;
-    bus_mut!(ppu).ppu_memory.palette_table[22] = 30;
-    bus_mut!(ppu).ppu_memory.palette_table[23] = 12;
+    bus_mut!(ppu).ppu_memory.palette_table[21] = 12;
+    bus_mut!(ppu).ppu_memory.palette_table[22] = 27;
+    bus_mut!(ppu).ppu_memory.palette_table[23] = 20;
 
     // we will now create 4 sprites of this tile, rotated to make a diamond shape
     // the center will be at 121.5, 69.5
@@ -128,11 +128,11 @@ fn sprites_rendering() {
                             i if i < 8.5 => {
                                 // in the diamond, use color 1
                                 // this has distance 0.5 + 7.5, but again floating point scare me
-                                SYSTEM_PALETTE[15]
+                                SYSTEM_PALETTE[12]
                             }
                             _ => {
                                 // color 2 of the palette
-                                SYSTEM_PALETTE[30]
+                                SYSTEM_PALETTE[27]
                             }
                         }
                     }
