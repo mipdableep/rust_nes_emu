@@ -4,8 +4,10 @@ use crate::ppu::render_nes::ppu_render_constants::SCREEN_WIDTH_TILE;
 use crate::ppu::{SCANLINES_PER_FRAME, SCANLINE_LENGTH_PIXELS};
 use crate::prelude::Mirroring;
 use crate::{bus_mut, generate_ppu, generate_texture_canvas_event_pump};
+use serial_test::serial;
 
 #[test]
+#[serial]
 fn background_drawing() {
     // this tests the drawing of the background
     // the result frame should have one tile that kinda draws the symbol for 1/2
