@@ -2,6 +2,8 @@ mod render_background;
 mod render_sprites;
 #[cfg(test)]
 mod test_background_rendering;
+#[cfg(test)]
+mod test_sprites_rendering;
 
 use super::PPU;
 
