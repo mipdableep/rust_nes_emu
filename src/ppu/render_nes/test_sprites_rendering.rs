@@ -1,9 +1,9 @@
+use crate::bus::cartridge::Mirroring;
 use crate::ppu::colors_palette::SYSTEM_PALETTE;
 use crate::ppu::frame::Frame;
 use crate::ppu::render_nes::assert_screen_state;
 use crate::ppu::render_nes::ppu_render_constants::SCREEN_WIDTH_TILE;
 use crate::ppu::{PPU, SCANLINES_PER_FRAME, SCANLINE_LENGTH_PIXELS};
-use crate::prelude::Mirroring;
 use crate::{bus_mut, generate_ppu, generate_texture_canvas_event_pump};
 use serial_test::serial;
 

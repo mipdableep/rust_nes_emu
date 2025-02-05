@@ -1,52 +1,42 @@
-#![allow(unused)]
-pub use crate::{
-    bus::{cartridge::Mirroring, Bus},
-    cpu::CPU,
-};
-
 #[macro_export]
 macro_rules! generate_cpu {
     ($var: ident) => {
-        use $crate::{bus::Bus, cpu::CPU};
-        let mut bus: Bus = Bus::new();
-        let mut $var = CPU::new(&mut bus);
+        let mut bus: crate::bus::Bus = crate::bus::Bus::new();
+        let mut $var = crate::cpu::CPU::new(&mut bus);
     };
 }
 
 #[macro_export]
 macro_rules! generate_ppu {
     ($var: ident) => {
-        use $crate::{bus::Bus, ppu::PPU};
-        let mut bus: Bus = Bus::new();
-        let mut $var = PPU::new(&mut bus);
+        let mut bus: crate::bus::Bus = crate::bus::Bus::new();
+        let mut $var = crate::ppu::PPU::new(&mut bus);
     };
 }
 
 #[macro_export]
 macro_rules! generate_cpu_and_set_vertical_mirroring {
     ($var: ident) => {
-        use $crate::{bus::Bus, cpu::CPU};
-        let mut bus: Bus = Bus::new();
+        let mut bus: crate::bus::Bus = crate::bus::Bus::new();
         bus.cartridge.screen_mirroring = Mirroring::Vertical;
-        let mut $var = CPU::new(&mut bus);
+        let mut $var = crate::cpu::CPU::new(&mut bus);
     };
 }
 
 #[macro_export]
 macro_rules! generate_cpu_and_set_horizontal_mirroring {
     ($var: ident) => {
-        use $crate::{bus::Bus, cpu::CPU};
-        let mut bus: Bus = Bus::new();
+        let mut bus: crate::bus::Bus = crate::bus::Bus::new();
         bus.cartridge.screen_mirroring = Mirroring::Horizontal;
-        let mut $var = CPU::new(&mut bus);
+        let mut $var = crate::cpu::CPU::new(&mut bus);
     };
 }
 
 #[macro_export]
 macro_rules! generate_texture_canvas_event_pump {
     ($texture: ident, $canvas: ident, $event_pump: ident) => {
-        use sdl2::pixels::PixelFormatEnum;
-        use $crate::ppu::{SCREEN_HEIGHT, SCREEN_WIDTH};
+        let screen_width = crate::ppu::SCREEN_WIDTH;
+        let screen_height = crate::ppu::SCREEN_HEIGHT;
 
         const SCREEN_FACTOR: usize = 2;
 
@@ -55,8 +45,8 @@ macro_rules! generate_texture_canvas_event_pump {
         let window = video_subsystem
             .window(
                 "Test Frame",
-                (SCREEN_WIDTH * SCREEN_FACTOR) as u32,
-                (SCREEN_HEIGHT * SCREEN_FACTOR) as u32,
+                (screen_width * SCREEN_FACTOR) as u32,
+                (screen_height * SCREEN_FACTOR) as u32,
             )
             .position_centered()
             .build()
@@ -73,9 +63,9 @@ macro_rules! generate_texture_canvas_event_pump {
         let creator = $canvas.texture_creator();
         let mut $texture = creator
             .create_texture_target(
-                PixelFormatEnum::RGB24,
-                SCREEN_WIDTH as u32,
-                SCREEN_HEIGHT as u32,
+                sdl2::pixels::PixelFormatEnum::RGB24,
+                screen_width as u32,
+                screen_height as u32,
             )
             .unwrap();
     };
