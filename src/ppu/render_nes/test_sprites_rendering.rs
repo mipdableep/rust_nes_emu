@@ -37,21 +37,53 @@ fn prepare_diamond_sprite(ppu: &mut PPU, tile_number: usize, bank_start: usize) 
         .copy_from_slice(&our_tile);
 }
 
-fn set_diamond_sprites(ppu: &mut PPU, center_x: u8, center_y: u8) {
-    let top_right_attr = prepare_attribute_byte(false, false, 1);
+fn set_diamond_sprites(ppu: &mut PPU, center_x: u8, center_y: u8, is_background: bool) {
+    let top_right_attr = prepare_attribute_byte(false, false, is_background, 1);
     set_sprite(ppu, 12, 5, center_x, center_y - 8, top_right_attr);
 
-    let top_left_attr = prepare_attribute_byte(true, false, 1);
+    let top_left_attr = prepare_attribute_byte(true, false, is_background, 1);
     set_sprite(ppu, 17, 5, center_x - 8, center_y - 8, top_left_attr);
 
-    let bottom_left_attr = prepare_attribute_byte(true, true, 1);
+    let bottom_left_attr = prepare_attribute_byte(true, true, is_background, 1);
     set_sprite(ppu, 26, 5, center_x - 8, center_y, bottom_left_attr);
 
-    let bottom_right_attr = prepare_attribute_byte(false, true, 1);
+    let bottom_right_attr = prepare_attribute_byte(false, true, is_background, 1);
     set_sprite(ppu, 63, 5, center_x, center_y, bottom_right_attr);
 }
 
-fn prepare_attribute_byte(flip_h: bool, flip_v: bool, palette: u8) -> u8 {
+fn get_color_index_for_diamond_sprite(x: i32, y: i32) -> usize {
+    let x_offset_from_center = (x as f32 + 0.5).abs();
+    // per multiple sources, including https://forums.nesdev.org/viewtopic.php?t=15890
+    // there is a 1 line offset in the sprite line
+    let y_offset_from_center = (-1.0 + y as f32 + 0.5).abs();
+
+    match x_offset_from_center < 8.0 && y_offset_from_center < 8.0 {
+        true => {
+            match x_offset_from_center + y_offset_from_center {
+                i if i < 1.5 => {
+                    // the center has no color
+                    // the distance is 0.5 + 0.5, but floating point
+                    0
+                }
+                i if i < 8.5 => {
+                    // in the diamond, use color 1
+                    // this has distance 0.5 + 7.5, but again floating point scare me
+                    1
+                }
+                _ => {
+                    // color 2 of the palette
+                    2
+                }
+            }
+        }
+        false => {
+            // outside this square we should not have a sprite
+            0
+        }
+    }
+}
+
+fn prepare_attribute_byte(flip_h: bool, flip_v: bool, is_bkg: bool, palette: u8) -> u8 {
     // 76543210
     // ||||||||
     // ||||||++- Palette (4 to 7) of sprite
@@ -60,7 +92,7 @@ fn prepare_attribute_byte(flip_h: bool, flip_v: bool, palette: u8) -> u8 {
     // |+------- Flip sprite horizontally
     // +-------- Flip sprite vertically
 
-    ((flip_v as u8) << 7) + ((flip_h as u8) << 6) + palette
+    ((flip_v as u8) << 7) + ((flip_h as u8) << 6) + ((is_bkg as u8) << 5) + palette
 }
 
 fn set_sprite(ppu: &mut PPU, sprite_number: usize, tile_number: u8, x: u8, y: u8, attr: u8) {
@@ -94,9 +126,16 @@ fn sprites_rendering() {
     bus_mut!(ppu).ppu_memory.palette_table[22] = 27;
     bus_mut!(ppu).ppu_memory.palette_table[23] = 20;
 
+    let wanted_palette = [
+        SYSTEM_PALETTE[0],
+        SYSTEM_PALETTE[12],
+        SYSTEM_PALETTE[27],
+        SYSTEM_PALETTE[20],
+    ];
+
     // we will now create 4 sprites of this tile, rotated to make a diamond shape
     // the center will be at 121.5, 69.5
-    set_diamond_sprites(&mut ppu, 122, 70);
+    set_diamond_sprites(&mut ppu, 122, 70, false);
 
     let mut frame = Frame::new();
     for _ in 0..SCANLINE_LENGTH_PIXELS {
@@ -107,41 +146,11 @@ fn sprites_rendering() {
 
     // in the end, we should have a pretty diamond shape
     // with the center at 121.5, 69.5
-    for x in 0..SCREEN_WIDTH as i32 {
-        for y in 0..SCREEN_HEIGHT as i32 {
-            let x_offset_from_center = (x as f32 - 121.5).abs();
-            // per multiple sources, including https://forums.nesdev.org/viewtopic.php?t=15890
-            // there is a 1 line offset in the sprite line
-            let y_offset_from_center = (-1.0 + y as f32 - 69.5).abs();
-
-            let color = frame.get_pixel(x as usize, y as usize);
-            assert_eq!(
-                color,
-                match x_offset_from_center < 8.0 && y_offset_from_center < 8.0 {
-                    true => {
-                        match x_offset_from_center + y_offset_from_center {
-                            i if i < 1.5 => {
-                                // the center has no color
-                                // the distance is 0.5 + 0.5, but floating point
-                                SYSTEM_PALETTE[0]
-                            }
-                            i if i < 8.5 => {
-                                // in the diamond, use color 1
-                                // this has distance 0.5 + 7.5, but again floating point scare me
-                                SYSTEM_PALETTE[12]
-                            }
-                            _ => {
-                                // color 2 of the palette
-                                SYSTEM_PALETTE[27]
-                            }
-                        }
-                    }
-                    false => {
-                        // outside this square we should not have a sprite
-                        SYSTEM_PALETTE[0]
-                    }
-                }
-            )
-        }
-    }
+    assert_screen_state!(
+        frame,
+        122,
+        70,
+        get_color_index_for_diamond_sprite,
+        wanted_palette
+    );
 }
