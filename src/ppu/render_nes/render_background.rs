@@ -52,7 +52,7 @@ fn tile_x_in_nametable(tile_x: usize) -> usize {
 
 fn tile_y_in_nametable(tile_y: usize) -> usize {
     // return the nametable base address from tile_y
-    tile_y % SCREEN_WIDTH_TILE
+    tile_y % SCREEN_HEIGHT_TILE
 }
 
 impl<'bus> PPU<'bus> {
