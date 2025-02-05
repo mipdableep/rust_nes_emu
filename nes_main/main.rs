@@ -1,9 +1,10 @@
 // use std::{thread::sleep, time};
 
+use nes_emulator::bus::Bus;
+use nes_emulator::cpu::CPU;
 use nes_emulator::generate_texture_canvas_event_pump;
 use nes_emulator::ppu::frame::Frame;
 use nes_emulator::ppu::PPU;
-use nes_emulator::prelude::{Bus, CPU};
 
 fn main() {
     let mut bus: Bus = Bus::new();
