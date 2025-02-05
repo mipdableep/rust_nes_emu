@@ -1,8 +1,10 @@
 use crate::ppu::colors_palette::SYSTEM_PALETTE;
 use crate::ppu::frame::Frame;
+use crate::ppu::render_nes::assert_screen_state;
+use crate::ppu::render_nes::ppu_render_constants::SCREEN_WIDTH_TILE;
 use crate::ppu::{PPU, SCANLINES_PER_FRAME, SCANLINE_LENGTH_PIXELS};
 use crate::prelude::Mirroring;
-use crate::{bus, bus_mut, generate_ppu, generate_texture_canvas_event_pump};
+use crate::{bus_mut, generate_ppu, generate_texture_canvas_event_pump};
 use serial_test::serial;
 
 fn prepare_diamond_sprite(ppu: &mut PPU, tile_number: usize, bank_start: usize) {
@@ -151,6 +153,85 @@ fn sprites_rendering() {
         122,
         70,
         get_color_index_for_diamond_sprite,
+        wanted_palette
+    );
+}
+
+#[test]
+#[serial]
+fn sprites_background() {
+    // a test to check we handle the background process correctly
+    generate_ppu!(ppu);
+    generate_texture_canvas_event_pump!(texture, canvas, event_pump);
+
+    bus_mut!(ppu).cartridge.screen_mirroring = Mirroring::Horizontal;
+
+    // set the sprite bank to 0x1000
+    bus_mut!(ppu)
+        .ppu_registers
+        .control_register
+        .write_byte(0x08);
+
+    // put our sprite as tile 5
+    prepare_diamond_sprite(&mut ppu, 5, 0x1000);
+
+    // prepare the palette
+    bus_mut!(ppu).ppu_memory.palette_table[21] = 12;
+    bus_mut!(ppu).ppu_memory.palette_table[22] = 27;
+    bus_mut!(ppu).ppu_memory.palette_table[23] = 20;
+
+    // we will now create 4 sprites of this tile, rotated to make a diamond shape
+    // the center will be at 121.5, 69.5
+    set_diamond_sprites(&mut ppu, 122, 70, true);
+
+    // we now give a background tile that collides with the sprites
+    // the background tile is like a window: has 1 color in the edges, and empty inside
+    let our_tile = [
+        0xFF_u8, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0,
+    ];
+    bus_mut!(ppu).cartridge.chr_rom[7 * 16..8 * 16].copy_from_slice(&our_tile);
+
+    // tells the tile in row 8 col 15 to be our tile
+    bus_mut!(ppu).ppu_memory.vram[8 * SCREEN_WIDTH_TILE + 15] = 7;
+
+    // now color this tile using a different palette
+    bus_mut!(ppu).ppu_memory.vram[960 + 2 * 8 + 3] = 0x0C; // mask of our tile meta tile
+    bus_mut!(ppu).ppu_memory.palette_table[13] = 35;
+
+    let mut frame = Frame::new();
+    for _ in 0..SCANLINE_LENGTH_PIXELS {
+        for _ in 0..SCANLINES_PER_FRAME {
+            ppu.run_one_ppu_cycle(&mut texture, &mut frame, &mut canvas, &mut event_pump);
+        }
+    }
+
+    fn get_color_index_for_diamond_sprite_with_background(x: i32, y: i32) -> usize {
+        // if we are in the top/bottom rows
+        if ((y == -6) || (y == 1)) && (-2 <= x && x < 6) {
+            return 3;
+        }
+        // if we are in the right/left columns
+        if ((x == -2) || (x == 5)) && (-6 <= y && y < 2) {
+            return 3;
+        }
+        // we are in the diamond
+        get_color_index_for_diamond_sprite(x, y)
+    }
+
+    // we cheat a little bit - we use color 3 as the color for the background (e.g. the window)
+    // we can do it since the diamond does not use all the 3 colors
+    let wanted_palette = [
+        SYSTEM_PALETTE[0],
+        SYSTEM_PALETTE[12],
+        SYSTEM_PALETTE[27],
+        SYSTEM_PALETTE[35],
+    ];
+
+    assert_screen_state!(
+        frame,
+        122,
+        70,
+        get_color_index_for_diamond_sprite_with_background,
         wanted_palette
     );
 }
