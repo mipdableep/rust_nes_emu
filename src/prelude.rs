@@ -35,8 +35,8 @@ macro_rules! generate_cpu_and_set_horizontal_mirroring {
 #[macro_export]
 macro_rules! generate_texture_canvas_event_pump {
     ($texture: ident, $canvas: ident, $event_pump: ident) => {
-        let screen_width = crate::ppu::SCREEN_WIDTH;
-        let screen_height = crate::ppu::SCREEN_HEIGHT;
+        let screen_width = $crate::ppu::SCREEN_WIDTH;
+        let screen_height = $crate::ppu::SCREEN_HEIGHT;
 
         const SCREEN_FACTOR: usize = 2;
 
