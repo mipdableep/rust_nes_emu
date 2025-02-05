@@ -30,3 +30,17 @@ pub mod ppu_render_constants {
     pub const NMI_SCANLINE: usize = 241;
     pub const SCANLINES_PER_FRAME: usize = 262;
 }
+
+#[cfg(test)]
+macro_rules! assert_screen_state {
+    ($frame: ident, $x_shift: literal, $y_shift: literal, $get_pixel_func: ident, $palette: ident) => {
+        for x in 0..crate::ppu::render_nes::ppu_render_constants::SCREEN_WIDTH as i32 {
+            for y in 0..crate::ppu::render_nes::ppu_render_constants::SCREEN_HEIGHT as i32 {
+                let color = $frame.get_pixel(x as usize, y as usize);
+                assert_eq!(color, $palette[$get_pixel_func(x - $x_shift, y - $y_shift)]);
+            }
+        }
+    };
+}
+#[cfg(test)]
+pub(crate) use assert_screen_state;

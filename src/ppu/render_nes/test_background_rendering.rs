@@ -1,5 +1,6 @@
 use crate::ppu::colors_palette::SYSTEM_PALETTE;
 use crate::ppu::frame::Frame;
+use crate::ppu::render_nes::assert_screen_state;
 use crate::ppu::render_nes::ppu_render_constants::SCREEN_WIDTH_TILE;
 use crate::ppu::{SCANLINES_PER_FRAME, SCANLINE_LENGTH_PIXELS};
 use crate::prelude::Mirroring;
@@ -87,13 +88,5 @@ fn background_drawing() {
         }
     }
 
-    for x in 0..SCREEN_WIDTH as i32 {
-        for y in 0..SCREEN_HEIGHT as i32 {
-            let color = frame.get_pixel(x as usize, y as usize);
-            assert_eq!(
-                color,
-                wanted_palette[get_color_index_for_half_tile(x - 9 * 8, y - 4 * 8)]
-            );
-        }
-    }
+    assert_screen_state!(frame, 72, 32, get_color_index_for_half_tile, wanted_palette);
 }
