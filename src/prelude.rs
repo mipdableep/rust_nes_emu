@@ -1,35 +1,38 @@
-#[macro_export]
-macro_rules! generate_cpu {
-    ($var: ident) => {
-        let mut bus: crate::bus::Bus = crate::bus::Bus::new();
-        let mut $var = crate::cpu::CPU::new(&mut bus);
-    };
-}
+#[cfg(test)]
+pub(crate) mod internal_macros {
+    macro_rules! generate_cpu {
+        ($var: ident) => {
+            let mut bus: crate::bus::Bus = crate::bus::Bus::new();
+            let mut $var = crate::cpu::CPU::new(&mut bus);
+        };
+    }
+    pub(crate) use generate_cpu;
 
-#[macro_export]
-macro_rules! generate_ppu {
-    ($var: ident) => {
-        let mut bus: crate::bus::Bus = crate::bus::Bus::new();
-        let mut $var = crate::ppu::PPU::new(&mut bus);
-    };
-}
+    macro_rules! generate_ppu {
+        ($var: ident) => {
+            let mut bus: crate::bus::Bus = crate::bus::Bus::new();
+            let mut $var = crate::ppu::PPU::new(&mut bus);
+        };
+    }
+    pub(crate) use generate_ppu;
 
-#[macro_export]
-macro_rules! generate_cpu_and_set_vertical_mirroring {
-    ($var: ident) => {
-        let mut bus: crate::bus::Bus = crate::bus::Bus::new();
-        bus.cartridge.screen_mirroring = Mirroring::Vertical;
-        let mut $var = crate::cpu::CPU::new(&mut bus);
-    };
-}
+    macro_rules! generate_cpu_and_set_vertical_mirroring {
+        ($var: ident) => {
+            let mut bus: crate::bus::Bus = crate::bus::Bus::new();
+            bus.cartridge.screen_mirroring = Mirroring::Vertical;
+            let mut $var = crate::cpu::CPU::new(&mut bus);
+        };
+    }
+    pub(crate) use generate_cpu_and_set_vertical_mirroring;
 
-#[macro_export]
-macro_rules! generate_cpu_and_set_horizontal_mirroring {
-    ($var: ident) => {
-        let mut bus: crate::bus::Bus = crate::bus::Bus::new();
-        bus.cartridge.screen_mirroring = Mirroring::Horizontal;
-        let mut $var = crate::cpu::CPU::new(&mut bus);
-    };
+    macro_rules! generate_cpu_and_set_horizontal_mirroring {
+        ($var: ident) => {
+            let mut bus: crate::bus::Bus = crate::bus::Bus::new();
+            bus.cartridge.screen_mirroring = Mirroring::Horizontal;
+            let mut $var = crate::cpu::CPU::new(&mut bus);
+        };
+    }
+    pub(crate) use generate_cpu_and_set_horizontal_mirroring;
 }
 
 #[macro_export]
