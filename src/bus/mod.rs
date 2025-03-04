@@ -74,8 +74,8 @@ pub struct Bus {
     pub ppu_memory: PPUMemory,
 }
 
-impl Bus {
-    pub fn new() -> Bus {
+impl Default for Bus {
+    fn default() -> Bus {
         Bus {
             cpu_idle_cycles: 0,
             nmi_generated: false,

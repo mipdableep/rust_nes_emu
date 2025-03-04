@@ -279,7 +279,7 @@ fn main() {
 
     let current_frame = [0_u8; 32 * 32 * 3];
     let rng = thread_rng();
-    let mut bus = Bus::new();
+    let mut bus = Bus::default();
     let mut snake_game = SnakeGame {
         cpu: CPU::new(&mut bus),
         event_pump,

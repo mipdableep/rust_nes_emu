@@ -15,7 +15,7 @@ fn get_random_vector_from_seed(seed: u8, length: u16) -> Vec<u8> {
 
 #[test]
 fn test_bus_memory_boundaries() {
-    let mut bus = Bus::new();
+    let mut bus = Bus::default();
     // this test ensures that we can write at the boundaries of all memory segments without errors
     bus.write_memory(CPU_RAM_MEM_END, 0x01);
     // writing to the segment that is mapped to the ppu registers is a bit wierd
@@ -31,7 +31,7 @@ fn test_bus_memory_boundaries() {
 
 #[test]
 fn test_cpu_ram_mirroring() {
-    let mut bus = Bus::new();
+    let mut bus = Bus::default();
     let cpu_ram = get_random_vector_from_seed(42, CPU_RAM_MEM_END - CPU_RAM_MEM_START);
     for i in 0..=CPU_RAM_MEM_END - CPU_RAM_MEM_START {
         bus.write_memory(i, cpu_ram[i as usize]);
@@ -47,7 +47,7 @@ fn test_cpu_ram_mirroring() {
 // #[test]
 // fn test_ppu_reg_mirroring() {
 //     // should either fix or move to the ppu section
-//     let mut bus = Bus::new();
+//     let mut bus = Bus::default();
 //     let ppu_registers = get_random_vector_from_seed(42, PPU_REGISTERS_END - PPU_REGISTERS_START);
 //     for i in 0..=PPU_REGISTERS_END - PPU_REGISTERS_START {
 //         bus.write_memory(PPU_REGISTERS_START + i, ppu_registers[i as usize]);
@@ -62,7 +62,7 @@ fn test_cpu_ram_mirroring() {
 
 #[test]
 fn test_memory_retrieval() {
-    let mut bus = Bus::new();
+    let mut bus = Bus::default();
     let memory = get_random_vector_from_seed(42, 0x7FFF);
     for i in 0..=0x7FFF {
         if (PPU_REGISTERS_START <= i) & (i <= PPU_REGISTERS_END) {
@@ -76,7 +76,7 @@ fn test_memory_retrieval() {
 
 #[test]
 fn test_read_memory_2_bytes() {
-    let mut bus = Bus::new();
+    let mut bus = Bus::default();
     let memory_contents = get_random_vector_from_seed(42, CPU_RAM_MEM_UNIQUE_SIZE);
     for i in CPU_RAM_MEM_START..CPU_RAM_MEM_UNIQUE_SIZE {
         bus.write_memory(i, memory_contents[i as usize])

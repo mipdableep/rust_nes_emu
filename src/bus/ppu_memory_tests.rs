@@ -104,7 +104,7 @@ fn test_read_from_status_resets_latch() {
 
 #[test]
 fn test_ppu_mirroring() {
-    let mut bus = Bus::new();
+    let mut bus = Bus::default();
 
     bus.write_memory(PPU_REGISTERS_START + 8 * 5, 0xa4); //PPU control
 
@@ -183,7 +183,7 @@ fn test_horizontal_mirroring() {
 
 #[test]
 fn test_dma() {
-    let mut bus = Bus::new();
+    let mut bus = Bus::default();
 
     // instantiate the cpu ram as page 3
     for i in 0..256 {

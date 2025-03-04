@@ -57,7 +57,7 @@ fn PHP_and_PLP() {
 }
 
 fn check_cpu_not_changed(cpu: &CPU) {
-    assert_eq!(**cpu.bus.as_ref().expect("idono"), Bus::new());
+    assert_eq!(**cpu.bus.as_ref().expect("idono"), Bus::default());
     assert_eq!(cpu.register_a, 0);
     assert_eq!(cpu.register_x, 0);
     assert_eq!(cpu.register_y, 0);

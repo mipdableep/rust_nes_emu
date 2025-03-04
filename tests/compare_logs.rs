@@ -71,7 +71,7 @@ mod generate_cpu_logs {
     pub fn run_and_log_all(args: Vec<String>) {
         // let path = std::env::current_dir().unwrap();
         // println!("The current directory is {}", path.display());
-        let mut bus = Bus::new();
+        let mut bus = Bus::default();
         let mut cpu = CPU::new(&mut bus);
         let (test_file_path, result_file_path, line_upto) = match args.len() {
         4 => {

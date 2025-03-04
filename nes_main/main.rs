@@ -58,7 +58,7 @@ fn main() {
 }
 
 fn run_emu(game_path: PathBuf) {
-    let mut bus: Bus = Bus::new();
+    let mut bus: Bus = Bus::default();
     let bytes = std::fs::read(game_path).unwrap();
     bus.cartridge.load_from_dump(&bytes);
 
