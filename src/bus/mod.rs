@@ -52,6 +52,34 @@ pub(crate) mod memory_mapping_constants {
     pub const PRG_ROM_END: u16 = 0xFFFF;
 }
 
+use sdl2::keyboard::Keycode;
+#[derive(Debug, Eq, PartialEq)]
+pub struct Config {
+    up: Keycode,
+    down: Keycode,
+    left: Keycode,
+    right: Keycode,
+    a: Keycode,
+    b: Keycode,
+    select: Keycode,
+    start: Keycode,
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Self {
+            up: Keycode::UP,
+            down: Keycode::DOWN,
+            left: Keycode::LEFT,
+            right: Keycode::RIGHT,
+            a: Keycode::A,
+            b: Keycode::B,
+            select: Keycode::O,
+            start: Keycode::P,
+        }
+    }
+}
+
 #[derive(Debug, Eq, PartialEq)]
 pub struct Bus {
     // cpu stuff
@@ -72,6 +100,7 @@ pub struct Bus {
     prg_ram: [u8; (PRG_RAM_END - PRG_RAM_START + 1) as usize],
     pub cartridge: Cartridge,
     pub ppu_memory: PPUMemory,
+    pub config: Config,
 }
 
 impl Default for Bus {
@@ -91,6 +120,7 @@ impl Default for Bus {
             prg_ram: [0; (PRG_RAM_END - PRG_RAM_START + 1) as usize],
             cartridge: Cartridge::new(),
             ppu_memory: PPUMemory::new(),
+            config: Config::default(),
         }
     }
 }

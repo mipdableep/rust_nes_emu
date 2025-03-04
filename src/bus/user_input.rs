@@ -13,27 +13,31 @@ impl Bus {
                     ..
                 } => std::process::exit(0),
 
-                Event::KeyDown { keycode, .. } => match keycode {
-                    Some(Keycode::A) => self.p1_controller.set_a(),
-                    Some(Keycode::B) => self.p1_controller.set_b(),
-                    Some(Keycode::P) => self.p1_controller.set_start(),
-                    Some(Keycode::O) => self.p1_controller.set_select(),
-                    Some(Keycode::UP) => self.p1_controller.set_up(),
-                    Some(Keycode::DOWN) => self.p1_controller.set_down(),
-                    Some(Keycode::LEFT) => self.p1_controller.set_left(),
-                    Some(Keycode::RIGHT) => self.p1_controller.set_right(),
+                Event::KeyDown {
+                    keycode: Some(kc), ..
+                } => match kc {
+                    val if val == self.config.a => self.p1_controller.set_a(),
+                    val if val == self.config.b => self.p1_controller.set_b(),
+                    val if val == self.config.start => self.p1_controller.set_start(),
+                    val if val == self.config.select => self.p1_controller.set_select(),
+                    val if val == self.config.up => self.p1_controller.set_up(),
+                    val if val == self.config.down => self.p1_controller.set_down(),
+                    val if val == self.config.left => self.p1_controller.set_left(),
+                    val if val == self.config.right => self.p1_controller.set_right(),
                     _ => {}
                 },
 
-                Event::KeyUp { keycode, .. } => match keycode {
-                    Some(Keycode::A) => self.p1_controller.unset_a(),
-                    Some(Keycode::B) => self.p1_controller.unset_b(),
-                    Some(Keycode::P) => self.p1_controller.unset_start(),
-                    Some(Keycode::O) => self.p1_controller.unset_select(),
-                    Some(Keycode::UP) => self.p1_controller.unset_up(),
-                    Some(Keycode::DOWN) => self.p1_controller.unset_down(),
-                    Some(Keycode::LEFT) => self.p1_controller.unset_left(),
-                    Some(Keycode::RIGHT) => self.p1_controller.unset_right(),
+                Event::KeyUp {
+                    keycode: Some(kc), ..
+                } => match kc {
+                    val if val == self.config.a => self.p1_controller.unset_a(),
+                    val if val == self.config.b => self.p1_controller.unset_b(),
+                    val if val == self.config.start => self.p1_controller.unset_start(),
+                    val if val == self.config.select => self.p1_controller.unset_select(),
+                    val if val == self.config.up => self.p1_controller.unset_up(),
+                    val if val == self.config.down => self.p1_controller.unset_down(),
+                    val if val == self.config.left => self.p1_controller.unset_left(),
+                    val if val == self.config.right => self.p1_controller.unset_right(),
                     _ => {}
                 },
 
