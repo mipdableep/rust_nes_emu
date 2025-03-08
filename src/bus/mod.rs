@@ -17,6 +17,7 @@ use controller::ControllerByte;
 use memory_mapping_constants::*;
 pub use ppu_memory::{NUMBER_OF_SPRITE, PPU_NAMETABLE_SIZE, PPU_NAMETABLE_START};
 use ppu_registers::PPURegisters;
+mod sdl2_keycode_serde;
 
 #[macro_export]
 macro_rules! bus {
@@ -53,16 +54,25 @@ pub(crate) mod memory_mapping_constants {
 }
 
 use sdl2::keyboard::Keycode;
-#[derive(Debug, Eq, PartialEq)]
+use serde::{Deserialize, Serialize};
+#[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub struct Config {
-    up: Keycode,
-    down: Keycode,
-    left: Keycode,
-    right: Keycode,
-    a: Keycode,
-    b: Keycode,
-    select: Keycode,
-    start: Keycode,
+    #[serde(with = "sdl2_keycode_serde")]
+    pub up: Keycode,
+    #[serde(with = "sdl2_keycode_serde")]
+    pub down: Keycode,
+    #[serde(with = "sdl2_keycode_serde")]
+    pub left: Keycode,
+    #[serde(with = "sdl2_keycode_serde")]
+    pub right: Keycode,
+    #[serde(with = "sdl2_keycode_serde")]
+    pub a: Keycode,
+    #[serde(with = "sdl2_keycode_serde")]
+    pub b: Keycode,
+    #[serde(with = "sdl2_keycode_serde")]
+    pub select: Keycode,
+    #[serde(with = "sdl2_keycode_serde")]
+    pub start: Keycode,
 }
 
 impl Default for Config {
@@ -90,14 +100,14 @@ pub struct Bus {
     pub oam_dma_page: u8,
     pub number_of_copies_in_current_oam_dma: u8,
 
-    cpu_ram: [u8; CPU_RAM_MEM_UNIQUE_SIZE as usize],
+    pub cpu_ram: [u8; CPU_RAM_MEM_UNIQUE_SIZE as usize],
     pub ppu_registers: PPURegisters,
     pub p1_controller: ControllerByte,
     pub p2_controller: ControllerByte,
-    io_and_audio_registers:
+    pub io_and_audio_registers:
         [u8; (IO_AND_AUDIO_REGISTERS_END - IO_AND_AUDIO_REGISTERS_START + 1) as usize],
-    unmapped_seg: [u8; (UNMAPPED_SEG_END - UNMAPPED_SEG_START + 1) as usize],
-    prg_ram: [u8; (PRG_RAM_END - PRG_RAM_START + 1) as usize],
+    pub unmapped_seg: [u8; (UNMAPPED_SEG_END - UNMAPPED_SEG_START + 1) as usize],
+    pub prg_ram: [u8; (PRG_RAM_END - PRG_RAM_START + 1) as usize],
     pub cartridge: Cartridge,
     pub ppu_memory: PPUMemory,
     pub config: Config,

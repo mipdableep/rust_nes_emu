@@ -18,7 +18,9 @@ rand = "0.8.5"
 rand_chacha = "0.3.1"
 regex = "1.11.0"
 sdl2 = "0.37.0"
+serde = { version = "1.0.218", features = ["derive"] }
 serial_test = "3.2.0"
+toml = "0.8.20"
 
 [dev-dependencies.cargo-husky]
 version = "1.5"

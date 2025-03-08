@@ -1,14 +1,16 @@
 // use std::{thread::sleep, time};
 
-use nes_emulator::bus::Bus;
+use nes_emulator::bus::{Bus, Config};
 use nes_emulator::cpu::CPU;
 use nes_emulator::generate_texture_canvas_event_pump;
 use nes_emulator::ppu::frame::Frame;
 use nes_emulator::ppu::PPU;
 
 use clap::{Parser, Subcommand};
-use std::path::{Path, PathBuf};
-use std::process::exit;
+use sdl2::keyboard::Keycode;
+use std::fs::{read_to_string, write};
+use std::path::PathBuf;
+use toml::Table;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -30,7 +32,13 @@ struct Cli {
 #[derive(Subcommand)]
 enum Commands {
     /// a visual configurator
-    ConfigVisual {
+    // ConfigVisual {
+    //     /// costum output path for the new config
+    //     #[clap(long, short = 'o')]
+    //     #[clap(default_value = "./nes_config.toml")]
+    //     output_path: PathBuf,
+    // },
+    DefaultConfig {
         /// costum output path for the new config
         #[clap(long, short = 'o')]
         #[clap(default_value = "./nes_config.toml")]
@@ -38,27 +46,45 @@ enum Commands {
     },
 }
 
-fn visual_config(output_file: PathBuf) {
-    todo!()
-}
-
 fn main() {
     let cli = Cli::parse();
-    if let Some(comm) = cli.command {
-        match comm {
-            Commands::ConfigVisual { output_path } => visual_config(output_path),
-        };
-    }
+
+    let mut conf = Config::default();
 
     if !cli.game_file.exists() {
         panic!("path {:?} does not exist", cli.game_file);
     }
 
-    run_emu(cli.game_file);
+    if let Some(comm) = cli.command {
+        match comm {
+            Commands::DefaultConfig { output_path } => {
+                let t_s = toml::to_string(&Config::default())
+                    .expect("should always work - a serde operation");
+                match write(&output_path, t_s) {
+                    Ok(_) => println!("writen default config to {output_path:?}"),
+                    Err(e) => println!("failed to write to file {output_path:?} - {e}"),
+                }
+            }
+        }
+        return;
+    }
+
+    if let Some(c) = &cli.config_file {
+        if let Ok(s) = read_to_string(c) {
+            if let Ok(t_conf) = toml::from_str(&s) {
+                conf = t_conf;
+            }
+        }
+    }
+
+    run_emu(cli.game_file, conf);
 }
 
-fn run_emu(game_path: PathBuf) {
-    let mut bus: Bus = Bus::default();
+fn run_emu(game_path: PathBuf, conf: Config) {
+    let mut bus: Bus = Bus {
+        config: conf,
+        ..Default::default()
+    };
     let bytes = std::fs::read(game_path).unwrap();
     bus.cartridge.load_from_dump(&bytes);
 
