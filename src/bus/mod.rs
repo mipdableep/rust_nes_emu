@@ -55,7 +55,7 @@ pub(crate) mod memory_mapping_constants {
 
 use sdl2::keyboard::Keycode;
 use serde::{Deserialize, Serialize};
-#[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Eq, PartialEq, Serialize, Deserialize, Clone)]
 pub struct Config {
     #[serde(with = "sdl2_keycode_serde")]
     pub up: Keycode,

@@ -1,4 +1,5 @@
-// use std::{thread::sleep, time};
+mod cli_config;
+mod visual_config;
 
 use nes_emulator::bus::{Bus, Config};
 use nes_emulator::cpu::CPU;
@@ -7,10 +8,8 @@ use nes_emulator::ppu::frame::Frame;
 use nes_emulator::ppu::PPU;
 
 use clap::{Parser, Subcommand};
-use sdl2::keyboard::Keycode;
 use std::fs::{read_to_string, write};
 use std::path::PathBuf;
-use toml::Table;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -25,7 +24,7 @@ struct Cli {
     game_file: PathBuf,
 
     /// optional config file
-    #[arg(short, long, value_name = "config_file")]
+    #[arg(short = 'c', long, value_name = "config_file")]
     config_file: Option<PathBuf>,
 }
 
@@ -38,6 +37,13 @@ enum Commands {
     //     #[clap(default_value = "./nes_config.toml")]
     //     output_path: PathBuf,
     // },
+    /// a cli configurator
+    ConfigCli {
+        /// costum output path for the new config
+        #[clap(long, short = 'o')]
+        #[clap(default_value = "./nes_config.toml")]
+        output_path: PathBuf,
+    },
     DefaultConfig {
         /// costum output path for the new config
         #[clap(long, short = 'o')]
@@ -65,6 +71,7 @@ fn main() {
                     Err(e) => println!("failed to write to file {output_path:?} - {e}"),
                 }
             }
+            Commands::ConfigCli { output_path } => cli_config::create_config(output_path),
         }
         return;
     }
