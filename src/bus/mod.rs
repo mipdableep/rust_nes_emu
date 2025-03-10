@@ -90,6 +90,21 @@ impl Default for Config {
     }
 }
 
+impl Config {
+    pub fn sensible_defaults() -> Self {
+        Self {
+            up: Keycode::W,
+            down: Keycode::S,
+            left: Keycode::A,
+            right: Keycode::D,
+            a: Keycode::N,
+            b: Keycode::M,
+            select: Keycode::U,
+            start: Keycode::I,
+        }
+    }
+}
+
 #[derive(Debug, Eq, PartialEq)]
 pub struct Bus {
     // cpu stuff
