@@ -1,11 +1,15 @@
+use std::io::{stdin, stdout, Write};
 use std::path::PathBuf;
 
+use crossterm::{
+    cursor,
+    event::{self, KeyCode, KeyEvent, KeyModifiers},
+    execute,
+    terminal::{disable_raw_mode, enable_raw_mode, Clear, ClearType},
+    tty::IsTty,
+};
 use nes_emulator::bus::Config;
-use sdl2::keyboard::Keycode;
-use std::io::{stdin, stdout, Write};
-use termion::event::Key;
-use termion::input::TermRead;
-use termion::raw::IntoRawMode;
+use sdl2::keyboard::Keycode as sdl2_kc;
 
 macro_rules! write_and_flash {
     ($dst:expr, $($arg:tt)*) => {{
@@ -37,219 +41,165 @@ enum Buttons {
     Start,
 }
 
-fn configure_key(
-    stdin: &mut termion::input::Keys<std::io::StdinLock>,
-    stdout: &mut termion::raw::RawTerminal<std::io::Stdout>,
-    conf: &mut Config,
-    button: Buttons,
-) {
-    write_and_flash!(
+fn configure_key(stdout: &mut std::io::Stdout, conf: &mut Config, button: Buttons) {
+    execute!(
         stdout,
-        "{}{}{}configuring button ( {button:?} ) - press a char or arrow to bind",
-        termion::cursor::Goto(1, 12),
-        termion::clear::AfterCursor,
-        termion::cursor::Goto(1, 13),
+        cursor::MoveTo(1, 12),
+        Clear(ClearType::FromCursorDown),
+        cursor::MoveTo(1, 13)
     )
     .unwrap();
 
-    // Read the next key press
-    if let Some(Ok(key_event)) = stdin.next() {
-        match key_event {
-            Key::Char(c) => {
-                if let Some(kc) = Keycode::from_name(&c.to_ascii_uppercase().to_string()) {
-                    match button {
-                        Buttons::Up => conf.up = kc,
-                        Buttons::Down => conf.down = kc,
-                        Buttons::Left => conf.left = kc,
-                        Buttons::Right => conf.right = kc,
-                        Buttons::A => conf.a = kc,
-                        Buttons::B => conf.b = kc,
-                        Buttons::Select => conf.select = kc,
-                        Buttons::Start => conf.start = kc,
-                    }
-                    write_and_flash!(
-                        stdout,
-                        "{}{}{}mapped key ({}) to button {button:?}",
-                        termion::cursor::Goto(1, 12),
-                        termion::clear::AfterCursor,
-                        termion::cursor::Goto(1, 13),
-                        kc.to_string(),
-                    )
-                    .unwrap();
-                }
-            }
-            Key::Up => {
+    write_and_flash!(
+        stdout,
+        "Configuring button ({:?}) - press a key to bind",
+        button
+    )
+    .unwrap();
+
+    while let Ok(true) = event::poll(std::time::Duration::from_secs(10)) {
+        if let Ok(event::Event::Key(KeyEvent {
+            code, modifiers: _, ..
+        })) = event::read()
+        {
+            let keycode = match code {
+                KeyCode::Char(c) => sdl2_kc::from_name(&c.to_ascii_uppercase().to_string()),
+                KeyCode::Up => Some(sdl2_kc::Up),
+                KeyCode::Down => Some(sdl2_kc::Down),
+                KeyCode::Left => Some(sdl2_kc::Left),
+                KeyCode::Right => Some(sdl2_kc::Right),
+                _ => None,
+            };
+
+            if let Some(kc) = keycode {
                 match button {
-                    Buttons::Up => conf.up = Keycode::Up,
-                    Buttons::Down => conf.down = Keycode::Up,
-                    Buttons::Left => conf.left = Keycode::Up,
-                    Buttons::Right => conf.right = Keycode::Up,
-                    Buttons::A => conf.a = Keycode::Up,
-                    Buttons::B => conf.b = Keycode::Up,
-                    Buttons::Select => conf.select = Keycode::Up,
-                    Buttons::Start => conf.start = Keycode::Up,
+                    Buttons::Up => conf.up = kc,
+                    Buttons::Down => conf.down = kc,
+                    Buttons::Left => conf.left = kc,
+                    Buttons::Right => conf.right = kc,
+                    Buttons::A => conf.a = kc,
+                    Buttons::B => conf.b = kc,
+                    Buttons::Select => conf.select = kc,
+                    Buttons::Start => conf.start = kc,
                 }
-                write_and_flash!(
+
+                execute!(
                     stdout,
-                    "{}{}{}mapped key ({}) to button {button:?}",
-                    termion::cursor::Goto(1, 12),
-                    termion::clear::AfterCursor,
-                    termion::cursor::Goto(1, 13),
-                    Keycode::Up.to_string(),
+                    cursor::MoveTo(1, 13),
+                    Clear(ClearType::FromCursorDown)
                 )
                 .unwrap();
-            }
-            Key::Down => {
-                match button {
-                    Buttons::Up => conf.up = Keycode::Up,
-                    Buttons::Down => conf.down = Keycode::Down,
-                    Buttons::Left => conf.left = Keycode::Down,
-                    Buttons::Right => conf.right = Keycode::Down,
-                    Buttons::A => conf.a = Keycode::Down,
-                    Buttons::B => conf.b = Keycode::Down,
-                    Buttons::Select => conf.select = Keycode::Down,
-                    Buttons::Start => conf.start = Keycode::Down,
-                }
                 write_and_flash!(
                     stdout,
-                    "{}{}{}mapped key ({}) to button {button:?}",
-                    termion::cursor::Goto(1, 12),
-                    termion::clear::AfterCursor,
-                    termion::cursor::Goto(1, 13),
-                    Keycode::Down.to_string(),
+                    "Mapped key ({}) to button {:?}",
+                    kc.to_string(),
+                    button
                 )
                 .unwrap();
-            }
-            Key::Left => {
-                match button {
-                    Buttons::Up => conf.up = Keycode::Up,
-                    Buttons::Down => conf.down = Keycode::Left,
-                    Buttons::Left => conf.left = Keycode::Left,
-                    Buttons::Right => conf.right = Keycode::Left,
-                    Buttons::A => conf.a = Keycode::Left,
-                    Buttons::B => conf.b = Keycode::Left,
-                    Buttons::Select => conf.select = Keycode::Left,
-                    Buttons::Start => conf.start = Keycode::Left,
-                }
-                write_and_flash!(
-                    stdout,
-                    "{}{}{}mapped key ({}) to button {button:?}",
-                    termion::cursor::Goto(1, 12),
-                    termion::clear::AfterCursor,
-                    termion::cursor::Goto(1, 13),
-                    Keycode::Left.to_string(),
-                )
-                .unwrap();
-            }
-            Key::Right => {
-                match button {
-                    Buttons::Up => conf.up = Keycode::Up,
-                    Buttons::Down => conf.down = Keycode::Right,
-                    Buttons::Left => conf.left = Keycode::Right,
-                    Buttons::Right => conf.right = Keycode::Right,
-                    Buttons::A => conf.a = Keycode::Right,
-                    Buttons::B => conf.b = Keycode::Right,
-                    Buttons::Select => conf.select = Keycode::Right,
-                    Buttons::Start => conf.start = Keycode::Right,
-                }
-                write_and_flash!(
-                    stdout,
-                    "{}{}{}mapped key ({}) to button {button:?}",
-                    termion::cursor::Goto(1, 12),
-                    termion::clear::AfterCursor,
-                    termion::cursor::Goto(1, 13),
-                    Keycode::Right.to_string(),
-                )
-                .unwrap();
-            }
-            _ => {
-                write_and_flash!(
-                    stdout,
-                    "{}{}{}invalid key!",
-                    termion::cursor::Goto(1, 12),
-                    termion::clear::AfterCursor,
-                    termion::cursor::Goto(1, 13),
-                )
-                .unwrap();
+                break;
             }
         }
     }
 }
+
 fn save_config_to_file(output_path: PathBuf, config: Config) {
     let t_s = toml::to_string(&config).expect("should always work - a serde operation");
     match std::fs::write(&output_path, t_s) {
-        Ok(_) => println!("writen default config to {output_path:?}"),
-        Err(e) => println!("failed to write to file {output_path:?} - {e}"),
+        Ok(_) => println!("Written default config to {output_path:?}"),
+        Err(e) => println!("Failed to write to file {output_path:?} - {e}"),
     }
 }
 
 pub fn create_config(output_path: PathBuf) {
-    let mut conf = Config::default();
-    let stdin = stdin();
-    let mut stdout = stdout().into_raw_mode().unwrap();
+    if !stdin().is_tty() {
+        panic!("not a tty - calling config-cli should be done from terminal");
+    }
 
-    write_and_flash!(stdout, "{}", termion::clear::All).unwrap();
+    let mut conf = Config::default();
+    let mut stdout = stdout();
+    enable_raw_mode().unwrap();
+    execute!(stdout, Clear(ClearType::All)).unwrap();
 
     for (i, s) in CONTROLLER.lines().enumerate() {
-        write_and_flash!(stdout, "{}{}", termion::cursor::Goto(1, i as u16), s).unwrap();
+        execute!(stdout, cursor::MoveTo(1, i as u16)).unwrap();
+        write_and_flash!(stdout, "{}", s).unwrap();
     }
 
     write_and_flash!(
         stdout,
-        "{}key bind configurator!{}",
-        termion::cursor::Goto(1, 8),
-        termion::cursor::Hide,
+        "{}Key bind configurator!{}",
+        cursor::MoveTo(1, 8),
+        cursor::Hide,
     )
     .unwrap();
+
     write_and_flash!(
         stdout,
-        "{}press a key to bind: (arrows) | (a) | (b) | (p) for start | (o) for select{}press (q) to quit, (Ctrl-q) to quit without saving, press (s) to save, (v) to view config{}",
-        termion::cursor::Goto(1, 10),
-        termion::cursor::Goto(1, 11),
-        termion::cursor::Goto(1, 13),
+        "{}Press a key to bind: (arrows) | (a) | (b) | (p) for start | (o) for select
+        {}Press (q) to quit, (Ctrl-q) to quit without saving, press (s) to save, (v) to view config",
+        cursor::MoveTo(1, 10),
+        cursor::MoveTo(1, 11),
     )
     .unwrap();
 
-    let mut keys = stdin.lock().keys(); // Lock stdin **only once**
+    loop {
+        if let Ok(event::Event::Key(KeyEvent {
+            code, modifiers, ..
+        })) = event::read()
+        {
+            match code {
+                KeyCode::Char('q') if modifiers.contains(KeyModifiers::CONTROL) => {
+                    execute!(
+                        stdout,
+                        cursor::MoveTo(1, 12),
+                        Clear(ClearType::FromCursorDown)
+                    )
+                    .unwrap();
 
-    'outer: while let Some(Ok(k)) = keys.next() {
-        match k {
-            Key::Char('q') => break 'outer,
-            Key::Char('a') => configure_key(&mut keys, &mut stdout, &mut conf, Buttons::A),
-            Key::Char('b') => configure_key(&mut keys, &mut stdout, &mut conf, Buttons::B),
-            Key::Up => configure_key(&mut keys, &mut stdout, &mut conf, Buttons::Up),
-            Key::Down => configure_key(&mut keys, &mut stdout, &mut conf, Buttons::Down),
-            Key::Left => configure_key(&mut keys, &mut stdout, &mut conf, Buttons::Left),
-            Key::Right => configure_key(&mut keys, &mut stdout, &mut conf, Buttons::Right),
-            Key::Char('o') => configure_key(&mut keys, &mut stdout, &mut conf, Buttons::Select),
-            Key::Char('p') => configure_key(&mut keys, &mut stdout, &mut conf, Buttons::Start),
-            Key::Char('v') => {
-                for (i, l) in toml::to_string(&conf).unwrap().lines().enumerate() {
-                    write_and_flash!(stdout, "{}{}", termion::cursor::Goto(1, 15 + i as u16), l)
-                        .unwrap();
+                    println!("Quitting without saving!");
+                    disable_raw_mode().unwrap();
+                    execute!(stdout, cursor::Show).unwrap();
+                    return;
                 }
-            }
-            Key::Char('s') => {
-                save_config_to_file(output_path.clone(), conf.clone());
-            }
-            Key::Ctrl('q') => {
-                println!("quitting without saving!");
-                write_and_flash!(stdout, "{}", termion::cursor::Show).unwrap();
-                return;
-            }
-            _ => {
-                write_and_flash!(
-                    stdout,
-                    "{}{}{}invalid key!",
-                    termion::cursor::Goto(1, 12),
-                    termion::clear::AfterCursor,
-                    termion::cursor::Goto(1, 13),
-                )
-                .unwrap();
+                KeyCode::Char('q') => break,
+                KeyCode::Char('a') => configure_key(&mut stdout, &mut conf, Buttons::A),
+                KeyCode::Char('b') => configure_key(&mut stdout, &mut conf, Buttons::B),
+                KeyCode::Up => configure_key(&mut stdout, &mut conf, Buttons::Up),
+                KeyCode::Down => configure_key(&mut stdout, &mut conf, Buttons::Down),
+                KeyCode::Left => configure_key(&mut stdout, &mut conf, Buttons::Left),
+                KeyCode::Right => configure_key(&mut stdout, &mut conf, Buttons::Right),
+                KeyCode::Char('o') => configure_key(&mut stdout, &mut conf, Buttons::Select),
+                KeyCode::Char('p') => configure_key(&mut stdout, &mut conf, Buttons::Start),
+                KeyCode::Char('v') => {
+                    for (i, l) in toml::to_string(&conf).unwrap().lines().enumerate() {
+                        write_and_flash!(stdout, "{}{}", cursor::MoveTo(1, 15 + i as u16), l)
+                            .unwrap();
+                    }
+                }
+                KeyCode::Char('s') => {
+                    execute!(
+                        stdout,
+                        cursor::MoveTo(1, 12),
+                        Clear(ClearType::FromCursorDown),
+                        cursor::MoveTo(1, 13),
+                    )
+                    .unwrap();
+                    save_config_to_file(output_path.clone(), conf.clone())
+                }
+                _ => {
+                    execute!(
+                        stdout,
+                        cursor::MoveTo(1, 12),
+                        Clear(ClearType::FromCursorDown)
+                    )
+                    .unwrap();
+                    write_and_flash!(stdout, "Invalid key!").unwrap();
+                }
             }
         }
     }
-    save_config_to_file(output_path, conf);
 
-    write_and_flash!(stdout, "{}", termion::cursor::Show).unwrap();
+    save_config_to_file(output_path, conf);
+    disable_raw_mode().unwrap();
+    execute!(stdout, cursor::Show).unwrap();
 }

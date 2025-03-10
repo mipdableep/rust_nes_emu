@@ -38,13 +38,21 @@ enum Commands {
     //     output_path: PathBuf,
     // },
     /// a cli configurator
-    ConfigCli {
+    CliEdit {
         /// costum output path for the new config
         #[clap(long, short = 'o')]
         #[clap(default_value = "./nes_config.toml")]
         output_path: PathBuf,
     },
+    /// write the default config to a file
     DefaultConfig {
+        /// costum output path for the new config
+        #[clap(long, short = 'o')]
+        #[clap(default_value = "./nes_config.toml")]
+        output_path: PathBuf,
+    },
+    /// write an alternative (more sensible) config to a file
+    SensibleConfig {
         /// costum output path for the new config
         #[clap(long, short = 'o')]
         #[clap(default_value = "./nes_config.toml")]
@@ -71,7 +79,15 @@ fn main() {
                     Err(e) => println!("failed to write to file {output_path:?} - {e}"),
                 }
             }
-            Commands::ConfigCli { output_path } => cli_config::create_config(output_path),
+            Commands::SensibleConfig { output_path } => {
+                let t_s = toml::to_string(&Config::sensible_defaults())
+                    .expect("should always work - a serde operation");
+                match write(&output_path, t_s) {
+                    Ok(_) => println!("writen default config to {output_path:?}"),
+                    Err(e) => println!("failed to write to file {output_path:?} - {e}"),
+                }
+            }
+            Commands::CliEdit { output_path } => cli_config::create_config(output_path),
         }
         return;
     }
